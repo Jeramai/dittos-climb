@@ -1,0 +1,94 @@
+#ifndef ENEMY_H
+#define ENEMY_H
+
+#include "bn_camera_ptr.h"
+#include "bn_random.h"
+#include "bn_sprite_ptr.h"
+
+#include "projectiles.h"
+#include "species.h"
+
+class enemy
+{
+
+public:
+    enemy(species_id id, const bn::fixed_point& position, const bn::camera_ptr& camera, bn::random& random);
+
+    void update(const bn::fixed_point& target, enemy_projectiles& projectiles, bn::random& random);
+
+    [[nodiscard]] species_id id() const
+    {
+        return _id;
+    }
+
+    [[nodiscard]] const species_data& data() const
+    {
+        return species::get(_id);
+    }
+
+    [[nodiscard]] const bn::fixed_point& position() const
+    {
+        return _position;
+    }
+
+    [[nodiscard]] bool active() const
+    {
+        return _state != state::spawning;
+    }
+
+    [[nodiscard]] bool contains(const bn::fixed_point& point, int half_size) const;
+
+    hit_result take_hit(const attack& hit);
+
+    [[nodiscard]] bool dead() const
+    {
+        return _hp <= 0;
+    }
+
+    [[nodiscard]] bool dash_hits(const bn::fixed_point& point);
+
+    [[nodiscard]] const attack& dash_attack() const
+    {
+        return _dash_attack;
+    }
+
+    [[nodiscard]] bool hit_by_area(int serial);
+
+private:
+    enum class state
+    {
+        spawning,
+        moving,
+        windup,
+        dashing,
+        recovering,
+    };
+
+    bn::sprite_ptr _sprite;
+    bn::fixed_point _position;
+    bn::fixed_point _attack_direction;
+    species_id _id;
+    state _state = state::spawning;
+    int _state_frames = 40;
+    int _hp;
+    int _cooldowns[2];
+    int _pending_move = 0;
+    int _flash_frames = 0;
+    int _walk_frames = 0;
+    int _last_area_serial = -1;
+    bool _dash_connected = false;
+    bool _facing_left = false;
+    attack _dash_attack;
+
+    [[nodiscard]] move_id _move(int index) const;
+
+    [[nodiscard]] bool _try_start_attack(const bn::fixed_point& target);
+
+    void _execute(enemy_projectiles& projectiles, bn::random& random);
+
+    void _walk(const bn::fixed_point& step);
+
+    void _update_sprite(bool moving);
+};
+
+#endif

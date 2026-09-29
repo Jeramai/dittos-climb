@@ -1,0 +1,293 @@
+#include "enemy.h"
+
+#include "attacks.h"
+#include "directions.h"
+
+namespace
+{
+    constexpr int melee_range = 30;
+    constexpr int dash_range = 90;
+    constexpr int shot_range = 150;
+    constexpr int shooter_keep_distance = 60;
+    constexpr int recover_frames = 30;
+    constexpr int cooldown_scale_a = 3;
+    constexpr int cooldown_scale_b = 5;
+    constexpr bn::fixed walk_speed_scale = 0.4;
+    constexpr bn::fixed dash_speed_scale = 0.85;
+    constexpr bn::fixed shot_speed_scale = 0.6;
+
+    attack wild_attack(move_id move, const species_data& user)
+    {
+        attack result = combat::make_attack(move, user.type_1, user.type_2);
+        result.power = result.power * 2 / 3;
+        return result;
+    }
+
+    int windup_frames(move_pattern pattern)
+    {
+        switch(pattern)
+        {
+
+        case move_pattern::melee:
+            return 14;
+
+        case move_pattern::dash:
+            return 22;
+
+        default:
+            return 16;
+        }
+    }
+
+    int attack_range(move_pattern pattern)
+    {
+        switch(pattern)
+        {
+
+        case move_pattern::melee:
+            return melee_range;
+
+        case move_pattern::dash:
+            return dash_range;
+
+        case move_pattern::shot:
+            return shot_range;
+
+        default:
+            return 0;
+        }
+    }
+
+    int distance(const bn::fixed_point& a, const bn::fixed_point& b)
+    {
+        bn::fixed_point delta = a - b;
+        return (bn::abs(delta.x()) + bn::abs(delta.y())).round_integer();
+    }
+}
+
+enemy::enemy(species_id id, const bn::fixed_point& position, const bn::camera_ptr& camera, bn::random& random) :
+    _sprite(species::get(id).sprite->create_sprite(position, species_frames::walk)),
+    _position(position),
+    _id(id),
+    _hp(species::get(id).hp),
+    _cooldowns{ 30 + random.get_int(60), 90 + random.get_int(90) },
+    _dash_attack(combat::make_attack(move_id::tackle, pokemon_type::normal, pokemon_type::none))
+{
+    _sprite.set_camera(camera);
+}
+
+void enemy::update(const bn::fixed_point& target, enemy_projectiles& projectiles, bn::random& random)
+{
+    for(int& cooldown : _cooldowns)
+    {
+        if(cooldown)
+        {
+            --cooldown;
+        }
+    }
+
+    if(_flash_frames)
+    {
+        --_flash_frames;
+    }
+
+    bool moving = false;
+
+    switch(_state)
+    {
+
+    case state::spawning:
+        _sprite.set_visible((_state_frames / 3) % 2);
+
+        if(! --_state_frames)
+        {
+            _sprite.set_visible(true);
+            _state = state::moving;
+        }
+
+        _sprite.set_position(_position);
+        return;
+
+    case state::moving:
+        if(! _try_start_attack(target))
+        {
+            bool shooter = moves::get(_move(0)).pattern == move_pattern::shot ||
+                           moves::get(_move(1)).pattern == move_pattern::shot;
+            int keep_distance = shooter ? shooter_keep_distance : 8;
+
+            if(distance(target, _position) > keep_distance)
+            {
+                _walk(directions::toward(_position, target) * data().speed * walk_speed_scale);
+                moving = true;
+            }
+
+            _facing_left = target.x() < _position.x();
+        }
+        break;
+
+    case state::windup:
+        if(! --_state_frames)
+        {
+            _execute(projectiles, random);
+        }
+        break;
+
+    case state::dashing:
+        _walk(_attack_direction * moves::get(_move(_pending_move)).speed * dash_speed_scale);
+        moving = true;
+
+        if(! --_state_frames)
+        {
+            _state = state::recovering;
+            _state_frames = recover_frames;
+        }
+        break;
+
+    case state::recovering:
+        if(! --_state_frames)
+        {
+            _state = state::moving;
+        }
+        break;
+
+    default:
+        break;
+    }
+
+    _update_sprite(moving);
+}
+
+bool enemy::contains(const bn::fixed_point& point, int half_size) const
+{
+    bn::fixed_point delta = point - _position;
+    return bn::abs(delta.x()) < 4 + half_size && bn::abs(delta.y()) < 5 + half_size;
+}
+
+hit_result enemy::take_hit(const attack& hit)
+{
+    const species_data& current = data();
+    hit_result result = combat::resolve(hit, current.type_1, current.type_2);
+    _hp -= result.damage;
+    _flash_frames = 4;
+    return result;
+}
+
+bool enemy::dash_hits(const bn::fixed_point& point)
+{
+    if(_state != state::dashing || _dash_connected || ! contains(point, 3))
+    {
+        return false;
+    }
+
+    _dash_connected = true;
+    return true;
+}
+
+bool enemy::hit_by_area(int serial)
+{
+    if(_last_area_serial == serial)
+    {
+        return false;
+    }
+
+    _last_area_serial = serial;
+    return true;
+}
+
+move_id enemy::_move(int index) const
+{
+    return index ? data().move_b : data().move_a;
+}
+
+bool enemy::_try_start_attack(const bn::fixed_point& target)
+{
+    int target_distance = distance(target, _position);
+
+    for(int index = 1; index >= 0; --index)
+    {
+        const move_data& move = moves::get(_move(index));
+
+        if(! _cooldowns[index] && target_distance <= attack_range(move.pattern))
+        {
+            _pending_move = index;
+            _attack_direction = directions::toward(_position, target);
+            _facing_left = target.x() < _position.x();
+            _state = state::windup;
+            _state_frames = windup_frames(move.pattern);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void enemy::_execute(enemy_projectiles& projectiles, bn::random& random)
+{
+    const species_data& current = data();
+    move_id id = _move(_pending_move);
+    const move_data& move = moves::get(id);
+    attack hit = wild_attack(id, current);
+    int scale = _pending_move ? cooldown_scale_b : cooldown_scale_a;
+    _cooldowns[_pending_move] = move.cooldown * scale + random.get_int(30);
+    _state = state::recovering;
+    _state_frames = recover_frames;
+
+    switch(move.pattern)
+    {
+
+    case move_pattern::shot:
+        attacks::shoot(projectiles, hit, _position, _attack_direction, shot_speed_scale);
+        break;
+
+    case move_pattern::melee:
+        attacks::slash(projectiles, hit, _position, _attack_direction);
+        break;
+
+    case move_pattern::dash:
+        _dash_attack = hit;
+        _dash_connected = false;
+        _state = state::dashing;
+        _state_frames = move.life * 2;
+        break;
+
+    default:
+        break;
+    }
+}
+
+void enemy::_walk(const bn::fixed_point& step)
+{
+    bn::fixed_point next(_position.x() + step.x(), _position.y());
+
+    if(! room::feet_are_blocked(next))
+    {
+        _position = next;
+    }
+
+    next = bn::fixed_point(_position.x(), _position.y() + step.y());
+
+    if(! room::feet_are_blocked(next))
+    {
+        _position = next;
+    }
+}
+
+void enemy::_update_sprite(bool moving)
+{
+    int frame = species_frames::walk;
+
+    if(_flash_frames || (_state == state::windup && (_state_frames / 3) % 2))
+    {
+        frame = species_frames::white;
+    }
+    else if(moving)
+    {
+        ++_walk_frames;
+        frame = species_frames::walk + (_walk_frames / 10) % 2;
+    }
+
+    _sprite.set_tiles(data().sprite->tiles_item(), frame);
+    _sprite.set_position(_position);
+    _sprite.set_horizontal_flip(_facing_left);
+    _sprite.set_z_order(-_position.y().round_integer());
+}
