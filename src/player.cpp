@@ -355,9 +355,6 @@ void player::_update_wave()
         return;
     }
 
-    int life = moves::get(move_id::struggle).life;
-    int frame = bn::min((life - _area_frames) * 3 / life, 2);
-    _wave_sprite->set_tiles(bn::sprite_items::wave.tiles_item(), frame);
     _wave_sprite->set_position(_position);
 }
 
@@ -394,7 +391,9 @@ void player::_update_sprite(bool moving)
             _walk_frames = 0;
         }
 
-        _sprite.set_item(*body().sprite, species_frames::own_walk + (_walk_frames / 8) % 2);
+        bool flailing = _wave_sprite.has_value();
+        int walk_frame = flailing ? 1 : (_walk_frames / 8) % 2;
+        _sprite.set_item(*body().sprite, species_frames::own_walk + walk_frame);
     }
 
     _sprite.set_horizontal_flip(directions::vectors[_aim].x() < 0);
