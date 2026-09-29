@@ -96,6 +96,13 @@ enum class move_id
     mega_punch,
     submission,
     thrash,
+    lick,
+    night_shade,
+    bone_club,
+    bonemerang,
+    psywave,
+    shadow_ball,
+    dream_eater,
 };
 
 enum class status_effect

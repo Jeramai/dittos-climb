@@ -6,13 +6,18 @@
 #include "bn_sprite_items_beedrill.h"
 #include "bn_sprite_items_bulbasaur.h"
 #include "bn_sprite_items_charmander.h"
+#include "bn_sprite_items_cubone.h"
 #include "bn_sprite_items_caterpie.h"
 #include "bn_sprite_items_diglett.h"
 #include "bn_sprite_items_ditto.h"
 #include "bn_sprite_items_ekans.h"
+#include "bn_sprite_items_exeggcute.h"
 #include "bn_sprite_items_farfetchd.h"
+#include "bn_sprite_items_gastly.h"
+#include "bn_sprite_items_gengar.h"
 #include "bn_sprite_items_geodude.h"
 #include "bn_sprite_items_grimer.h"
+#include "bn_sprite_items_haunter.h"
 #include "bn_sprite_items_hitmonchan.h"
 #include "bn_sprite_items_hitmonlee.h"
 #include "bn_sprite_items_growlithe.h"
@@ -166,6 +171,16 @@ namespace
           move_id::hi_jump_kick, &bn::sprite_items::hitmonlee },
         { "HITMONCHAN", pokemon_type::fighting, pokemon_type::none, 60, 1.2, move_id::fire_punch, move_id::mega_punch,
           &bn::sprite_items::hitmonchan },
+        { "GASTLY", pokemon_type::ghost, pokemon_type::poison, 14, 1.2, move_id::lick, move_id::confuse_ray,
+          &bn::sprite_items::gastly, species_behavior::flyer },
+        { "HAUNTER", pokemon_type::ghost, pokemon_type::poison, 18, 1.4, move_id::lick, move_id::night_shade,
+          &bn::sprite_items::haunter, species_behavior::flyer },
+        { "CUBONE", pokemon_type::ground, pokemon_type::none, 18, 1, move_id::bone_club, move_id::bonemerang,
+          &bn::sprite_items::cubone },
+        { "EXEGGCUTE", pokemon_type::grass, pokemon_type::psychic, 18, 0.9, move_id::psywave, move_id::confusion,
+          &bn::sprite_items::exeggcute },
+        { "GENGAR", pokemon_type::ghost, pokemon_type::poison, 70, 1.3, move_id::lick, move_id::shadow_ball,
+          &bn::sprite_items::gengar },
     };
 }
 

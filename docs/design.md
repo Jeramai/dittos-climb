@@ -209,4 +209,9 @@ Bonus floors after the end: Steel, Dark and Fairy.
     out Hitmonlee (Rolling Kick ring, Hi Jump Kick that crashes into walls and hurts itself) or Hitmonchan (Fire,
     Ice and Thunder Punch combos, Mega Punch, a Counter stance that strikes back when hit); its outline is the
     other one — the dojo prize.
-13. Then one floor per milestone.
+13. **Floor 11.** (done) Pokémon Tower is dark; without the Silph Scope Ghost types stay invisible except while
+    they wind up an attack ("GHOST: Get out... Get out..."), and Gengar is hard to see. Spirit barriers block side
+    doors and a Ghost form phases through. Gastly (Lick, Confuse Ray), Haunter (Lick, Night Shade), Cubone (Bone
+    Club, Bonemerang). Rare: Exeggcute. Gengar fires Shadow Ball fans, vanishes and reappears next to Ditto with a
+    Lick, and follows Hypnosis with Dream Eater. Base Ditto (Normal) is immune to its Ghost moves.
+14. Then one floor per milestone.

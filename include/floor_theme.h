@@ -19,6 +19,7 @@ enum class boss_kind
     pidgeot,
     team_rocket,
     hitmon,
+    gengar,
 };
 
 enum class key_item
@@ -34,6 +35,7 @@ enum class gate_kind
     bush,
     ice,
     cracked,
+    spirit,
 };
 
 enum class hazard_kind
@@ -71,6 +73,7 @@ struct floor_theme
     key_item key;
     int waves;
     bool no_items;
+    bool ghosts_need_scope;
     int overgrown_percent;
     boss_kind boss;
     species_id rare;

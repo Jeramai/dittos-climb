@@ -62,6 +62,11 @@ enum class species_id
     farfetchd,
     hitmonlee,
     hitmonchan,
+    gastly,
+    haunter,
+    cubone,
+    exeggcute,
+    gengar,
 };
 
 namespace species_frames

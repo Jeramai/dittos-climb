@@ -53,6 +53,10 @@ public:
         return false;
     }
 
+    virtual void set_revealed(bool)
+    {
+    }
+
     [[nodiscard]] virtual bn::fixed_point wind() const
     {
         return bn::fixed_point();

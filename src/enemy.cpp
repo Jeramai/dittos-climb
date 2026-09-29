@@ -479,7 +479,8 @@ void enemy::_update_sprite(bool moving)
     }
 
     _sprite.set_tiles(data().sprite->tiles_item(), frame);
-    _sprite.set_visible(! _hidden && _in_light);
+    bool telegraphing = _state == state::windup || _state == state::dashing || _flash_frames;
+    _sprite.set_visible(! _hidden && _in_light && (! _unseen || telegraphing));
     _sprite.set_position(_position);
     _sprite.set_horizontal_flip(_facing_left);
     _sprite.set_z_order(-_position.y().round_integer());

@@ -41,6 +41,11 @@ public:
         _in_light = in_light;
     }
 
+    void set_unseen(bool unseen)
+    {
+        _unseen = unseen;
+    }
+
     [[nodiscard]] bool contains(const bn::fixed_point& point, int half_size) const;
 
     hit_result take_hit(const attack& hit);
@@ -108,6 +113,7 @@ private:
     bool _underground = false;
     bool _exploded = false;
     bool _in_light = true;
+    bool _unseen = false;
     int _burrow_frames = 0;
     int _wobble_frames = 0;
     bool _was_hidden = false;

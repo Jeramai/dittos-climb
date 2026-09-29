@@ -1372,6 +1372,144 @@ FARFETCHD_1 = FARFETCHD_TOP + ["     kykyk", "     kk kk"]
 FARFETCHD_2 = FARFETCHD_TOP + ["    kyk kyk", "    kk   kk"]
 
 
+GASTLY_1 = [
+    "",
+    "   z   zz   z",
+    "  zpz zppz zpz",
+    " zppzzkkkkzzppz",
+    "  zpkkkkkkkkpz",
+    " zpkkwwkkwwkkpz",
+    " zpkkwkkkkwkkpz",
+    "zppkkkkkkkkkkppz",
+    " zpkkknnnnkkkpz",
+    " zpkkkkwwkkkkpz",
+    "  zpkkkkkkkkpz",
+    " zppzkkkkkkzppz",
+    "  zpz zzzz zpz",
+    "   z        z",
+]
+
+GASTLY_2 = [
+    "",
+    "",
+    "  z   zz   z",
+    " zpzzkkkkzzpz",
+    "  zpkkkkkkkkpz",
+    " zpkkwwkkwwkkpz",
+    " zpkkwkkkkwkkpz",
+    "zppkkkkkkkkkkppz",
+    "zppkkknnnnkkkppz",
+    " zpkkkkwwkkkkpz",
+    "  zpkkkkkkkkpz",
+    " zppzkkkkkkzppz",
+    "  zpzzzzzzzzpz",
+    "   z        z",
+]
+
+HAUNTER_1 = [
+    "",
+    "   k  kkkk  k",
+    "  kzk kzzzzkzk",
+    "  kzzkzzzzzzzk",
+    "   kzzwwzzwwzk",
+    "   kzzwnzzwnzk",
+    "kk  kzzzzzzzzk  kk",
+    "kzk kznnnnnnzk kzk",
+    " kzkkzzwzwzzzkkzk",
+    "  kzzzzzzzzzzzk",
+    "     kzzzzzzk",
+    "      kzzzzk",
+    "       kzzk",
+    "        kk",
+]
+
+HAUNTER_1 = [row[:16] for row in HAUNTER_1]
+HAUNTER_2 = [""] + HAUNTER_1[:-1]
+
+CUBONE_TOP = [
+    "",
+    "   kk    kk",
+    "  kwwk  kwwk",
+    "  kwwkkkkwwk",
+    "  kwwwwwwwwk",
+    "  kwkkwwkkwk",
+    "  kwkkwwkkwk",
+    "   kwwkkwwk",
+    "    kbbbbk   kk",
+    "   kbbccbbk kwk",
+    "  kbbccccbbkwk",
+    "  kbbccccbbkk",
+]
+
+CUBONE_1 = CUBONE_TOP + ["   kbbk kbbk", "   kkk  kkk"]
+CUBONE_2 = CUBONE_TOP + ["  kbbk   kbbk", "  kkk    kkk"]
+
+EXEGGCUTE_1 = [
+    "",
+    "",
+    "",
+    "    kkk  kkk",
+    "   kqqqkkqqqk",
+    "   kqkqkkqkqk",
+    "   kqqqkkqqqk",
+    " kkkkkkkkkkkkkk",
+    "kqqqkkqqqkkqqqk",
+    "kqkqkkqkqkkqkqk",
+    "kqqqkkqqqkkqqqk",
+    "kqqqkkqqqkkqqqk",
+    " kkk  kkk  kkk",
+]
+
+EXEGGCUTE_2 = [""] + EXEGGCUTE_1[:-1]
+
+SHADOW_BALL = [
+    "",
+    "  kkkk",
+    " kmmmmk",
+    "kmppmmmk",
+    "kmpmmmmk",
+    "kmmmmmmk",
+    " kmmmmk",
+    "  kkkk",
+]
+
+BONE = [
+    "",
+    " kk  kk",
+    "kcckkcck",
+    " kccccck",
+    "  kccck",
+    " kcccck",
+    "kcckkcck",
+    " kk  kk",
+]
+
+
+def gengar_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    ellipse(grid, 16, 17 + step, 12, 11, "z")
+    for x in (7, 11, 21, 25):
+        for y in range(3, 8):
+            if abs(x - 16) // 3 + (7 - y) < 6:
+                grid[y + step][x] = "z"
+                grid[y + step][x + 1] = "z"
+    for x in (6, 26):
+        for y in range(9, 13):
+            grid[y + step][x] = "z"
+    for dx in (-5, 5):
+        ellipse(grid, 16 + dx, 13 + step, 2.5, 1.5, "n" if not charging else "w")
+    for x in range(9, 24):
+        grid[20 + step][x] = "k"
+        if x % 2:
+            grid[21 + step][x] = "w"
+    for x in range(10, 23):
+        grid[22 + step][x] = "k"
+    for x in (9, 10, 22, 23):
+        for y in range(27, 31):
+            grid[y][x] = "z"
+    return ["".join(row) for row in outline(grid)]
+
+
 def hitmon_frame(step, charging, kicker):
     grid = [["."] * 32 for _ in range(32)]
     ellipse(grid, 16, 13, 7, 8, "b")
@@ -2755,6 +2893,114 @@ def cracked_rock_tile():
     return tile
 
 
+TOWER_PALETTE = [
+    (8, 6, 14),
+    (88, 80, 104),
+    (72, 64, 88),
+    (112, 104, 128),
+    (56, 48, 72),
+    (32, 24, 44),
+    (52, 40, 68),
+    (80, 64, 104),
+    (56, 44, 76),
+    (112, 96, 136),
+    (48, 40, 60),
+    (152, 144, 160),
+    (120, 112, 128),
+    (224, 216, 240),
+    (160, 112, 224),
+    (20, 16, 28),
+]
+
+
+def tower_floor_tile(variant):
+    tile = blank(1)
+    for i in range(8):
+        tile[7][i] = 2
+        tile[i][7] = 2
+    if variant:
+        tile[2][2] = tile[4][5] = 3
+    return tile
+
+
+def tower_shadow_tile():
+    tile = blank(4)
+    for i in range(8):
+        tile[7][i] = 10
+    return tile
+
+
+def tower_wall_top_tile():
+    tile = blank(5)
+    for x, y in ((1, 1), (5, 3), (2, 6)):
+        tile[y][x] = 6
+    return tile
+
+
+def tower_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [9] * 8
+    tile[7] = [8] * 8
+    for y in range(1, 7):
+        tile[y][3] = 8
+    tile[3][1] = tile[3][5] = 14
+    return tile
+
+
+def tower_door_tile():
+    tile = blank(5)
+    for y in range(8):
+        tile[y][(y * 3) % 8] = 14
+        tile[y][(y * 3 + 4) % 8] = 13
+    return tile
+
+
+def tower_stairs_tiles():
+    big = [[15] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 13
+            big[top + 1][x] = 3
+            big[top + 2][x] = 7
+    return split_quad(big)
+
+
+def grave_tile():
+    tile = tower_floor_tile(0)
+    for y in range(1, 7):
+        for x in range(2, 6):
+            tile[y][x] = 11
+    tile[1][2] = tile[1][5] = 1
+    tile[3][3] = tile[3][4] = tile[2][3] = tile[4][3] = 12
+    return tile
+
+
+def spirit_barrier_tile():
+    tile = blank(6)
+    for y in range(8):
+        for x in range(8):
+            if (x + y * 2) % 5 == 0:
+                tile[y][x] = 14
+            elif (x * 3 + y) % 7 == 0:
+                tile[y][x] = 13
+    return tile
+
+
+TOWER_TILES = [
+    blank(0),
+    tower_floor_tile(0),
+    tower_floor_tile(1),
+    tower_shadow_tile(),
+    tower_wall_top_tile(),
+    tower_wall_face_tile(),
+    tower_door_tile(),
+    *tower_stairs_tiles(),
+    grave_tile(),
+    tower_floor_tile(0),
+    spirit_barrier_tile(),
+]
+
 DOJO_TILES = [
     blank(0),
     dojo_floor_tile(0),
@@ -2998,7 +3244,8 @@ def main():
     save_species("staryu", STARYU_1, STARYU_2)
     save_species("horsea", HORSEA_1, HORSEA_2)
     save_species("gyarados", gyarados_frame(0, False), gyarados_frame(1, False), 32, [gyarados_frame(0, True)])
-    save_sprite_sheet("water_projectiles", [BUBBLE, WATER_DROP, STAR, DRAGON_FIRE, ICE_SHARD, HEART, SLUDGE], 8)
+    save_sprite_sheet("water_projectiles", [BUBBLE, WATER_DROP, STAR, DRAGON_FIRE, ICE_SHARD, HEART, SLUDGE,
+                                            SHADOW_BALL, BONE], 8)
     save_species("pikachu", PIKACHU_1, PIKACHU_2)
     save_species("voltorb", VOLTORB_1, VOLTORB_2)
     save_species("magnemite", MAGNEMITE_1, MAGNEMITE_2)
@@ -3039,6 +3286,11 @@ def main():
                  [hitmon_frame(0, True, True)])
     save_species("hitmonchan", hitmon_frame(0, False, False), hitmon_frame(1, False, False), 32,
                  [hitmon_frame(0, True, False)])
+    save_species("gastly", GASTLY_1, GASTLY_2)
+    save_species("haunter", HAUNTER_1, HAUNTER_2)
+    save_species("cubone", CUBONE_1, CUBONE_2)
+    save_species("exeggcute", EXEGGCUTE_1, EXEGGCUTE_2)
+    save_species("gengar", gengar_frame(0, False), gengar_frame(1, False), 32, [gengar_frame(0, True)])
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
@@ -3055,6 +3307,7 @@ def main():
     save_tiles("chasm", CHASM_TILES, CHASM_PALETTE)
     save_tiles("hideout", HIDEOUT_TILES, HIDEOUT_PALETTE)
     save_tiles("dojo", DOJO_TILES, DOJO_PALETTE)
+    save_tiles("tower", TOWER_TILES, TOWER_PALETTE)
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 

@@ -124,6 +124,17 @@ namespace
         { "MEGA PUNCH", "M.PUNCH", pokemon_type::normal, 80, 10, dash, 45, 0, 0, 3.8, 14, 0 },
         { "SUBMISSION", "SUBMIT", pokemon_type::fighting, 80, 15, dash, 45, 0, 0, 3.5, 14, 0 },
         { "THRASH", "THRASH", pokemon_type::normal, 90, 10, dash, 50, 0, 0, 4, 16, 0, status_effect::confusion, 20 },
+        { "LICK", "LICK", pokemon_type::ghost, 30, 0, melee, 18, 0, 0, 0, 6, 0, status_effect::paralysis, 30 },
+        { "NIGHT SHADE", "N.SHADE", pokemon_type::ghost, 45, 15, shot, 34, 1, 0, 2.4, 50, water_frames::shadow,
+          no_status, 0, false, water },
+        { "BONE CLUB", "B.CLUB", pokemon_type::ground, 50, 0, melee, 20, 0, 0, 0, 6, 0 },
+        { "BONEMERANG", "BONEMRNG", pokemon_type::ground, 45, 10, shot, 36, 2, 10, 2.6, 45, water_frames::bone,
+          no_status, 0, false, water },
+        { "PSYWAVE", "PSYWAVE", pokemon_type::psychic, 40, 0, shot, 22, 1, 0, 2.8, 40, projectile_frames::psybeam },
+        { "SHADOW BALL", "S.BALL", pokemon_type::ghost, 70, 10, shot, 40, 1, 0, 2.2, 55, water_frames::shadow,
+          no_status, 0, false, water },
+        { "DREAM EATER", "D.EATER", pokemon_type::psychic, 100, 5, shot, 60, 1, 0, 3, 50, projectile_frames::psybeam,
+          no_status, 0, true },
     };
 }
 

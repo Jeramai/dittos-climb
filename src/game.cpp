@@ -23,6 +23,7 @@
 #include "articuno_boss.h"
 #include "moltres_boss.h"
 #include "pidgeot_boss.h"
+#include "gengar_boss.h"
 #include "hitmon_boss.h"
 #include "team_rocket_boss.h"
 #include "onix_boss.h"
@@ -113,6 +114,10 @@ game::game(bn::random& random) :
         _floor_number = DITTO_TEST_FLOOR;
     #endif
 
+    #ifdef DITTO_TEST_SCOPE
+        _has_silph_scope = true;
+    #endif
+
     _start_floor();
 
     #ifdef DITTO_TEST_FORM
@@ -146,6 +151,11 @@ void game::_start_floor()
     if(_theme().no_items && _player.held_item())
     {
         _messages.show("The DOJO bans held items!");
+    }
+
+    if(_theme().ghosts_need_scope)
+    {
+        _messages.show(_has_silph_scope ? "The SILPH SCOPE revealed the ghosts!" : "GHOST: Get out... Get out...");
     }
     _has_flute = false;
     _boss_defeated = false;
@@ -592,6 +602,11 @@ void game::_spawn_boss()
         _boss.reset(new pidgeot_boss(position, _camera));
         _messages.show("PIDGEOT swooped down from above!");
     }
+    else if(_theme().boss == boss_kind::gengar)
+    {
+        _boss.reset(new gengar_boss(position, _camera));
+        _messages.show("A GENGAR rose from the shadows!");
+    }
     else if(_theme().boss == boss_kind::hitmon)
     {
         bool kicker = _random.get_int(2);
@@ -714,9 +729,19 @@ void game::_update_darkness(bool room_changed)
 
     _light->set_position(_player.position());
 
+    bool ghosts_unseen = _theme().ghosts_need_scope && ! _has_silph_scope;
+
     for(enemy& value : _enemies)
     {
+        const species_data& data = value.data();
+        bool ghost = data.type_1 == pokemon_type::ghost || data.type_2 == pokemon_type::ghost;
         value.set_in_light(within(value.position(), _player.position(), light_radius, light_radius));
+        value.set_unseen(ghost && ghosts_unseen);
+    }
+
+    if(_boss)
+    {
+        _boss->set_revealed(! ghosts_unseen);
     }
 }
 
@@ -889,7 +914,9 @@ void game::_handle_cut()
 
     bool ice = gate == gate_kind::ice;
     bool rock = gate == gate_kind::cracked;
-    pokemon_type needed = ice ? pokemon_type::fire : rock ? pokemon_type::fighting : pokemon_type::grass;
+    bool spirit = gate == gate_kind::spirit;
+    pokemon_type needed = ice ? pokemon_type::fire : rock ? pokemon_type::fighting :
+                          spirit ? pokemon_type::ghost : pokemon_type::grass;
     const species_data& body = _player.body();
     bool can_clear = body.type_1 == needed || body.type_2 == needed;
     bn::fixed_point feet = _player.position() + bn::fixed_point(0, 4);
@@ -905,7 +932,8 @@ void game::_handle_cut()
             {
                 _messages.show(ice ? "A FIRE POKEMON could melt this ice." :
                                rock ? "A FIGHTING POKEMON can smash this." :
-                                      "A GRASS POKEMON could CUT this bush.");
+                               spirit ? "Only a GHOST POKEMON can pass this." :
+                                        "A GRASS POKEMON could CUT this bush.");
                 return;
             }
         }
@@ -918,7 +946,8 @@ void game::_handle_cut()
         return;
     }
 
-    _messages.show(ice ? "DITTO melted the ice!" : rock ? "DITTO used ROCK SMASH!" : "DITTO used CUT!");
+    _messages.show(ice ? "DITTO melted the ice!" : rock ? "DITTO used ROCK SMASH!" :
+                   spirit ? "DITTO phased through the barrier!" : "DITTO used CUT!");
     _spawn_effect(feet);
 
     for(int side = 0; side < 4; ++side)
