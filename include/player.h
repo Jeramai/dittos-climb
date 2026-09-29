@@ -68,6 +68,13 @@ public:
         _items_allowed = allowed;
     }
 
+    void set_forced_struggle(bool forced, message_box& messages);
+
+    [[nodiscard]] bool forced_struggle() const
+    {
+        return _forced_struggle;
+    }
+
     [[nodiscard]] bool area_active() const
     {
         return _area_frames;
@@ -154,6 +161,7 @@ private:
     int _bonus_hp = 0;
     bn::optional<item_id> _held;
     bool _items_allowed = true;
+    bool _forced_struggle = false;
 
     void _use_move(bool move_a, player_projectiles& projectiles, message_box& messages);
 

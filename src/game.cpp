@@ -342,6 +342,7 @@ void game::_update_play()
     _update_effects();
     _update_camera(false);
     _messages.update();
+    _update_struggle_check();
     _hud.update(_player);
     _update_room_state();
 }
@@ -903,6 +904,49 @@ void game::_handle_explosions()
     }
 }
 
+void game::_update_struggle_check()
+{
+    const form* current = _player.active_form();
+
+    if(! current)
+    {
+        _player.set_forced_struggle(false, _messages);
+        return;
+    }
+
+    const species_data& body = species::get(current->species);
+    move_id own_moves[] = { body.move_a, body.move_b };
+    bool has_foe = false;
+    bool can_affect = false;
+
+    auto check = [&](const species_data& foe)
+    {
+        has_foe = true;
+
+        for(move_id move : own_moves)
+        {
+            pokemon_type type = moves::get(move).type;
+
+            if(types::effectiveness(type, foe.type_1, foe.type_2))
+            {
+                can_affect = true;
+            }
+        }
+    };
+
+    for(const enemy& value : _enemies)
+    {
+        check(value.data());
+    }
+
+    if(_boss)
+    {
+        check(species::get(_boss->species()));
+    }
+
+    _player.set_forced_struggle(has_foe && ! can_affect, _messages);
+}
+
 void game::_handle_cut()
 {
     gate_kind gate = _theme().gate;
@@ -1174,6 +1218,11 @@ void game::_spawn_enemies()
         for(int attempt = 0; attempt < 20; ++attempt)
         {
             species_id id = floor_themes::pick_species(_theme(), _random.get_int(100));
+
+            #ifdef DITTO_TEST_SPECIES
+                id = species_id(DITTO_TEST_SPECIES);
+            #endif
+
             const species_data& data = species::get(id);
             bn::fixed_point position = _view.random_floor_position(_random);
             bool aquatic = data.behavior == species_behavior::aquatic;

@@ -367,6 +367,21 @@ bool player::give_item(item_id id, message_box& messages)
     }
 }
 
+void player::set_forced_struggle(bool forced, message_box& messages)
+{
+    forced = forced && _form;
+
+    if(forced && ! _forced_struggle)
+    {
+        message_box::text message(species::get(_form->species).name);
+        message.append(" can't hurt the foe!");
+        messages.show(message);
+        messages.show("It will STRUGGLE!");
+    }
+
+    _forced_struggle = forced;
+}
+
 void player::heal(int amount)
 {
     if(_form)
@@ -520,9 +535,9 @@ void player::set_visible(bool visible)
 void player::_use_move(bool move_a, player_projectiles& projectiles, message_box& messages)
 {
     const species_data& current = body();
-    move_id move = move_a ? current.move_a : current.move_b;
+    move_id move = _forced_struggle ? move_id::struggle : move_a ? current.move_a : current.move_b;
 
-    if(_form && ! move_a)
+    if(_form && ! move_a && ! _forced_struggle)
     {
         int& pp = _form->pp_b;
 

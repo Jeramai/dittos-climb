@@ -65,6 +65,7 @@ void hud::update(const player& value)
     if(current)
     {
         key.append(bn::to_string<4>(current->pp_b));
+        key.append(value.forced_struggle() ? "S" : "");
     }
 
     if(key == _shown_key)
@@ -81,7 +82,12 @@ void hud::update(const player& value)
     bn::string<24> line_a;
     bn::string<24> line_b;
 
-    if(current)
+    if(current && value.forced_struggle())
+    {
+        append_move(line_a, "A ", move_id::struggle, -1);
+        append_move(line_b, "B ", move_id::struggle, -1);
+    }
+    else if(current)
     {
         append_move(line_a, "A ", body.move_a, -1);
         append_move(line_b, "B ", body.move_b, current->pp_b);

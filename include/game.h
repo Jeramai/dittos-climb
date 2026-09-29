@@ -114,6 +114,8 @@ private:
 
     void _update_darkness(bool room_changed);
 
+    void _update_struggle_check();
+
     void _update_plates();
 
     void _update_flicker();

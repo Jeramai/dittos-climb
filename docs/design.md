@@ -54,6 +54,8 @@ the Unknown Dungeon.
 - Every move has a type, power and an attack pattern: shot, spread, melee, dash, beam, cloud or status.
 - Move A (weak) has no PP limit. Move B (strong) has PP; at 0 PP it becomes Struggle.
 - **STAB**: a move of the same type as the user does ×1.5.
+- If none of a form's moves can affect any Pokémon left in the room (for example a Normal form against
+  ghosts), both buttons become Struggle until a foe it can hit appears. Struggle has no type, so it hits everything.
 
 ### Type chart
 

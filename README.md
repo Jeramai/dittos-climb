@@ -30,6 +30,7 @@ Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, beca
 | `-DDITTO_TEST_FALL` | Start on a pit (floors with pits only) |
 | `-DDITTO_TEST_LAYOUT=<n>` | The start combat room uses layout n (0–4; 3 has a centre block) |
 | `-DDITTO_TEST_SCOPE` | Start with the Silph Scope |
+| `-DDITTO_TEST_SPECIES=<species>` | Every wild Pokémon is this species |
 
 ```
 make TARGET=test-boss BUILD=build-test-boss USERFLAGS="-DDITTO_TEST_START_KIND=2 -DDITTO_TEST_FORM=1"
