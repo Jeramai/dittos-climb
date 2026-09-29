@@ -1598,6 +1598,7 @@ void game::_ending()
     bn::sprite_ptr mew = bn::sprite_items::mew.create_sprite(-24, 30, species_frames::walk);
     bn::sprite_ptr ditto = bn::sprite_items::ditto.create_sprite(24, 34, species_frames::own_walk);
     mew.set_bg_priority(0);
+    mew.set_horizontal_flip(true);
     ditto.set_bg_priority(0);
     int frame_counter = 0;
 

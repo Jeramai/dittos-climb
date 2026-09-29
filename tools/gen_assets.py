@@ -56,6 +56,11 @@ COLORS = {
     "4": (244, 176, 192),
     "5": (248, 192, 216),
     "6": (216, 136, 176),
+    "7": (255, 204, 204),
+    "8": (255, 150, 150),
+    "9": (192, 80, 80),
+    "0": (176, 216, 230),
+    "1": (72, 168, 200),
 }
 
 DITTO = [
@@ -2066,29 +2071,33 @@ def mirrored(points):
     return [(32 - x, y) for x, y in points]
 
 
+MEW = [
+    "..........................",
+    ".............kkk..........",
+    "...........kk777kkk.......",
+    "..........k77kkk777kk.....",
+    ".........k7kk...kk777k....",
+    ".........k7k.....k8778k...",
+    "..........k7kk....k888k...",
+    "...........k77kk...kkk....",
+    "............kk77k.........",
+    "...kkk........kk8k........",
+    "...k77kkkkkk...k8k........",
+    "...k7k77778kkkk8k.........",
+    "...k7777788k9778k.........",
+    "..kw9777997k7788k.........",
+    "..k09777w97k7788k.........",
+    "..k19777097k77888k........",
+    "..k77777197kkk8k88k.......",
+    "..kk777779kkk.kkkk8k......",
+    "...k888779k......kkk......",
+    "....kkkkkk................",
+]
+
+
 def mew_frame(step):
-    grid = [["."] * 16 for _ in range(16)]
-    dy = step
-    for t in range(31):
-        u = t / 30
-        x = (1 - u) ** 2 * 9 + 2 * (1 - u) * u * 15.5 + u * u * 13
-        y = (1 - u) ** 2 * (12.5 + dy) + 2 * (1 - u) * u * 12 + u * u * (4.5 - step)
-        grid[round(y)][round(x)] = "5"
-    ellipse(grid, 13, 3.4 - step, 1.3, 1.8, "5")
-    ellipse(grid, 7, 11.2 + dy, 2.2, 2.1, "5")
-    ellipse(grid, 8, 13.6 + dy, 2.2, 0.9, "6")
-    ellipse(grid, 4, 10.6 + dy, 1, 0.7, "5")
-    ellipse(grid, 5.5, 6.6 + dy, 4, 3.6, "5")
-    polygon(grid, [(2, 4.6 + dy), (2.4, 2.3 + dy), (4.4, 3.4 + dy)], "5")
-    polygon(grid, [(7, 3.3 + dy), (8.8, 2.3 + dy), (9.2, 4.6 + dy)], "5")
-    for x, y in ((3, 6), (4, 6), (3, 7), (4, 7), (3, 8), (4, 8), (7, 6), (8, 6), (7, 7), (8, 7), (7, 8), (8, 8)):
-        grid[y + dy][x] = "B"
-    grid[6 + dy][3] = grid[6 + dy][7] = "w"
-    grid[8 + dy][3] = grid[8 + dy][7] = "U"
-    grid[10 + dy][5] = "6"
-    for x, y in ((9, 9), (8, 12), (9, 12)):
-        grid[y + dy][x] = "6"
-    return ["".join(row) for row in outline(grid)]
+    rows = ["." * 32] * (6 + step) + ["..." + row + "..." for row in MEW]
+    return (rows + ["." * 32] * 32)[:32]
 
 
 def snorlax_frame(step, asleep):
@@ -3860,7 +3869,7 @@ def main():
     save_species("drowzee", DROWZEE_1, DROWZEE_2)
     save_species("venomoth", VENOMOTH_1, VENOMOTH_2)
     save_species("mewtwo", mewtwo_frame(0, False), mewtwo_frame(1, False), 32, [mewtwo_frame(0, True)])
-    save_species("mew", mew_frame(0), mew_frame(1))
+    save_species("mew", mew_frame(0), mew_frame(1), 32)
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
