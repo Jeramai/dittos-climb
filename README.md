@@ -13,7 +13,8 @@ make -j8
 make run
 ```
 
-`make assets` regenerates the placeholder art from `tools/gen_assets.py`.
+`make assets` regenerates the placeholder art from `tools/gen_assets.py`. `make artbook` rebuilds the
+[art book](docs/artbook/README.md), a page with every sprite and tileset per floor.
 
 Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, because `make` does not rebuild on a flag change):
 

@@ -72,10 +72,13 @@ endif
 #---------------------------------------------------------------------------------------------------------------------
 include $(LIBBUTANOABS)/butano.mak
 
-.PHONY: assets run
+.PHONY: assets artbook run
 
 assets:
 	$(PYTHON) tools/gen_assets.py
+
+artbook:
+	$(PYTHON) tools/gen_artbook.py
 
 run: $(TARGET).gba
 	open -a mGBA $(TARGET).gba
