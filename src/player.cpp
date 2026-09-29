@@ -393,7 +393,7 @@ bool player::give_item(item_id id, message_box& messages)
     {
         int maximum = _form ? species::get(_form->species).hp * form_hp_scale : max_hp();
 
-        if(hp() >= maximum && (! _form || _form->hp >= maximum))
+        if((_form ? _form->hp : _hp) >= maximum)
         {
             messages.show("The HP is already full!");
             return false;
