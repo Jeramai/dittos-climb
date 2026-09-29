@@ -1,6 +1,7 @@
 #include "player.h"
 
 #include "bn_keypad.h"
+#include "bn_sprite_affine_mat_ptr.h"
 
 #include "bn_sprite_items_ditto.h"
 #include "bn_sprite_items_wave.h"
@@ -16,6 +17,7 @@ namespace
     constexpr int dodge_fast_frames = 16;
     constexpr int dodge_invulnerable_frames = 18;
     constexpr int dodge_cooldown_frames = 12;
+    constexpr bn::fixed dodge_squash = 0.5;
     constexpr int hurt_invulnerable_frames = 60;
     constexpr int transform_frames = 30;
     constexpr int switch_flash_frames = 8;
@@ -373,9 +375,15 @@ void player::_update_sprite(bool moving)
         return;
     }
 
-    if(_dodge_frames)
+    bool squashed = _dodge_frames && _form;
+
+    if(_dodge_frames && ! _form)
     {
         _sprite.set_item(bn::sprite_items::ditto, species_frames::ditto_flat);
+    }
+    else if(squashed)
+    {
+        _sprite.set_item(*body().sprite, species_frames::own_walk);
     }
     else if(_switch_flash_frames)
     {
@@ -395,6 +403,16 @@ void player::_update_sprite(bool moving)
         bool flailing = _wave_sprite.has_value();
         int walk_frame = flailing ? 1 : (_walk_frames / 8) % 2;
         _sprite.set_item(*body().sprite, species_frames::own_walk + walk_frame);
+    }
+
+    if(squashed)
+    {
+        _sprite.set_vertical_scale(dodge_squash);
+        _sprite.set_y(_position.y() + _sprite.shape_size().height() * (1 - dodge_squash) / 2);
+    }
+    else if(_sprite.affine_mat())
+    {
+        _sprite.remove_affine_mat();
     }
 
     _sprite.set_horizontal_flip(directions::vectors[_aim].x() < 0);
