@@ -10,6 +10,7 @@ namespace profile
     struct data
     {
         unsigned magic;
+        unsigned seen[form_words];
         unsigned forms[form_words];
         unsigned shiny_forms[form_words];
         int runs;
@@ -19,11 +20,17 @@ namespace profile
 
     [[nodiscard]] const data& get();
 
+    [[nodiscard]] bool has_seen(species_id id);
+
     [[nodiscard]] bool has_form(species_id id);
 
     [[nodiscard]] bool has_shiny_form(species_id id);
 
+    [[nodiscard]] int seen_count();
+
     [[nodiscard]] int form_count();
+
+    void register_seen(species_id id, bool shiny);
 
     void register_form(species_id id, bool shiny);
 

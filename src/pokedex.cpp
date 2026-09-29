@@ -60,10 +60,12 @@ void show()
     small.set_center_alignment();
 
     const profile::data& stats = profile::get();
-    bn::string<32> header("POKEDEX ");
-    header.append(bn::to_string<4>(profile::form_count()));
+    bn::string<32> header("SEEN ");
+    header.append(bn::to_string<4>(profile::seen_count()));
     header.append("/");
     header.append(bn::to_string<4>(entry_count));
+    header.append("  USED ");
+    header.append(bn::to_string<4>(profile::form_count()));
 
     bn::string<40> record("RUNS ");
     record.append(bn::to_string<6>(stats.runs));
@@ -100,7 +102,7 @@ void show()
             const bn::sprite_item& item = *species::get(id).sprite;
             bn::sprite_ptr icon = item.create_sprite(cell_position(index), species_frames::walk);
 
-            if(! profile::has_form(id))
+            if(! profile::has_seen(id))
             {
                 icon.set_palette(silhouette);
             }
@@ -123,7 +125,12 @@ void show()
         label.append(entry + 1 < 10 ? "00" : entry + 1 < 100 ? "0" : "");
         label.append(bn::to_string<4>(entry + 1));
         label.append(" ");
-        label.append(profile::has_form(id) ? species::get(id).name : "???");
+        label.append(profile::has_seen(id) ? species::get(id).name : "???");
+
+        if(profile::has_form(id))
+        {
+            label.append(" USED");
+        }
 
         if(profile::has_shiny_form(id))
         {

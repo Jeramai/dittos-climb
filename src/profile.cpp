@@ -4,7 +4,7 @@
 
 namespace
 {
-    constexpr unsigned profile_magic = 0x44435031;
+    constexpr unsigned profile_magic = 0x44435032;
     constexpr int sram_offset = 4096;
 
     profile::data current;
@@ -21,6 +21,19 @@ namespace
                 current = profile::data();
                 current.magic = profile_magic;
             }
+
+            #ifdef DITTO_TEST_DEX
+                for(int word = 0; word < profile::form_words; ++word)
+                {
+                    current.seen[word] = 0xb5ad6f5b;
+                    current.forms[word] = 0x21084211;
+                    current.shiny_forms[word] = 0x01000402;
+                }
+
+                current.runs = 12;
+                current.wins = 2;
+                current.best_floor = 13;
+            #endif
 
             loaded = true;
         }
@@ -47,6 +60,11 @@ const data& get()
     return loaded_data();
 }
 
+bool has_seen(species_id id)
+{
+    return has_bit(loaded_data().seen, id) || has_form(id);
+}
+
 bool has_form(species_id id)
 {
     return has_bit(loaded_data().forms, id);
@@ -57,16 +75,48 @@ bool has_shiny_form(species_id id)
     return has_bit(loaded_data().shiny_forms, id);
 }
 
+int seen_count()
+{
+    int result = 0;
+
+    for(int index = 1; index <= int(species_id::mew); ++index)
+    {
+        result += has_seen(species_id(index));
+    }
+
+    return result;
+}
+
 int form_count()
 {
     int result = 0;
 
-    for(int index = 1; index < int(species_id::mew) + 1; ++index)
+    for(int index = 1; index <= int(species_id::mew); ++index)
     {
         result += has_form(species_id(index));
     }
 
     return result;
+}
+
+void register_seen(species_id id, bool shiny)
+{
+    data& value = loaded_data();
+    unsigned bit = 1u << (int(id) % 32);
+    unsigned& seen = value.seen[int(id) / 32];
+    unsigned& shiny_form = value.shiny_forms[int(id) / 32];
+    bool changed = ! (seen & bit) || (shiny && ! (shiny_form & bit));
+    seen |= bit;
+
+    if(shiny)
+    {
+        shiny_form |= bit;
+    }
+
+    if(changed)
+    {
+        write();
+    }
 }
 
 void register_form(species_id id, bool shiny)

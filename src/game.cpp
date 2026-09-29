@@ -627,6 +627,7 @@ void game::_handle_player_attacks()
 
         show_name_message(_messages, "Wild ", value.data().name, " fainted!");
         ++_defeated;
+        profile::register_seen(value.id(), value.shiny());
         audio::play_quiet(bn::sound_items::sfx_faint);
         _spawn_effect(value.position());
         _spawn_outline(value.id(), value.position(), value.shiny());
@@ -808,6 +809,7 @@ void game::_update_boss()
         _enemy_projectiles.clear();
         _wait_for_a(defeat_min_frames);
         ++_defeated;
+        profile::register_seen(_boss->outline_species(), false);
         _won = true;
         return;
     }
@@ -819,9 +821,11 @@ void game::_update_boss()
         _boss->announce_defeat(_messages);
         _spawn_effect(_boss->position());
         _spawn_outline(_boss->outline_species(), _boss->position());
+        profile::register_seen(_boss->outline_species(), false);
 
         if(bn::optional<species_id> extra = _boss->extra_outline())
         {
+            profile::register_seen(*extra, false);
             _spawn_outline(*extra, _boss->position() + bn::fixed_point(28, 0));
         }
         _boss.reset();
@@ -1535,6 +1539,7 @@ void game::_spawn_enemies()
         {
             show_name_message(_messages, "A shiny ", value.data().name, " appeared!");
             ++_shinies;
+            profile::register_seen(value.id(), true);
             audio::play(bn::sound_items::sfx_key_item);
             _spawn_effect(value.position());
         }
@@ -1814,7 +1819,7 @@ void game::_show_run_stats(const char* title)
     };
 
     bn::string<24> dex("POKEDEX ");
-    dex.append(bn::to_string<4>(profile::form_count()));
+    dex.append(bn::to_string<4>(profile::seen_count()));
     dex.append("/");
     dex.append(bn::to_string<4>(int(species_id::mew)));
 
@@ -1961,7 +1966,10 @@ void game::_ending()
     mew.set_bg_priority(0);
     mew.set_horizontal_flip(true);
 
-    if(shiny::roll(_random))
+    bool shiny_mew = shiny::roll(_random);
+    profile::register_seen(species_id::mew, shiny_mew);
+
+    if(shiny_mew)
     {
         mew.set_palette(*shiny::palette(species_id::mew));
     }
