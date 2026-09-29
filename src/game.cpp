@@ -6,6 +6,8 @@
 #include "bn_keypad.h"
 #include "bn_sprite_palettes.h"
 #include "bn_sprite_text_generator.h"
+#include "bn_music_items.h"
+#include "bn_sound_items.h"
 #include "bn_string.h"
 #include "bn_window.h"
 
@@ -32,6 +34,7 @@
 #include "hitmon_boss.h"
 #include "team_rocket_boss.h"
 #include "onix_boss.h"
+#include "audio.h"
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
 #include "venusaur_boss.h"
@@ -162,6 +165,7 @@ void game::run()
 void game::_start_floor()
 {
     _previous_room = -1;
+    audio::play_floor_music(_floor_number);
     _floor.generate(_floor_number, _theme().overgrown_percent, ! _theme().no_items, _theme().large_rooms, _random);
     _player.set_items_allowed(! _theme().no_items);
 
@@ -304,6 +308,7 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
         _spawn_delay = spawn_delay_frames;
         _waves_left = _theme().waves - 1;
         _messages.show(_theme().lock_message);
+        audio::play(bn::sound_items::sfx_door_lock);
     }
 
     if(boss_room)
@@ -396,6 +401,7 @@ void game::_update_room_state()
         _floor[_room].cleared = true;
         _view.set_locked(false);
         _messages.show(_theme().unlock_message);
+        audio::play(bn::sound_items::sfx_door_open);
 
         if(_floor[_room].reward == room_reward::rare)
         {
@@ -422,6 +428,7 @@ void game::_update_room_state()
     if(_flute_pickup && within(_flute_pickup->position(), _player.position(), 12, 12))
     {
         _flute_pickup.reset();
+        audio::play(bn::sound_items::sfx_key_item);
 
         if(_theme().key == key_item::silph_scope)
         {
@@ -553,6 +560,7 @@ void game::_handle_player_attacks()
         }
 
         show_name_message(_messages, "Wild ", value.data().name, " fainted!");
+        audio::play_quiet(bn::sound_items::sfx_faint);
         _spawn_effect(value.position());
         _spawn_outline(value.id(), value.position());
         return true;
@@ -584,6 +592,8 @@ void game::_spawn_outline(species_id id, const bn::fixed_point& position)
 
 void game::_spawn_boss()
 {
+    audio::play(bn::sound_items::sfx_boss);
+    audio::play_music(_theme().boss == boss_kind::mewtwo ? bn::music_items::final_boss : bn::music_items::boss);
     bn::fixed_point position = _view.interior_center() - bn::fixed_point(0, 12);
 
     if(_theme().boss == boss_kind::snorlax)
@@ -720,6 +730,8 @@ void game::_update_boss()
 
     if(_boss->dead() && _theme().boss == boss_kind::mewtwo)
     {
+        audio::play(bn::sound_items::sfx_faint);
+        audio::stop_music();
         _boss->announce_defeat(_messages);
         _won = true;
         return;
@@ -727,6 +739,8 @@ void game::_update_boss()
 
     if(_boss->dead())
     {
+        audio::play(bn::sound_items::sfx_faint);
+        audio::play_floor_music(_floor_number);
         _boss->announce_defeat(_messages);
         _spawn_effect(_boss->position());
         _spawn_outline(_boss->outline_species(), _boss->position());
@@ -829,6 +843,7 @@ void game::_update_plates()
     {
         _messages.show(lava ? "The lava is burning DITTO!" : gas ? "DITTO breathed in poison gas!" :
                        "The floor is electrified!");
+        audio::play(bn::sound_items::sfx_shock);
         hit_result result = _player.take_hit(shock, _messages);
         _shake_frames = shake_frames;
 
@@ -932,6 +947,7 @@ void game::_handle_explosions()
         }
 
         show_name_message(_messages, "", value.data().name, " used SELFDESTRUCT!");
+        audio::play(bn::sound_items::sfx_explosion);
         _shake_frames = shake_frames * 2;
 
         for(bn::fixed_point offset : { bn::fixed_point(-10, -8), bn::fixed_point(10, -8), bn::fixed_point(0, 10) })
@@ -967,6 +983,7 @@ void game::_update_warps()
     {
         _player.set_position(*partner - bn::fixed_point(0, 4));
         _messages.show("DITTO was warped!");
+        audio::play(bn::sound_items::sfx_warp);
         _spawn_effect(*partner);
     }
 }
@@ -1057,6 +1074,7 @@ void game::_handle_cut()
         return;
     }
 
+    audio::play(bn::sound_items::sfx_hit);
     _messages.show(ice ? "DITTO melted the ice!" : rock ? "DITTO used ROCK SMASH!" :
                    spirit ? "DITTO phased through the barrier!" : "DITTO used CUT!");
     _spawn_effect(feet);
@@ -1085,6 +1103,19 @@ status_effect game::_roll_status(move_id move)
 void game::_after_player_hit(const attack& hit, const hit_result& result, enemy* target)
 {
     _messages.show(combat::effectiveness_message(result.effectiveness));
+
+    if(result.effectiveness > types::neutral)
+    {
+        audio::play(bn::sound_items::sfx_super);
+    }
+    else if(result.effectiveness && result.effectiveness < types::neutral)
+    {
+        audio::play(bn::sound_items::sfx_weak);
+    }
+    else if(result.effectiveness)
+    {
+        audio::play_quiet(bn::sound_items::sfx_hit);
+    }
 
     if(! result.effectiveness)
     {
@@ -1150,12 +1181,14 @@ void game::_collect_reward()
         _reward_pickup.reset();
         value.reward_taken = true;
         ++_journal_pages;
+        audio::play(bn::sound_items::sfx_key_item);
         _show_journal_page(_floor_number - 1);
         return;
     }
 
     if(_player.give_item(value.item, _messages))
     {
+        audio::play(bn::sound_items::sfx_pickup);
         _reward_pickup.reset();
         value.reward_taken = true;
     }
@@ -1237,6 +1270,11 @@ void game::_handle_enemy_attacks()
     {
         hit_result result = _player.take_hit(*hit, _messages);
         _shake_frames = shake_frames;
+
+        if(result.damage)
+        {
+            audio::play(bn::sound_items::sfx_hurt);
+        }
 
         if(result.effectiveness)
         {
@@ -1414,6 +1452,7 @@ void game::_climb_stairs()
 {
     _messages.clear();
     _messages.show("DITTO went up the stairs!");
+    audio::play(bn::sound_items::sfx_stairs);
 
     for(int frame = 0; frame < 45; ++frame)
     {
@@ -1431,6 +1470,7 @@ void game::_climb_stairs()
 void game::_fall_into_pit()
 {
     _messages.show("DITTO fell down the chasm!");
+    audio::play(bn::sound_items::sfx_fall);
     _fade(true);
     _player.take_fall_damage(fall_damage);
     _enter_room(_previous_room >= 0 ? _previous_room : _room, bn::nullopt);
@@ -1470,6 +1510,7 @@ void game::_set_world_visible(bool visible)
 
 void game::_pause_map()
 {
+    audio::play(bn::sound_items::sfx_menu);
     _set_world_visible(false);
     _overlay.show_map(_floor, _room);
 
@@ -1536,6 +1577,7 @@ void game::_ending()
     }
 
     _fade(true);
+    audio::play_music(bn::music_items::ending);
     _clear_room_objects();
     _messages.clear();
     _hud.set_visible(false);
@@ -1637,6 +1679,8 @@ void game::_ending()
 
 void game::_game_over()
 {
+    audio::stop_music();
+    audio::play(bn::sound_items::sfx_faint);
     _clear_room_objects();
     _messages.clear();
     _hud.set_visible(false);

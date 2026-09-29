@@ -7,11 +7,14 @@
 #include "bn_sprite_text_generator.h"
 #include "bn_vector.h"
 
+#include "bn_music_items.h"
+#include "bn_sound_items.h"
 #include "bn_sprite_items_ditto.h"
 
 #include "common_fixed_8x8_sprite_font.h"
 #include "common_variable_8x16_sprite_font.h"
 
+#include "audio.h"
 #include "species.h"
 
 namespace
@@ -41,6 +44,7 @@ namespace intro
 
 void title(bn::random& random)
 {
+    audio::play_music(bn::music_items::title);
     bn::sprite_text_generator big(common::variable_8x16_sprite_font);
     big.set_center_alignment();
 
@@ -108,6 +112,7 @@ void story()
 
             if(bn::keypad::a_pressed())
             {
+                audio::play(bn::sound_items::sfx_menu);
                 break;
             }
         }

@@ -6,7 +6,10 @@
 #include "bn_sprite_items_ditto.h"
 #include "bn_sprite_items_wave.h"
 
+#include "bn_sound_items.h"
+
 #include "attacks.h"
+#include "audio.h"
 #include "directions.h"
 
 namespace
@@ -461,6 +464,7 @@ void player::_faint_form(message_box& messages)
     message.append(" fainted!");
     messages.show(message);
     messages.show("DITTO lost its shape!");
+    audio::play(bn::sound_items::sfx_faint);
     _form.reset();
     _switch_flash_frames = switch_flash_frames;
 }
@@ -479,6 +483,7 @@ void player::_lose_hp(int amount)
 
 void player::start_transform(species_id target)
 {
+    audio::play(bn::sound_items::sfx_transform);
     _transform_target = target;
     _transform_frames = transform_frames;
     _dash_frames = 0;
@@ -563,6 +568,7 @@ void player::_use_move(bool move_a, player_projectiles& projectiles, message_box
 
     const move_data& data = moves::get(move);
     attack hit = combat::make_attack(move, current.type_1, current.type_2);
+    audio::play_quiet(move == move_id::struggle ? bn::sound_items::sfx_struggle : bn::sound_items::sfx_shot);
     const bn::fixed_point& aim = directions::vectors[_aim];
     _cooldown = data.cooldown;
 

@@ -153,6 +153,9 @@ Bonus floors after the end: Steel, Dark and Fairy.
 - Own pixel art, not ripped sprites. 16×16 for wild Pokémon, 32×32 or larger for bosses.
 - One 16-colour palette per sprite sheet.
 - The placeholder art comes from `tools/gen_assets.py`. A hand-made BMP of the same size replaces it.
+- The music and sound effects come from `tools/gen_audio.py` and play through Maxmod. Every floor has its own
+  theme; bosses switch to a boss theme (Mewtwo has its own) and the floor theme returns when the boss faints.
+  A hand-made MOD or WAV with the same name replaces a generated one.
 
 ## Milestones
 
@@ -226,4 +229,5 @@ Bonus floors after the end: Steel, Dark and Fairy.
     rings of Psychic shots and (below half HP) Swift, raises Barrier, teleports, and uses Recover once.
 16. **Ending.** (done) Mew appears, tells Ditto the truth, and Ditto transforms into Mewtwo. With all 13 journal
     pages, a secret scene follows and Ditto transforms into Mew. The run ends and the title screen returns.
-17. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, sound, real art.
+17. Music and sound effects: 17 original tracks and 20 effects.
+18. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, real art.
