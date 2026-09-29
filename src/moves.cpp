@@ -13,6 +13,10 @@ namespace
         { "HYPER FANG", "H.FANG", pokemon_type::normal, 80, 15, melee, 40, 0, 0, 0, 8, 0 },
         { "SCRATCH", "SCRATCH", pokemon_type::normal, 40, 35, melee, 16, 0, 0, 0, 6, 0 },
         { "PAY DAY", "PAY DAY", pokemon_type::normal, 40, 20, shot, 30, 3, 20, 2.5, 50, projectile_frames::coin },
+        { "TRI ATTACK", "TRI ATK", pokemon_type::normal, 30, 25, shot, 26, 3, 25, 2.2, 45, projectile_frames::tri },
+        { "PSYBEAM", "PSYBEAM", pokemon_type::psychic, 65, 15, shot, 30, 1, 0, 3.5, 40, projectile_frames::psybeam },
+        { "HEADBUTT", "HEADBUTT", pokemon_type::normal, 70, 20, melee, 30, 0, 0, 0, 8, 0 },
+        { "BODY SLAM", "B.SLAM", pokemon_type::normal, 85, 10, dash, 50, 0, 0, 3, 14, 0 },
     };
 }
 

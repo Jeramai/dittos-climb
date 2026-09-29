@@ -13,6 +13,7 @@ namespace
     constexpr int top_y = -72;
     constexpr int line_height = 10;
     constexpr int bar_fill = 28;
+    constexpr int boss_y = -50;
 
     int bar_frame(int hp, int max_hp)
     {
@@ -98,9 +99,39 @@ void hud::update(const player& value)
     _text.generate(118, top_y + line_height, line_b, _text_sprites);
 }
 
+void hud::show_boss(const char* name, int hp, int max_hp)
+{
+    if(! _boss_bar)
+    {
+        _boss_bar = bn::sprite_items::hp_bar.create_sprite(28, boss_y, 0);
+        _boss_bar->set_bg_priority(0);
+        _boss_bar->set_z_order(z_order);
+        _text.set_right_alignment();
+        _text.generate(8, boss_y, name, _boss_text);
+    }
+
+    _boss_bar->set_tiles(bn::sprite_items::hp_bar.tiles_item(), bar_frame(hp, max_hp));
+}
+
+void hud::hide_boss()
+{
+    _boss_bar.reset();
+    _boss_text.clear();
+}
+
 void hud::set_visible(bool visible)
 {
     _hp_bar.set_visible(visible);
+
+    if(_boss_bar)
+    {
+        _boss_bar->set_visible(visible);
+    }
+
+    for(bn::sprite_ptr& sprite : _boss_text)
+    {
+        sprite.set_visible(visible);
+    }
 
     for(bn::sprite_ptr& sprite : _text_sprites)
     {

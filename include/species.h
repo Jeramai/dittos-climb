@@ -11,6 +11,8 @@ enum class species_id
     ditto,
     rattata,
     meowth,
+    porygon,
+    snorlax,
 };
 
 namespace species_frames
@@ -19,6 +21,7 @@ namespace species_frames
     constexpr int white = 2;
     constexpr int own_walk = 3;
     constexpr int ditto_flat = 5;
+    constexpr int asleep = 5;
 }
 
 struct species_data

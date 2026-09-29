@@ -14,6 +14,7 @@
 #include "player.h"
 #include "projectiles.h"
 #include "room_view.h"
+#include "snorlax_boss.h"
 
 class game
 {
@@ -48,6 +49,8 @@ private:
     bn::vector<enemy, 6> _enemies;
     bn::vector<outline, 6> _outlines;
     bn::vector<effect, 10> _effects;
+    bn::optional<snorlax_boss> _boss;
+    bn::optional<bn::sprite_ptr> _flute_pickup;
     hud _hud;
     floor_map _floor;
     bn::fixed_point _camera_position;
@@ -56,7 +59,10 @@ private:
     int _spawn_delay = 0;
     int _shake_frames = 0;
     int _last_recoil_serial = -1;
+    int _flute_room = -1;
     bool _locked = false;
+    bool _has_flute = false;
+    bool _boss_defeated = false;
 
     [[nodiscard]] const floor_room& _current_room() const
     {
@@ -74,6 +80,12 @@ private:
     void _handle_player_attacks();
 
     void _handle_enemy_attacks();
+
+    void _update_boss();
+
+    void _update_flute();
+
+    void _spawn_outline(species_id id, const bn::fixed_point& position);
 
     [[nodiscard]] int _outline_below_player() const;
 

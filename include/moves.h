@@ -22,6 +22,10 @@ enum class move_id
     hyper_fang,
     scratch,
     pay_day,
+    tri_attack,
+    psybeam,
+    headbutt,
+    body_slam,
 };
 
 struct move_data

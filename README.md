@@ -15,10 +15,17 @@ make run
 
 `make assets` regenerates the placeholder art from `tools/gen_assets.py`.
 
-A test build can start in a room of one kind (1 combat, 2 stairs):
+Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, because `make` does not rebuild on a flag change):
+
+| Flag | Effect |
+|---|---|
+| `-DDITTO_TEST_START_KIND=1` | Start in a combat room, which is also the Poké Flute room |
+| `-DDITTO_TEST_START_KIND=2` | Start in the stairs room, with the Poké Flute |
+| `-DDITTO_TEST_FORM=<species>` | Start transformed (1 Rattata, 2 Meowth, 3 Porygon, 4 Snorlax) |
+| `-DDITTO_TEST_NO_ENEMIES` | Combat rooms spawn nothing |
 
 ```
-make TARGET=test-kind-2 BUILD=build-test-2 USERFLAGS=-DDITTO_TEST_START_KIND=2
+make TARGET=test-boss BUILD=build-test-boss USERFLAGS="-DDITTO_TEST_START_KIND=2 -DDITTO_TEST_FORM=1"
 ```
 
 ## Controls

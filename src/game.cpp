@@ -8,6 +8,7 @@
 #include "bn_sprite_text_generator.h"
 #include "bn_string.h"
 
+#include "bn_sprite_items_poke_flute.h"
 #include "bn_sprite_items_projectiles.h"
 
 #include "common_fixed_8x8_sprite_font.h"
@@ -24,6 +25,8 @@ namespace
     constexpr int outline_blink_frames = 90;
     constexpr int fade_frames = 8;
     constexpr int min_spawn_distance = 72;
+    constexpr int boss_floor = 1;
+    constexpr int boss_talk_distance = 36;
 
     constexpr const char* floor_names[] = {
         "CINNABAR LAB", "VIRIDIAN FOREST", "ROCK TUNNEL", "UNDERGROUND LAKE", "POWER PLANT", "VOLCANO",
@@ -73,6 +76,10 @@ game::game(bn::random& random) :
     set_fade(0);
     _view.set_camera(_camera);
     _start_floor();
+
+    #ifdef DITTO_TEST_FORM
+        _player.start_transform(species_id(DITTO_TEST_FORM));
+    #endif
 }
 
 void game::run()
@@ -95,11 +102,38 @@ void game::run()
 void game::_start_floor()
 {
     _floor.generate(_floor_number, _random);
+    _has_flute = false;
+    _boss_defeated = false;
+    _flute_room = -1;
+
+    if(_floor_number == boss_floor)
+    {
+        bn::vector<int, floor_map::max_rooms> combat_rooms;
+
+        for(int index = 0; index < _floor.size(); ++index)
+        {
+            if(_floor[index].kind == room_kind::combat)
+            {
+                combat_rooms.push_back(index);
+            }
+        }
+
+        if(! combat_rooms.empty())
+        {
+            _flute_room = combat_rooms[_random.get_int(combat_rooms.size())];
+        }
+        else
+        {
+            _has_flute = true;
+        }
+    }
     #ifdef DITTO_TEST_START_KIND
         for(int index = 0; index < _floor.size(); ++index)
         {
             if(_floor[index].kind == room_kind(DITTO_TEST_START_KIND))
             {
+                _has_flute = room_kind(DITTO_TEST_START_KIND) == room_kind::stairs;
+                _flute_room = _has_flute ? -1 : index;
                 _enter_room(index, bn::nullopt);
                 _messages.show(floor_label(_floor_number));
                 return;
@@ -137,8 +171,18 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
 
     if(value.kind == room_kind::stairs)
     {
-        _messages.show("There are stairs going up!");
+        if(_floor_number == boss_floor && ! _boss_defeated)
+        {
+            _boss.emplace(_view.interior_center() - bn::fixed_point(0, 12), _camera);
+            _messages.show("A SNORLAX sleeps on the stairs!");
+        }
+        else
+        {
+            _messages.show("There are stairs going up!");
+        }
     }
+
+    _update_flute();
 
     _update_camera(true);
 }
@@ -168,6 +212,7 @@ void game::_update_play()
 
     _handle_player_attacks();
     _handle_enemy_attacks();
+    _update_boss();
     _update_outlines();
 
     _update_effects();
@@ -184,12 +229,20 @@ void game::_update_room_state()
         _spawn_enemies();
     }
 
-    if(_locked && ! _spawn_delay && _enemies.empty())
+    if(_locked && ! _spawn_delay && _enemies.empty() && ! _boss)
     {
         _locked = false;
         _floor[_room].cleared = true;
         _view.set_locked(false);
         _messages.show("The doors opened!");
+        _update_flute();
+    }
+
+    if(_flute_pickup && within(_flute_pickup->position(), _player.position(), 12, 12))
+    {
+        _flute_pickup.reset();
+        _has_flute = true;
+        _messages.show("DITTO found the POKE FLUTE!");
     }
 
     if(_player.transforming())
@@ -205,7 +258,7 @@ void game::_update_room_state()
 
     bn::fixed_point feet = _player.position() + bn::fixed_point(0, 2);
 
-    if(room::at(feet.x(), feet.y()) == room::cells::stairs)
+    if(! _boss && room::at(feet.x(), feet.y()) == room::cells::stairs)
     {
         _climb_stairs();
     }
@@ -226,6 +279,22 @@ void game::_handle_player_attacks()
                 _spawn_effect(shot.position);
                 return true;
             }
+        }
+
+        if(_boss && _boss->contains(shot.position, shot.half_size))
+        {
+            if(_boss->awake())
+            {
+                hit_result result = _boss->take_hit(shot.hit);
+                _messages.show(combat::effectiveness_message(result.effectiveness));
+            }
+            else
+            {
+                _messages.show("SNORLAX is fast asleep...");
+            }
+
+            _spawn_effect(shot.position);
+            return true;
         }
 
         return false;
@@ -253,6 +322,21 @@ void game::_handle_player_attacks()
         }
     }
 
+    if(_player.area_active() && _boss && _boss->awake() &&
+       _boss->contains(_player.position(), _player.area_half_size()) && _boss->hit_by_area(_player.area_serial()))
+    {
+        hit_result result = _boss->take_hit(_player.area_attack());
+        _messages.show(combat::effectiveness_message(result.effectiveness));
+        _spawn_effect(_boss->position());
+        int serial = _player.area_serial();
+
+        if(result.damage && _player.area_attack().move == move_id::struggle && serial != _last_recoil_serial)
+        {
+            _last_recoil_serial = serial;
+            recoil = true;
+        }
+    }
+
     if(recoil)
     {
         _player.recoil(_messages);
@@ -267,17 +351,94 @@ void game::_handle_player_attacks()
 
         show_name_message(_messages, "Wild ", value.data().name, " fainted!");
         _spawn_effect(value.position());
-
-        if(! _outlines.full())
-        {
-            bn::sprite_ptr sprite = value.data().sprite->create_sprite(value.position(), species_frames::white);
-            sprite.set_camera(_camera);
-            sprite.set_z_order(500);
-            _outlines.push_back(outline{ bn::move(sprite), value.id(), outline_frames });
-        }
-
+        _spawn_outline(value.id(), value.position());
         return true;
     });
+}
+
+void game::_spawn_outline(species_id id, const bn::fixed_point& position)
+{
+    if(_outlines.full())
+    {
+        return;
+    }
+
+    bn::sprite_ptr sprite = species::get(id).sprite->create_sprite(position, species_frames::white);
+    sprite.set_camera(_camera);
+    sprite.set_z_order(500);
+    _outlines.push_back(outline{ bn::move(sprite), id, outline_frames });
+}
+
+void game::_update_boss()
+{
+    if(! _boss)
+    {
+        return;
+    }
+
+    _boss->update(_player.position(), _enemy_projectiles, _random, _messages);
+
+    if(_boss->asleep())
+    {
+        if(within(_boss->position(), _player.position(), boss_talk_distance, boss_talk_distance))
+        {
+            if(! _has_flute)
+            {
+                _messages.show("SNORLAX is blocking the stairs!");
+            }
+            else if(bn::keypad::a_pressed())
+            {
+                _messages.show("DITTO played the POKE FLUTE!");
+                _boss->wake(_messages);
+                _locked = true;
+                _view.set_locked(true);
+            }
+            else
+            {
+                _messages.show("Press A to play the POKE FLUTE!");
+            }
+        }
+
+        return;
+    }
+
+    _hud.show_boss("SNORLAX", _boss->hp(), snorlax_boss::max_hp);
+
+    if(_boss->landed_this_frame())
+    {
+        _shake_frames = shake_frames * 2;
+
+        if(_player.vulnerable() && within(_boss->position() + bn::fixed_point(0, 8), _player.position(),
+                                          snorlax_boss::slam_radius, snorlax_boss::slam_radius))
+        {
+            _player.take_hit(_boss->slam_attack(), _messages);
+        }
+    }
+
+    if(_boss->dead())
+    {
+        _messages.show("SNORLAX fainted!");
+        _spawn_effect(_boss->position());
+        _spawn_outline(species_id::snorlax, _boss->position());
+        _boss.reset();
+        _boss_defeated = true;
+        _hud.hide_boss();
+        _enemy_projectiles.clear();
+    }
+}
+
+void game::_update_flute()
+{
+    if(_has_flute || _flute_pickup || _room != _flute_room || ! _floor[_room].cleared)
+    {
+        return;
+    }
+
+    bn::sprite_ptr sprite = bn::sprite_items::poke_flute.create_sprite(_view.interior_center());
+    sprite.set_camera(_camera);
+    sprite.set_z_order(600);
+    _flute_pickup = bn::move(sprite);
+    _messages.show("Something shiny is on the floor!");
 }
 
 void game::_handle_enemy_attacks()
@@ -345,6 +506,10 @@ void game::_update_outlines()
 
 void game::_spawn_enemies()
 {
+    #ifdef DITTO_TEST_NO_ENEMIES
+        return;
+    #endif
+
     int count = bn::min(2 + _floor_number / 2 + _random.get_int(2), _enemies.max_size());
 
     for(int index = 0; index < count; ++index)
@@ -359,7 +524,8 @@ void game::_spawn_enemies()
                 continue;
             }
 
-            species_id id = _random.get_int(100) < 40 ? species_id::meowth : species_id::rattata;
+            int roll = _random.get_int(100);
+            species_id id = roll < 20 ? species_id::porygon : roll < 55 ? species_id::meowth : species_id::rattata;
             _enemies.emplace_back(id, position, _camera, _random);
             break;
         }
@@ -469,6 +635,9 @@ void game::_clear_room_objects()
     _effects.clear();
     _enemies.clear();
     _outlines.clear();
+    _boss.reset();
+    _flute_pickup.reset();
+    _hud.hide_boss();
     _spawn_delay = 0;
 }
 

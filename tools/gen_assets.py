@@ -28,6 +28,9 @@ COLORS = {
     "b": (128, 80, 40),
     "y": (248, 232, 96),
     "B": (80, 120, 200),
+    "q": (232, 120, 152),
+    "T": (56, 104, 128),
+    "t": (32, 64, 88),
 }
 
 DITTO = [
@@ -180,6 +183,118 @@ COIN = [
     "  kkkk",
 ]
 
+PORYGON_1 = [
+    "",
+    "",
+    "       kkk",
+    "      kqqBk",
+    "  kk  kqwkBk",
+    " kBBkkqqqqBk",
+    " kBBBqqqqqk",
+    "  kkqqqqqBBk",
+    "   kqqqqBBBk",
+    "  kqqkkqBBBk",
+    "  kqk  kBBk",
+    "  kk    kk",
+]
+
+PORYGON_2 = [""] + PORYGON_1[:-1]
+
+TRI = [
+    "",
+    "   kk",
+    "  kyyk",
+    "  kyyk",
+    " keeBBk",
+    " keeBBk",
+    " kkkkkk",
+]
+
+PSYBEAM = [
+    "",
+    "  kkkk",
+    " kqhhqk",
+    " khkkhk",
+    " khkkhk",
+    " kqhhqk",
+    "  kkkk",
+]
+
+POKE_FLUTE = [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "  kkkkkkkkkkkk",
+    " kBBBBBBBBBBBBk",
+    " kBwBkBkBkBBBBk",
+    " kBBBBBBBBBBBBk",
+    "  kkkkkkkkkkkk",
+]
+
+
+def ellipse(grid, cx, cy, rx, ry, color):
+    for y in range(len(grid)):
+        for x in range(len(grid[0])):
+            if ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1:
+                grid[y][x] = color
+
+
+def outline(grid):
+    size = len(grid)
+    result = [row[:] for row in grid]
+    for y in range(size):
+        for x in range(size):
+            if grid[y][x] != ".":
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < size and 0 <= ny < size and grid[ny][nx] != ".":
+                    result[y][x] = "k"
+                    break
+    return result
+
+
+def snorlax_frame(step, asleep):
+    grid = [["."] * 32 for _ in range(32)]
+    foot = 1 if step else 0
+    ellipse(grid, 8.5, 27.5 - foot, 5, 3.5, "c")
+    ellipse(grid, 23.5, 27.5 - (1 - foot), 5, 3.5, "c")
+    ellipse(grid, 16, 18.5, 13.5, 10.5, "T")
+    ellipse(grid, 16, 20.5, 9.5, 8, "c")
+    ellipse(grid, 16, 9, 9.5, 6.5, "T")
+    ellipse(grid, 16, 10, 6.5, 4.5, "c")
+    for ear_x in (8, 23):
+        for y in range(2, 6):
+            for x in range(ear_x - (y - 2) // 2, ear_x + 2 + (y - 2) // 2):
+                grid[y][x] = "T"
+    for x in range(11, 14):
+        grid[9][x] = "t"
+    for x in range(18, 21):
+        grid[9][x] = "t"
+    if asleep:
+        for x in range(14, 18):
+            grid[12][x] = "t"
+        grid[11][15] = grid[11][16] = "w"
+    else:
+        for x in range(13, 19):
+            grid[12][x] = "t"
+        grid[11][13] = grid[11][18] = "w"
+    for x in (6, 8, 10):
+        grid[29 - foot][x] = "b"
+    for x in (21, 23, 25):
+        grid[29 - (1 - foot)][x] = "b"
+    for x in (2, 29):
+        for y in range(16, 21):
+            grid[y][x] = "T"
+    result = outline(grid)
+    if asleep:
+        for x, y in ((26, 1), (27, 1), (28, 1), (28, 2), (27, 3), (26, 4), (27, 4), (28, 4)):
+            result[y][x] = "w"
+    return ["".join(row) for row in result]
+
+
 SLASH = [
     "",
     "",
@@ -235,10 +350,10 @@ def save_sprite_sheet(name, frames, size):
     save_indexed(name, pixels, palette, {"type": "sprite", "height": size})
 
 
-def save_species(name, walk_1, walk_2):
+def save_species(name, walk_1, walk_2, size=16, extra_frames=()):
     own_outline = {"k": "m"}
     save_sprite_sheet(name, [walk_1, walk_2, whiten(walk_1),
-                             recolor(walk_1, own_outline), recolor(walk_2, own_outline)], 16)
+                             recolor(walk_1, own_outline), recolor(walk_2, own_outline), *extra_frames], size)
 
 
 def save_wave():
@@ -468,7 +583,10 @@ def main():
     save_sprite_sheet("ditto", [DITTO, DITTO_SQUISH, whiten(DITTO), DITTO, DITTO_SQUISH, DITTO_FLAT], 16)
     save_species("rattata", RATTATA_1, RATTATA_2)
     save_species("meowth", MEOWTH_1, MEOWTH_2)
-    save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN], 8)
+    save_species("porygon", PORYGON_1, PORYGON_2)
+    save_species("snorlax", snorlax_frame(0, False), snorlax_frame(1, False), 32, [snorlax_frame(0, True)])
+    save_sprite_sheet("poke_flute", [POKE_FLUTE], 16)
+    save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM], 8)
     save_sprite_sheet("slash", [SLASH], 16)
     save_wave()
     save_hp_bar()

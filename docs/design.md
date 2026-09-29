@@ -134,6 +134,8 @@ Bonus floors after the end: Steel, Dark and Fairy.
    HP bars, the text box, the type chart, the intro story.
 2. **Floor structure.** (done) Random floors of 7–11 rooms, doors that lock until the room is clear, the floor
    map on Start, stairs.
-3. **Floor 1 complete.** Porygon, the Poké Flute, the Snorlax boss.
+3. **Floor 1 complete.** (done) Porygon (Tri Attack, Psybeam). One combat room drops the Poké Flute. Snorlax
+   sleeps on the stairs; the flute wakes it. Body Slam jumps with a shockwave ring; Rest heals once at low HP.
+   Its outline gives the Snorlax form (Headbutt, Body Slam).
 4. **Floor 2.** Viridian Forest, tall grass, Cut, Venusaur.
 5. Then one floor per milestone.
