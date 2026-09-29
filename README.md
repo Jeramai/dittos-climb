@@ -13,7 +13,13 @@ make -j8
 make run
 ```
 
-`make assets` regenerates the placeholder art and `include/room_data.h` from `tools/gen_assets.py`.
+`make assets` regenerates the placeholder art from `tools/gen_assets.py`.
+
+A test build can start in a room of one kind (1 combat, 2 Pokémon Center, 3 stairs), with every form registered:
+
+```
+make TARGET=test-kind-2 BUILD=build-test-2 USERFLAGS=-DDITTO_TEST_START_KIND=2
+```
 
 ## Controls
 
@@ -24,4 +30,4 @@ make run
 | B | Move 2 |
 | L | Dodge |
 | R (hold) | Lock aim while moving |
-| Start | Pause / restart after a black-out |
+| Start | Floor map / restart after a black-out |

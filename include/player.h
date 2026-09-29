@@ -26,7 +26,7 @@ public:
     player(const bn::camera_ptr& camera, const bn::fixed_point& position);
 
     [[nodiscard]] bool update(player_projectiles& projectiles, message_box& messages,
-                              const species_id* outline_below);
+                              const species_id* outline_below, bool peaceful);
 
     [[nodiscard]] const bn::fixed_point& position() const
     {
@@ -79,6 +79,10 @@ public:
     void recoil(message_box& messages);
 
     void start_transform(species_id target);
+
+    void set_position(const bn::fixed_point& position);
+
+    void restore();
 
     void set_visible(bool visible);
 

@@ -21,6 +21,8 @@ public:
 
     void clear();
 
+    void set_visible(bool visible);
+
 private:
     bn::regular_bg_ptr _bg;
     bn::sprite_text_generator _generator;

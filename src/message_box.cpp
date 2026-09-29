@@ -15,7 +15,7 @@ message_box::message_box() :
     _bg(bn::regular_bg_items::text_box.create_bg(0, 0)),
     _generator(common::variable_8x16_sprite_font)
 {
-    _bg.set_priority(0);
+    _bg.set_priority(1);
     _bg.set_visible(false);
     _generator.set_center_alignment();
     _generator.set_bg_priority(0);
@@ -72,6 +72,16 @@ void message_box::clear()
     _current.clear();
     _frames = 0;
     _bg.set_visible(false);
+}
+
+void message_box::set_visible(bool visible)
+{
+    _bg.set_visible(visible && _frames);
+
+    for(bn::sprite_ptr& sprite : _sprites)
+    {
+        sprite.set_visible(visible);
+    }
 }
 
 void message_box::_display_next()

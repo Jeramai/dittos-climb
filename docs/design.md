@@ -130,9 +130,10 @@ Bonus floors after the end: Steel, Dark and Fairy.
 
 ## Milestones
 
-1. **Ditto and floor 1.** Base Ditto with Struggle. Transform. Rattata and Meowth with 2 moves each and PP.
+1. **Ditto and floor 1.** (done) Base Ditto with Struggle. Transform. Rattata and Meowth with 2 moves each and PP.
    HP bars, the text box, the type chart, the intro story.
-2. **Floor structure.** Rooms, doors, the minimap, stairs, the Pokémon Center with Bill's PC.
+2. **Floor structure.** (done) Random floors of 7–11 rooms, doors that lock until the room is clear, the floor
+   map on Start, stairs, the Pokémon Center (Chansey heals once per floor; Bill's PC gives one form per floor).
 3. **Floor 1 complete.** Porygon, the Poké Flute, the Snorlax boss.
 4. **Floor 2.** Viridian Forest, tall grass, Cut, Venusaur.
 5. Then one floor per milestone.

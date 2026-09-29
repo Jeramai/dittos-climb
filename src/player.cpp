@@ -38,7 +38,8 @@ player::player(const bn::camera_ptr& camera, const bn::fixed_point& position) :
     _sprite.set_camera(camera);
 }
 
-bool player::update(player_projectiles& projectiles, message_box& messages, const species_id* outline_below)
+bool player::update(player_projectiles& projectiles, message_box& messages, const species_id* outline_below,
+                    bool peaceful)
 {
     bool used_outline = false;
 
@@ -125,7 +126,7 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
                 start_transform(*outline_below);
                 used_outline = true;
             }
-            else if(! _cooldown)
+            else if(! _cooldown && ! peaceful)
             {
                 if(bn::keypad::a_held())
                 {
@@ -218,6 +219,28 @@ void player::start_transform(species_id target)
     _dash_frames = 0;
     _area_frames = 0;
     _dodge_frames = 0;
+}
+
+void player::set_position(const bn::fixed_point& position)
+{
+    _position = position;
+    _dash_frames = 0;
+    _dodge_frames = 0;
+    _area_frames = 0;
+    _update_sprite(false);
+}
+
+void player::restore()
+{
+    _hp = ditto().hp;
+
+    if(_form)
+    {
+        const species_data& shape = species::get(_form->species);
+        _form->hp = shape.hp * form_hp_scale;
+        _form->pp_a = moves::get(shape.move_a).pp;
+        _form->pp_b = moves::get(shape.move_b).pp;
+    }
 }
 
 void player::set_visible(bool visible)

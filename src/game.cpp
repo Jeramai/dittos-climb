@@ -4,11 +4,11 @@
 #include "bn_color.h"
 #include "bn_core.h"
 #include "bn_keypad.h"
-#include "bn_optional.h"
+#include "bn_sprite_palettes.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_string.h"
 
-#include "bn_regular_bg_items_room.h"
+#include "bn_sprite_items_chansey.h"
 #include "bn_sprite_items_projectiles.h"
 
 #include "common_fixed_8x8_sprite_font.h"
@@ -18,11 +18,21 @@
 
 namespace
 {
-    constexpr int wave_delay_frames = 120;
+    constexpr int spawn_delay_frames = 30;
     constexpr int shake_frames = 10;
     constexpr int effect_frames = 6;
     constexpr int outline_frames = 300;
     constexpr int outline_blink_frames = 90;
+    constexpr int fade_frames = 8;
+    constexpr int min_spawn_distance = 72;
+
+    constexpr const char* floor_names[] = {
+        "CINNABAR LAB", "VIRIDIAN FOREST", "ROCK TUNNEL", "UNDERGROUND LAKE", "POWER PLANT", "VOLCANO",
+        "SEAFOAM CAVE", "THE CHASM", "ROCKET HIDEOUT", "FIGHTING DOJO", "POKEMON TOWER", "DRAGON'S DEN",
+        "CERULEAN CAVE",
+    };
+
+    constexpr int floor_name_count = sizeof(floor_names) / sizeof(floor_names[0]);
 
     bool within(const bn::fixed_point& a, const bn::fixed_point& b, int half_width, int half_height)
     {
@@ -30,28 +40,40 @@ namespace
         return bn::abs(delta.x()) < half_width && bn::abs(delta.y()) < half_height;
     }
 
-    void append_name_message(message_box& messages, const char* prefix, const char* name, const char* suffix)
+    void show_name_message(message_box& messages, const char* prefix, const char* name, const char* suffix)
     {
         message_box::text message(prefix);
         message.append(name);
         message.append(suffix);
         messages.show(message);
     }
+
+    bn::string<32> floor_label(int floor_number)
+    {
+        bn::string<32> label = bn::to_string<4>(floor_number);
+        label.append("F  ");
+        label.append(floor_number <= floor_name_count ? floor_names[floor_number - 1] : "???");
+        return label;
+    }
+
+    void set_fade(bn::fixed intensity)
+    {
+        bn::color black(0, 0, 0);
+        bn::bg_palettes::set_fade(black, intensity);
+        bn::sprite_palettes::set_fade(black, intensity);
+    }
 }
 
 game::game(bn::random& random) :
     _random(random),
     _camera(bn::camera_ptr::create(0, 0)),
-    _room_bg(bn::regular_bg_items::room.create_bg(0, 0)),
-    _player(_camera, bn::fixed_point(0, 64)),
+    _player(_camera, bn::fixed_point()),
     _player_projectiles(_camera),
-    _enemy_projectiles(_camera),
-    _camera_position(room::clamp_camera(_player.position()))
+    _enemy_projectiles(_camera)
 {
-    bn::bg_palettes::set_fade_intensity(0);
-    _room_bg.set_camera(_camera);
-    _camera.set_position(_camera_position);
-    _messages.show("DITTO woke up in the lab basement.");
+    set_fade(0);
+    _view.set_camera(_camera);
+    _start_floor();
 }
 
 void game::run()
@@ -60,7 +82,7 @@ void game::run()
     {
         if(bn::keypad::start_pressed())
         {
-            _pause();
+            _pause_map();
         }
 
         _update_play();
@@ -69,6 +91,69 @@ void game::run()
     }
 
     _game_over();
+}
+
+void game::_start_floor()
+{
+    _floor.generate(_floor_number, _random);
+    _center_healed = false;
+    _pc_used = false;
+
+    #ifdef DITTO_TEST_START_KIND
+        _pokedex = ~0u;
+
+        for(int index = 0; index < _floor.size(); ++index)
+        {
+            if(_floor[index].kind == room_kind(DITTO_TEST_START_KIND))
+            {
+                _enter_room(index, bn::nullopt);
+                _messages.show(floor_label(_floor_number));
+                return;
+            }
+        }
+    #endif
+
+    _enter_room(0, bn::nullopt);
+    _messages.show(floor_label(_floor_number));
+}
+
+void game::_enter_room(int index, bn::optional<direction> entered_from)
+{
+    _clear_room_objects();
+    _room = index;
+
+    floor_room& value = _floor[index];
+    bool doors[4];
+
+    for(int side = 0; side < 4; ++side)
+    {
+        doors[side] = _floor.neighbor(index, direction(side)) >= 0;
+    }
+
+    _locked = value.kind == room_kind::combat && ! value.cleared;
+    _view.build(value, doors, _locked);
+    _player.set_position(entered_from ? _view.entry_position(*entered_from) : _view.interior_center());
+    value.visited = true;
+
+    if(_locked)
+    {
+        _spawn_delay = spawn_delay_frames;
+        _messages.show("The lab doors locked!");
+    }
+
+    if(value.kind == room_kind::center)
+    {
+        bn::sprite_ptr chansey = bn::sprite_items::chansey.create_sprite(_view.chansey_position());
+        chansey.set_camera(_camera);
+        _chansey = bn::move(chansey);
+        _messages.show("Welcome to the POKEMON CENTER!");
+    }
+    else if(value.kind == room_kind::stairs)
+    {
+        _messages.show("There are stairs going up!");
+    }
+
+    _update_camera(true);
 }
 
 void game::_update_play()
@@ -81,9 +166,16 @@ void game::_update_play()
         _messages.show("Press B to TRANSFORM!");
     }
 
-    if(_player.update(_player_projectiles, _messages, outline_species))
+    bool peaceful = _current_room().kind == room_kind::center;
+
+    if(_player.update(_player_projectiles, _messages, outline_species, peaceful))
     {
         _outlines.erase(_outlines.begin() + outline_index);
+    }
+
+    if(const form* current = _player.active_form())
+    {
+        _pokedex |= 1u << int(current->species);
     }
 
     for(enemy& value : _enemies)
@@ -98,24 +190,58 @@ void game::_update_play()
     _handle_enemy_attacks();
     _update_outlines();
 
-    if(_enemies.empty() && --_wave_delay <= 0)
+    if(_chansey)
     {
-        ++_wave;
-        _spawn_wave();
-        _wave_delay = wave_delay_frames;
+        _chansey->set_tiles(bn::sprite_items::chansey.tiles_item(), (_random.get_int(90) == 0) ? 1 : 0);
+        _handle_center();
     }
 
     _update_effects();
-    _update_camera();
+    _update_camera(false);
     _messages.update();
     _hud.update(_player);
+    _update_room_state();
+}
+
+void game::_update_room_state()
+{
+    if(_spawn_delay && ! --_spawn_delay)
+    {
+        _spawn_enemies();
+    }
+
+    if(_locked && ! _spawn_delay && _enemies.empty())
+    {
+        _locked = false;
+        _floor[_room].cleared = true;
+        _view.set_locked(false);
+        _messages.show("The doors opened!");
+    }
+
+    if(_player.transforming())
+    {
+        return;
+    }
+
+    if(bn::optional<direction> side = _view.exit_side(_player.position()))
+    {
+        _change_room(*side);
+        return;
+    }
+
+    bn::fixed_point feet = _player.position() + bn::fixed_point(0, 2);
+
+    if(room::at(feet.x(), feet.y()) == room::cells::stairs)
+    {
+        _climb_stairs();
+    }
 }
 
 void game::_handle_player_attacks()
 {
     bool recoil = false;
 
-    _player_projectiles.remove_if([this, &recoil](const projectile& shot)
+    _player_projectiles.remove_if([this](const projectile& shot)
     {
         for(enemy& value : _enemies)
         {
@@ -124,7 +250,6 @@ void game::_handle_player_attacks()
                 hit_result result = value.take_hit(shot.hit);
                 _messages.show(combat::effectiveness_message(result.effectiveness));
                 _spawn_effect(shot.position);
-                recoil = recoil || shot.hit.move == move_id::struggle;
                 return true;
             }
         }
@@ -159,8 +284,6 @@ void game::_handle_player_attacks()
         _player.recoil(_messages);
     }
 
-    bool had_enemies = ! _enemies.empty();
-
     bn::erase_if(_enemies, [this](const enemy& value)
     {
         if(! value.dead())
@@ -168,7 +291,7 @@ void game::_handle_player_attacks()
             return false;
         }
 
-        append_name_message(_messages, "Wild ", value.data().name, " fainted!");
+        show_name_message(_messages, "Wild ", value.data().name, " fainted!");
         _spawn_effect(value.position());
 
         if(! _outlines.full())
@@ -181,11 +304,6 @@ void game::_handle_player_attacks()
 
         return true;
     });
-
-    if(had_enemies && _enemies.empty())
-    {
-        ++_waves_cleared;
-    }
 }
 
 void game::_handle_enemy_attacks()
@@ -224,6 +342,32 @@ void game::_handle_enemy_attacks()
     }
 }
 
+void game::_handle_center()
+{
+    if(! bn::keypad::a_pressed() || _player.transforming())
+    {
+        return;
+    }
+
+    if(within(_player.position(), _view.chansey_position() + bn::fixed_point(0, 24), 24, 14))
+    {
+        if(_center_healed)
+        {
+            _messages.show("We hope to see you again!");
+        }
+        else
+        {
+            _center_healed = true;
+            _player.restore();
+            _messages.show("CHANSEY healed DITTO fully!");
+        }
+    }
+    else if(within(_player.position(), _view.pc_position() + bn::fixed_point(0, 18), 14, 12))
+    {
+        _bills_pc();
+    }
+}
+
 int game::_outline_below_player() const
 {
     for(int index = 0; index < _outlines.size(); ++index)
@@ -251,41 +395,33 @@ void game::_update_outlines()
     });
 }
 
-void game::_spawn_wave()
+void game::_spawn_enemies()
 {
-    int count = bn::min(1 + _wave, _enemies.max_size());
-    int meowth_chance = _wave == 1 ? 0 : bn::min(20 + _wave * 8, 60);
-    species_id first = species_id::ditto;
+    int count = bn::min(2 + _floor_number / 2 + _random.get_int(2), _enemies.max_size());
 
     for(int index = 0; index < count; ++index)
     {
-        for(int attempt = 0; attempt < 30; ++attempt)
+        for(int attempt = 0; attempt < 20; ++attempt)
         {
-            bn::fixed_point position(_random.get_int(480) - 240, _random.get_int(208) - 104);
+            bn::fixed_point position = _view.random_floor_position(_random);
             bn::fixed_point delta = position - _player.position();
 
-            if(room::feet_are_blocked(position) || bn::abs(delta.x()) + bn::abs(delta.y()) < 100)
+            if(bn::abs(delta.x()) + bn::abs(delta.y()) < min_spawn_distance)
             {
                 continue;
             }
 
-            species_id id = _random.get_int(100) < meowth_chance ? species_id::meowth : species_id::rattata;
+            species_id id = _random.get_int(100) < 40 ? species_id::meowth : species_id::rattata;
             _enemies.emplace_back(id, position, _camera, _random);
-
-            if(first == species_id::ditto)
-            {
-                first = id;
-            }
-
             break;
         }
     }
 
     if(_enemies.size() == 1)
     {
-        append_name_message(_messages, "A wild ", species::get(first).name, " appeared!");
+        show_name_message(_messages, "A wild ", _enemies[0].data().name, " appeared!");
     }
-    else
+    else if(! _enemies.empty())
     {
         _messages.show("Wild POKEMON appeared!");
     }
@@ -312,10 +448,18 @@ void game::_update_effects()
     });
 }
 
-void game::_update_camera()
+void game::_update_camera(bool snap)
 {
     bn::fixed_point target = room::clamp_camera(_player.position());
-    _camera_position += (target - _camera_position) / 4;
+
+    if(snap)
+    {
+        _camera_position = target;
+    }
+    else
+    {
+        _camera_position += (target - _camera_position) / 4;
+    }
 
     bn::fixed_point shake;
 
@@ -328,29 +472,193 @@ void game::_update_camera()
     _camera.set_position(_camera_position + shake);
 }
 
-void game::_pause()
+void game::_change_room(direction side)
 {
-    bn::sprite_text_generator generator(common::variable_8x16_sprite_font);
-    generator.set_center_alignment();
-    generator.set_bg_priority(0);
+    int next = _floor.neighbor(_room, side);
 
-    bn::vector<bn::sprite_ptr, 4> text;
-    generator.generate(0, 0, "PAUSED", text);
-    bn::core::update();
-
-    while(! bn::keypad::start_pressed())
+    if(next < 0)
     {
+        return;
+    }
+
+    _fade(true);
+    _enter_room(next, directions_of_floor::opposite(side));
+    _fade(false);
+}
+
+void game::_climb_stairs()
+{
+    _messages.clear();
+    _messages.show("DITTO went up the stairs!");
+
+    for(int frame = 0; frame < 45; ++frame)
+    {
+        _messages.update();
+        bn::core::update();
+    }
+
+    _fade(true);
+    ++_floor_number;
+    _messages.clear();
+    _start_floor();
+    _fade(false);
+}
+
+void game::_fade(bool out)
+{
+    for(int frame = 1; frame <= fade_frames; ++frame)
+    {
+        bn::fixed progress = bn::fixed(frame) / fade_frames;
+        set_fade(out ? progress : 1 - progress);
         bn::core::update();
     }
 }
 
-void game::_game_over()
+void game::_clear_room_objects()
 {
     _player_projectiles.clear();
     _enemy_projectiles.clear();
     _effects.clear();
     _enemies.clear();
     _outlines.clear();
+    _chansey.reset();
+    _spawn_delay = 0;
+}
+
+void game::_set_world_visible(bool visible)
+{
+    _hud.set_visible(visible);
+    _messages.set_visible(visible);
+}
+
+void game::_pause_map()
+{
+    _set_world_visible(false);
+    _overlay.show_map(_floor, _room);
+
+    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
+    big.set_center_alignment();
+    big.set_bg_priority(0);
+
+    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    small.set_center_alignment();
+    small.set_bg_priority(0);
+
+    bn::vector<bn::sprite_ptr, 16> text;
+    big.generate(0, -62, floor_label(_floor_number), text);
+    small.generate(0, 70, "START: RESUME", text);
+    bn::core::update();
+
+    while(! bn::keypad::start_pressed())
+    {
+        bn::core::update();
+    }
+
+    text.clear();
+    _overlay.hide();
+    _set_world_visible(true);
+    bn::core::update();
+}
+
+void game::_bills_pc()
+{
+    if(_player.active_form())
+    {
+        _messages.show("BILL's PC only accepts DITTO!");
+        return;
+    }
+
+    if(_pc_used)
+    {
+        _messages.show("The PC needs to recharge...");
+        return;
+    }
+
+    bn::vector<species_id, 8> entries;
+
+    for(species_id id : { species_id::rattata, species_id::meowth })
+    {
+        if(_pokedex & (1u << int(id)))
+        {
+            entries.push_back(id);
+        }
+    }
+
+    if(entries.empty())
+    {
+        _messages.show("No POKEMON are registered yet.");
+        return;
+    }
+
+    _set_world_visible(false);
+    _overlay.show_black();
+
+    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
+    big.set_bg_priority(0);
+
+    bn::vector<bn::sprite_ptr, 32> text;
+    big.set_center_alignment();
+    big.generate(0, -60, "BILL's PC", text);
+    big.generate(0, -40, "Take out which form?", text);
+    big.set_left_alignment();
+
+    for(int index = 0; index < entries.size(); ++index)
+    {
+        big.generate(-40, -12 + index * 18, species::get(entries[index]).name, text);
+    }
+
+    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    small.set_center_alignment();
+    small.set_bg_priority(0);
+    small.generate(0, 70, "A: TAKE OUT   B: CANCEL", text);
+
+    bn::vector<bn::sprite_ptr, 2> cursor;
+    int selected = 0;
+    bn::optional<species_id> choice;
+    bn::core::update();
+
+    while(true)
+    {
+        cursor.clear();
+        big.generate(-56, -12 + selected * 18, ">", cursor);
+        bn::core::update();
+
+        if(bn::keypad::up_pressed())
+        {
+            selected = (selected + entries.size() - 1) % entries.size();
+        }
+        else if(bn::keypad::down_pressed())
+        {
+            selected = (selected + 1) % entries.size();
+        }
+        else if(bn::keypad::a_pressed())
+        {
+            choice = entries[selected];
+            break;
+        }
+        else if(bn::keypad::b_pressed())
+        {
+            break;
+        }
+    }
+
+    text.clear();
+    cursor.clear();
+    _overlay.hide();
+    _set_world_visible(true);
+
+    if(choice)
+    {
+        _pc_used = true;
+        _player.start_transform(*choice);
+    }
+
+    bn::core::update();
+}
+
+void game::_game_over()
+{
+    _clear_room_objects();
     _messages.clear();
     _hud.set_visible(false);
     _player.set_visible(false);
@@ -364,12 +672,12 @@ void game::_game_over()
     small.set_center_alignment();
     small.set_bg_priority(0);
 
-    bn::string<24> cleared("WAVES CLEARED: ");
-    cleared.append(bn::to_string<4>(_waves_cleared));
+    bn::string<24> reached("FLOOR REACHED: ");
+    reached.append(bn::to_string<4>(_floor_number));
 
     bn::vector<bn::sprite_ptr, 20> text;
     big.generate(0, -24, "DITTO blacked out!", text);
-    small.generate(0, 4, cleared, text);
+    small.generate(0, 4, reached, text);
     small.generate(0, 24, "PRESS START", text);
 
     while(! bn::keypad::start_pressed())
