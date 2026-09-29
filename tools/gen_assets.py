@@ -46,6 +46,10 @@ COLORS = {
     "Z": (96, 64, 144),
     "x": (152, 104, 64),
     "i": (136, 184, 232),
+    "l": (168, 184, 200),
+    "L": (112, 128, 152),
+    "O": (160, 152, 192),
+    "P": (104, 96, 136),
 }
 
 DITTO = [
@@ -392,31 +396,24 @@ BEAM = [
 ]
 
 
-GEODUDE_BODY = [
+GEODUDE_1 = [
     "",
-    "",
-    "",
-    "      kkkk",
-    "    kkaaaakk",
-    "   kaaaaaaaak",
-    "   kaakaakaak",
+    "     kkkkkk",
+    "   kkaaaaaakk",
     "  kaaaaaaaaaak",
-    "  kaaaAAAAaaak",
-    "   kaaaaaaaak",
-    "    kkaaaakk",
+    " kaaAaaaaaaaaak",
+    " kaakkaaaakkaak",
+    " kaaawkaakwaaak",
+    " kAaaaaaaaaaaAk",
+    " kAaaakkkkaaaAk",
+    "kkkAaaaaaaaaAkkk",
+    "kaakkAaaaaAkkaak",
+    "kakakkAAAAkkakak",
+    "kaaak kkkk kaaak",
+    " kkk        kkk",
 ]
 
-GEODUDE_1 = GEODUDE_BODY + [
-    " kaak kkkk kaak",
-    " kaaak    kaaak",
-    "  kkk      kkk",
-]
-
-GEODUDE_2 = GEODUDE_BODY + [
-    "kaak  kkkk  kaak",
-    " kaak      kaak",
-    "  kk        kk",
-]
+GEODUDE_2 = [""] + GEODUDE_1[:-1]
 
 DIGLETT_1 = [
     "",
@@ -803,21 +800,22 @@ THUNDER_WAVE = [
 
 MACHOP_TOP = [
     "",
-    "      kkkk",
-    "     kssssk",
-    "    ksksskskk",
-    "    ksssssssk",
-    "    ksskkksk",
-    "  kk kssssk kk",
-    " kssksssssskssk",
-    " ksskssbbsskssk",
-    "  kk ksssssk kk",
-    "     ksssssk",
-    "     kssksk",
+    "     kLkLkLk",
+    "     kLLLLLk",
+    "    kllllllk",
+    "    klekkelk",
+    "kk  kllllllk  kk",
+    "klk  kllkkk  klk",
+    "kllkkllllllkkllk",
+    " klLkklllllkkLlk",
+    "  kLLlllllllLLk",
+    "     kllLLllk",
+    "     kLkkkkLk",
+    "     kLLkkLLk",
 ]
 
-MACHOP_1 = MACHOP_TOP + ["    kssk kssk", "    kkkk kkkk"]
-MACHOP_2 = MACHOP_TOP + ["   kssk   kssk", "   kkkk   kkkk"]
+MACHOP_1 = MACHOP_TOP + ["    kLLk  kLLk", "    kkkk  kkkk"]
+MACHOP_2 = MACHOP_TOP + ["   kLLk    kLLk", "   kkkk    kkkk"]
 
 CHARMANDER_TOP = [
     "",
@@ -857,20 +855,22 @@ BULBASAUR_2 = BULBASAUR_TOP + ["  kJk  kk  kJk", "  kkk      kkk"]
 SANDSHREW_TOP = [
     "",
     "",
-    "    kk    kk",
-    "    kykkkkyk",
-    "   kyyyyyyyyk",
-    "   kykyyyykyk",
-    "   kyyyxxyyyk",
-    "  kkyyyyyyyykk",
-    " kxxkxxxxxxkxxk",
-    " kxkxxxxxxxxkxk",
-    "  kkxxxxxxxxkk",
-    "   kyyyyyyyyk",
+    "   kk      kk",
+    "   kGk    kGk",
+    "   kGGkkkkGGk",
+    "  kgGGgGGgGGgk",
+    "  kggggggggggk",
+    "  kgkkggggkkgk",
+    "  kggggkkggggk",
+    " kGGccccccccGGk",
+    "kwkGccccccccGkwk",
+    "kwwkcccccccckwwk",
+    " kk kGccccGk kk",
+    "    kGGGGGGk",
 ]
 
-SANDSHREW_1 = SANDSHREW_TOP + ["   kwk    kwk", "   kkk    kkk"]
-SANDSHREW_2 = SANDSHREW_TOP + ["  kwk      kwk", "  kkk      kkk"]
+SANDSHREW_1 = SANDSHREW_TOP + ["   kGgk  kgGk", "   kkkk  kkkk"]
+SANDSHREW_2 = SANDSHREW_TOP + ["  kGgk    kgGk", "  kkkk    kkkk"]
 
 ITEM_BALL = [
     "",
@@ -1321,17 +1321,19 @@ SLUDGE = [
 
 MANKEY_TOP = [
     "",
-    "",
-    "  kk  kkkk  kk",
-    " kcckkccccckcck",
-    " kccckcccccccck",
-    "  kkckwkcckwkck",
-    "   kcccqqqccck",
-    "   kccqkqkqcck",
-    "  kkcccqqqccckk",
-    " kcckcccccccckcck",
-    " kkk kccccccck kkk",
-    "     kcccccck",
+    " kkk k kk k kkk",
+    " kCckwkwwkwkcCk",
+    "  kckwwwwwwwkck",
+    "  kwwwwwwwwwwk",
+    "  kwkkwwwwkkwk",
+    "  kwwckwwkcwwk",
+    "  kwwwcCCcwwwk",
+    "  kwwwCkkCwwwk",
+    "  kcwwcCCcwwck",
+    " kbkcwwwwwwckbk",
+    "kbbkccwwwwcckbbk",
+    " kk kCccccCk kk",
+    "    kkCCCCkk",
 ]
 
 MANKEY_1 = [row[:16] for row in MANKEY_TOP + ["    kbbk  kbbk", "    kkk   kkk"]]
@@ -1339,21 +1341,23 @@ MANKEY_2 = [row[:16] for row in MANKEY_TOP + ["   kbbk    kbbk", "   kkk     kkk
 
 MACHOKE_TOP = [
     "",
-    "     kkkkk",
-    "    ksssssk",
-    "   kskssksk",
-    "   ksssssssk",
-    "  kkskkkksskk",
-    " kssksssssskssk",
-    "kssskssssssksssk",
-    "kssk kkkkkk kssk",
-    " kk  ksnnsk  kk",
-    "     kssssk",
-    "    kssksssk",
+    "       kk",
+    "      kPPk",
+    "     kOOOOk",
+    "    kOekkeOk",
+    "kkk kOOOOOOk kkk",
+    "kOOk kOkkOk kOOk",
+    "kOPOkkOOOOkkOPOk",
+    " kPOOOOOOOOOOPk",
+    "  kkPOOOOOOPkk",
+    "    kOOPPOOk",
+    "    kkkggkkk",
+    "    kkkkkkkk",
+    "    kOPkkPOk",
 ]
 
-MACHOKE_1 = MACHOKE_TOP + ["   ksssk ksssk", "   kkkk  kkkk"]
-MACHOKE_2 = MACHOKE_TOP + ["  ksssk   ksssk", "  kkkk    kkkk"]
+MACHOKE_1 = MACHOKE_TOP + ["   kOPk  kPOk", "   kkkk  kkkk"]
+MACHOKE_2 = MACHOKE_TOP + ["  kOPk    kPOk", "  kkkk    kkkk"]
 
 FARFETCHD_TOP = [
     "",
@@ -1601,21 +1605,22 @@ KADABRA_2 = KADABRA_TOP + ["  kyk    kyk", "  kkk    kkk"]
 
 DROWZEE_TOP = [
     "",
-    "    kkkkkk",
-    "   kyyyyyyk",
-    "  kyykyykyyk",
-    "  kyyyyyyyyk",
-    "   kyyxxyyk",
-    "  kkkyxxykkk",
-    " kbbkyyyykbbk",
-    " kyykbbbbkyyk",
-    "  kkbbbbbbkk",
-    "   kbbbbbbk",
-    "   kyyyyyyk",
+    "",
+    "     kkkkkk",
+    "   kkyyyyyykk",
+    "  kyyyyyyyyyyk",
+    "  kyyyyyyyyyyk",
+    "  kykkkyykkkyk",
+    "  kgyyyggyyygk",
+    "  kxxxxggxxxxk",
+    " kxkxxxyyxxxkxk",
+    "kxxkxxxyyxxxkxxk",
+    " kk kxxGGxxk kk",
+    "    kbxxxxbk",
 ]
 
-DROWZEE_1 = DROWZEE_TOP + ["   kyk  kyk", "   kkk  kkk"]
-DROWZEE_2 = DROWZEE_TOP + ["  kyk    kyk", "  kkk    kkk"]
+DROWZEE_1 = DROWZEE_TOP + ["   kbxk  kxbk", "   kkkk  kkkk"]
+DROWZEE_2 = DROWZEE_TOP + ["  kbxk    kxbk", "  kkkk    kkkk"]
 
 VENOMOTH_1 = [
     "",
