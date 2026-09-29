@@ -132,7 +132,7 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked,
 
     _plate_phase = 0;
 
-    if(theme.plates && value.kind != room_kind::start)
+    if(theme.hazard != hazard_kind::none && value.kind != room_kind::start)
     {
         _plant_plates(seed);
     }

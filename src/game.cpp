@@ -9,6 +9,7 @@
 #include "bn_string.h"
 #include "bn_window.h"
 
+#include "bn_sprite_items_electric_projectiles.h"
 #include "bn_sprite_items_light.h"
 #include "bn_sprite_items_pickups.h"
 #include "bn_sprite_items_poke_flute.h"
@@ -19,6 +20,7 @@
 
 #include "gyarados_boss.h"
 #include "journal.h"
+#include "moltres_boss.h"
 #include "onix_boss.h"
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
@@ -45,6 +47,13 @@ namespace
     constexpr int plate_paralysis_chance = 25;
     constexpr int explosion_radius = 34;
     constexpr int flicker_frames = 16;
+    constexpr int ember_interval = 80;
+    constexpr int boss_ember_interval = 45;
+    constexpr int ember_warning_frames = 45;
+    constexpr int ember_spread = 64;
+    constexpr int ember_power = 40;
+    constexpr int ember_life = 8;
+    constexpr int ember_half_size = 7;
 
     constexpr const char* floor_names[] = {
         "CINNABAR LAB", "VIRIDIAN FOREST", "ROCK TUNNEL", "UNDERGROUND LAKE", "POWER PLANT", "VOLCANO",
@@ -283,6 +292,7 @@ void game::_update_play()
     _update_darkness(false);
     _update_plates();
     _update_flicker();
+    _update_ember_rain();
     _update_effects();
     _update_camera(false);
     _messages.update();
@@ -498,10 +508,15 @@ void game::_spawn_boss()
         _boss.reset(new gyarados_boss(position, _camera));
         _messages.show("A MAGIKARP is splashing around...");
     }
-    else
+    else if(_theme().boss == boss_kind::zapdos)
     {
         _boss.reset(new zapdos_boss(position, _camera));
         _messages.show("ZAPDOS appeared in a flash of lightning!");
+    }
+    else
+    {
+        _boss.reset(new moltres_boss(position, _camera));
+        _messages.show("MOLTRES rose from the magma!");
     }
 }
 
@@ -608,7 +623,9 @@ void game::_update_darkness(bool room_changed)
 
 void game::_update_plates()
 {
-    if(! _theme().plates)
+    hazard_kind hazard = _theme().hazard;
+
+    if(hazard == hazard_kind::none)
     {
         return;
     }
@@ -628,16 +645,23 @@ void game::_update_plates()
         --_plate_serial;
     }
 
-    attack shock{ move_id::thundershock, pokemon_type::electric, plate_power };
+    bool lava = hazard == hazard_kind::lava;
+    attack shock = lava ? attack{ move_id::ember, pokemon_type::fire, plate_power } :
+                          attack{ move_id::thundershock, pokemon_type::electric, plate_power };
+    auto fireproof = [lava](const species_data& data)
+    {
+        return lava && (data.type_1 == pokemon_type::fire || data.type_2 == pokemon_type::fire);
+    };
+
     bn::fixed_point feet = _player.position() + bn::fixed_point(0, 4);
 
-    if(_player.vulnerable() && room::at(feet.x(), feet.y()) == room::cells::plate)
+    if(_player.vulnerable() && ! fireproof(_player.body()) && room::at(feet.x(), feet.y()) == room::cells::plate)
     {
-        _messages.show("The floor is electrified!");
+        _messages.show(lava ? "The lava is burning DITTO!" : "The floor is electrified!");
         hit_result result = _player.take_hit(shock, _messages);
         _shake_frames = shake_frames;
 
-        if(result.effectiveness && _random.get_int(100) < plate_paralysis_chance)
+        if(! lava && result.effectiveness && _random.get_int(100) < plate_paralysis_chance)
         {
             _player.apply_status(status_effect::paralysis, _messages);
         }
@@ -647,8 +671,8 @@ void game::_update_plates()
     {
         bn::fixed_point enemy_feet = value.position() + bn::fixed_point(0, 4);
 
-        if(value.active() && room::at(enemy_feet.x(), enemy_feet.y()) == room::cells::plate &&
-           value.hit_by_area(_plate_serial))
+        if(value.active() && ! fireproof(value.data()) &&
+           room::at(enemy_feet.x(), enemy_feet.y()) == room::cells::plate && value.hit_by_area(_plate_serial))
         {
             hit_result result = value.take_hit(shock);
             static_cast<void>(result);
@@ -659,7 +683,7 @@ void game::_update_plates()
 
 void game::_update_flicker()
 {
-    if(! _theme().plates)
+    if(_theme().hazard != hazard_kind::electric)
     {
         return;
     }
@@ -676,6 +700,51 @@ void game::_update_flicker()
         _flicker_frames = flicker_frames;
         _flicker_timer = 300 + _random.get_int(300);
     }
+}
+
+void game::_update_ember_rain()
+{
+    if(! _theme().ember_rain || _current_room().kind == room_kind::start || _player.transforming())
+    {
+        _embers.clear();
+        return;
+    }
+
+    bn::erase_if(_embers, [this](falling_ember& value)
+    {
+        value.marker.set_visible((value.frames / 3) % 2 == 0);
+
+        if(--value.frames > 0)
+        {
+            return false;
+        }
+
+        attack hit{ move_id::ember, pokemon_type::fire, ember_power };
+        bn::fixed_point position = value.marker.position();
+        _enemy_projectiles.spawn(bn::sprite_items::electric_projectiles.create_sprite(position, electric_frames::ember),
+                                 position, bn::fixed_point(), hit, ember_life, ember_half_size, false);
+        return true;
+    });
+
+    if(--_ember_timer > 0 || _embers.full())
+    {
+        return;
+    }
+
+    bn::fixed_point offset(_random.get_int(ember_spread * 2) - ember_spread,
+                           _random.get_int(ember_spread * 2) - ember_spread);
+    bn::fixed_point position = _player.position() + offset;
+
+    if(! room::feet_are_blocked(position, true))
+    {
+        bn::sprite_ptr marker = bn::sprite_items::projectiles.create_sprite(position, projectile_frames::impact);
+        marker.set_camera(_camera);
+        marker.set_z_order(-900);
+        _embers.push_back(falling_ember{ bn::move(marker), ember_warning_frames });
+    }
+
+    int interval = _boss ? boss_ember_interval : ember_interval;
+    _ember_timer = interval + _random.get_int(interval / 2);
 }
 
 void game::_handle_explosions()
@@ -1108,6 +1177,7 @@ void game::_clear_room_objects()
     _boss.reset();
     _flute_pickup.reset();
     _reward_pickup.reset();
+    _embers.clear();
     _hud.hide_boss();
     _spawn_delay = 0;
 }

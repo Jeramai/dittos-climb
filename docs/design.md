@@ -119,7 +119,7 @@ Some types open paths, like HMs:
 | 3 | Rock Tunnel | Rock / Ground | Darkness: only a light circle around Ditto. Diglett pop out of holes. | Geodude, Diglett, Zubat, Onix | Onix (a long body of segments that chases you) | Grass |
 | 4 | Underground Lake | Water | Deep water that only Water forms can cross. Currents push you. | Magikarp, Poliwag, Staryu, Horsea | Gyarados (a Magikarp evolves in the fight) | Grass |
 | 5 | Power Plant | Electric | Floor plates charge and shock on a timer. Lights flicker. | Pikachu, Voltorb, Magnemite | Zapdos | Ground |
-| 6 | Volcano | Fire | Lava rises and falls. Ember rain from the ceiling. | Vulpix, Ponyta, Growlithe, Slugma | Moltres | Water, Rock, Ground |
+| 6 | Volcano | Fire | Lava rises and falls. Ember rain from the ceiling. | Vulpix, Ponyta, Growlithe, Magmar | Moltres | Water, Rock, Ground |
 | 7 | Seafoam Ice Cave | Ice | Slippery ice floors and sliding puzzles. | Seel, Jynx, Shellder | Articuno | Fire, Rock |
 | 8 | The Chasm | Flying | Wind vents push you. A fall into a pit drops you one room back. | Pidgey, Spearow, Aerodactyl | Pidgeot (Gust pushes you around) | Electric, Ice, Rock |
 | 9 | Rocket Hideout | Poison | Spinner arrow tiles. Poison gas clouds. Holds the Silph Scope. | Koffing, Ekans, Grimer | Jessie and James (Arbok, Weezing and a Meowth balloon) | Ground |
@@ -177,4 +177,9 @@ Bonus floors after the end: Steel, Dark and Fairy.
    that faints it; a Voltorb form can do the same and loses its shape), Magnemite (Thundershock, Thunder Wave).
    Zapdos orbits Ditto, fires Thundershock bursts, Drill Pecks, and calls Thunder onto marked spots; the plates
    cycle faster during the fight.
-8. Then one floor per milestone.
+8. **Floor 6.** (done) Volcano: lava patches cycle crust, glow and molten, and molten lava burns everything
+   except Fire types; embers fall on marked spots near Ditto. Vulpix (Ember, Confuse Ray), Ponyta (Tackle, Fire
+   Spin), Growlithe (Bite, Flamethrower), Magmar (Fire Punch, Smog) — Magmar replaces Slugma, which is Gen 2.
+   Rare: Squirtle. Moltres orbits Ditto with Flamethrower bursts and a Fire Spin ring, and glows before a Sky
+   Attack sweep; the ember rain falls faster in its room.
+9. Then one floor per milestone.

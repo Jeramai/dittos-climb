@@ -37,6 +37,8 @@ namespace cloud_frames
 {
     constexpr int stun = 0;
     constexpr int sleep = 1;
+    constexpr int fire = 2;
+    constexpr int smog = 3;
 }
 
 #endif

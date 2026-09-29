@@ -14,6 +14,14 @@ enum class boss_kind
     onix,
     gyarados,
     zapdos,
+    moltres,
+};
+
+enum class hazard_kind
+{
+    none,
+    electric,
+    lava,
 };
 
 struct spawn_weight
@@ -34,7 +42,8 @@ struct floor_theme
     bool tall_grass;
     bool dark;
     bool water;
-    bool plates;
+    hazard_kind hazard;
+    bool ember_rain;
     int overgrown_percent;
     boss_kind boss;
     species_id rare;

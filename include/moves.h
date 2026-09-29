@@ -67,6 +67,11 @@ enum class move_id
     flamethrower,
     vine_whip,
     leech_seed,
+    fire_spin,
+    confuse_ray,
+    fire_punch,
+    smog,
+    sky_attack,
 };
 
 enum class status_effect

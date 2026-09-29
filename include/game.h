@@ -33,6 +33,12 @@ private:
         int frames;
     };
 
+    struct falling_ember
+    {
+        bn::sprite_ptr marker;
+        int frames;
+    };
+
     struct outline
     {
         bn::sprite_ptr sprite;
@@ -55,6 +61,7 @@ private:
     bn::optional<bn::sprite_ptr> _flute_pickup;
     bn::optional<bn::sprite_ptr> _light;
     bn::optional<bn::sprite_ptr> _reward_pickup;
+    bn::vector<falling_ember, 4> _embers;
     hud _hud;
     floor_map _floor;
     bn::fixed_point _camera_position;
@@ -68,6 +75,7 @@ private:
     int _flicker_timer = 400;
     int _flicker_frames = 0;
     int _journal_pages = 0;
+    int _ember_timer = 60;
     int _flute_room = -1;
     bool _locked = false;
     bool _has_flute = false;
@@ -106,6 +114,8 @@ private:
     void _update_plates();
 
     void _update_flicker();
+
+    void _update_ember_rain();
 
     void _handle_explosions();
 

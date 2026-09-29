@@ -914,6 +914,126 @@ EMBER = [
 ]
 
 
+VULPIX_TOP = [
+    "",
+    "   kk    kk",
+    "  kbok  kobk",
+    "  kbook koobk",
+    "   koookooook  kk",
+    "   koowooowok kook",
+    "    kookoookk koook",
+    "    koooooook kooook",
+    "     kocccok  koook",
+    "    kooccccokkoook",
+    "    koocccoooook",
+]
+
+VULPIX_1 = [row[:16] for row in VULPIX_TOP + ["    kbk kbkkk", "    kkk kkk"]]
+VULPIX_2 = [row[:16] for row in VULPIX_TOP + ["   kbk   kbkk", "   kkk   kkk"]]
+
+PONYTA_TOP = [
+    "",
+    "        kyk",
+    "      kyonyk",
+    "     kyonnook",
+    "  kk kccyonok",
+    " kcckccccyok",
+    " kcekccccck",
+    "  kkkccccck   kyk",
+    "     kcccccckyonk",
+    "    kccccccccony",
+    "    kcccccccckk",
+    "    kcck  kcck",
+]
+
+PONYTA_1 = [row[:16] for row in PONYTA_TOP + ["    kbbk  kbbk", "    kkk   kkk"]]
+PONYTA_2 = [row[:16] for row in PONYTA_TOP + ["   kbbk    kbbk", "   kkk     kkk"]]
+
+GROWLITHE_TOP = [
+    "",
+    "   kk     kk",
+    "  kook   kook",
+    "  koookkkoook",
+    "  kookoookook",
+    "  kooowooowok",
+    "   kccookccck",
+    "  kccccccccck",
+    "  koookkkoook  kk",
+    " koooooooooookcck",
+    " kokoookoookookk",
+    "  kooooooooook",
+]
+
+GROWLITHE_1 = [row[:16] for row in GROWLITHE_TOP + ["  kook    kook", "  kkk     kkk"]]
+GROWLITHE_2 = [row[:16] for row in GROWLITHE_TOP + [" kook      kook", " kkk       kkk"]]
+
+MAGMAR_TOP = [
+    "",
+    "     knk  knk",
+    "    knyk knyk",
+    "    knnnknnnk",
+    "   knnwnnnwnk",
+    "   knnnyynnnk",
+    "  kknnnnnnnnkk",
+    " knnknyyyynknnk",
+    " knk kyyyyk knk",
+    "  k  knyynk  k",
+    "     knnnnk",
+    "    knnkknnk",
+]
+
+MAGMAR_1 = MAGMAR_TOP + ["    kyk  kyk", "    kkk  kkk"]
+MAGMAR_2 = MAGMAR_TOP + ["   kyk    kyk", "   kkk    kkk"]
+
+SQUIRTLE_TOP = [
+    "",
+    "     kkkk",
+    "    kiiiik",
+    "   kiiwkiik",
+    "   kiikkiik",
+    "    kiiiik",
+    "  kkkbbbbkkk",
+    " kiikbccbkiik",
+    "  kkbccccbkk  kk",
+    "   kbccccbk  kiik",
+    "   kbbbbbbk kiik",
+    "    kiiiiikkik",
+]
+
+SQUIRTLE_1 = [row[:16] for row in SQUIRTLE_TOP + ["   kiik kiik", "   kkk  kkk"]]
+SQUIRTLE_2 = [row[:16] for row in SQUIRTLE_TOP + ["  kiik   kiik", "  kkk    kkk"]]
+
+
+def moltres_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    wing = 2 * step
+    for side in (-1, 1):
+        for i in range(12):
+            x = 16 + side * (4 + i)
+            top = 6 + i // 2 - wing
+            for y in range(top, 17 + i // 3):
+                if 0 <= x < 32 and 0 <= y < 32:
+                    grid[y][x] = "n" if y < top + 3 else "o"
+            if 0 <= x < 32 and top - 2 >= 0:
+                grid[top - 1][x] = "y"
+                if i % 2:
+                    grid[top - 2][x] = "y"
+    ellipse(grid, 16, 17, 5.5, 7, "y")
+    ellipse(grid, 16, 9, 3.5, 3.5, "y")
+    for i, x in enumerate(range(13, 20)):
+        grid[4 - (i % 3)][x] = "n"
+        grid[5][x] = "o"
+    for x in range(18, 22):
+        grid[10][x] = "s"
+    grid[8][17] = "w" if charging else "k"
+    for x in (14, 18):
+        for y in range(24, 29):
+            grid[y][x] = "s"
+    for x in range(12, 21):
+        grid[25 + (x % 3)][x] = "n"
+    return ["".join(row) for row in outline(grid)]
+
+
 def zapdos_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
     wing = 2 * step
@@ -1668,6 +1788,117 @@ def plate_tile(state):
     return tile
 
 
+VOLCANO_PALETTE = [
+    (12, 6, 6),
+    (72, 56, 56),
+    (60, 46, 46),
+    (96, 76, 72),
+    (44, 32, 32),
+    (28, 18, 18),
+    (48, 32, 30),
+    (88, 60, 52),
+    (60, 40, 36),
+    (120, 84, 72),
+    (40, 28, 28),
+    (200, 72, 32),
+    (240, 144, 48),
+    (248, 224, 120),
+    (104, 40, 24),
+    (20, 12, 12),
+]
+
+
+def volcano_floor_tile(variant):
+    tile = blank(1)
+    for x, y in ((2, 1), (6, 3), (1, 6), (5, 6)):
+        tile[y][x] = 2
+    if variant:
+        tile[3][3] = tile[3][4] = 3
+    return tile
+
+
+def volcano_shadow_tile():
+    tile = blank(4)
+    tile[3][2] = tile[5][6] = 10
+    return tile
+
+
+def volcano_wall_top_tile():
+    tile = blank(5)
+    for x, y in ((1, 1), (5, 2), (3, 5), (6, 6)):
+        tile[y][x] = 6
+    return tile
+
+
+def volcano_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [9] * 8
+    tile[7] = [8] * 8
+    for y in range(1, 7):
+        tile[y][(y * 3 + 1) % 8] = 8
+    tile[4][5] = 11
+    tile[5][5] = 14
+    return tile
+
+
+def volcano_door_tile():
+    tile = blank(14)
+    for y in range(8):
+        tile[y][(y * 5) % 8] = 11
+        tile[y][(y * 5 + 2) % 8] = 12
+    return tile
+
+
+def volcano_stairs_tiles():
+    big = [[15] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 9
+            big[top + 1][x] = 3
+            big[top + 2][x] = 7
+    return split_quad(big)
+
+
+def ember_crack_tile():
+    tile = volcano_floor_tile(0)
+    tile[3][2] = tile[4][3] = tile[4][4] = tile[5][5] = 11
+    return tile
+
+
+def lava_tile(state):
+    if state == 0:
+        tile = blank(10)
+        tile[2][2] = tile[2][3] = tile[5][5] = tile[6][2] = 14
+    elif state == 1:
+        tile = blank(14)
+        tile[2][2] = tile[2][3] = tile[3][4] = tile[5][5] = tile[6][2] = tile[6][3] = 11
+    else:
+        tile = blank(11)
+        for x, y in ((1, 1), (5, 2), (2, 5), (6, 6), (4, 4)):
+            tile[y][x] = 12
+        tile[3][6] = tile[6][4] = 13
+    return tile
+
+
+VOLCANO_TILES = [
+    blank(0),
+    volcano_floor_tile(0),
+    volcano_floor_tile(1),
+    volcano_shadow_tile(),
+    volcano_wall_top_tile(),
+    volcano_wall_face_tile(),
+    volcano_door_tile(),
+    *volcano_stairs_tiles(),
+    ember_crack_tile(),
+    volcano_floor_tile(0),
+    volcano_wall_top_tile(),
+    *[volcano_floor_tile(0)] * 5,
+    lava_tile(0),
+    lava_tile(1),
+    lava_tile(2),
+]
+
 PLANT_TILES = [
     blank(0),
     plant_floor_tile(0),
@@ -1811,7 +2042,8 @@ def main():
     save_species("paras", PARAS_1, PARAS_2)
     save_species("beedrill", BEEDRILL_1, BEEDRILL_2)
     save_species("venusaur", venusaur_frame(0, False), venusaur_frame(1, False), 32, [venusaur_frame(0, True)])
-    save_sprite_sheet("clouds", [cloud_frame("y", "g"), cloud_frame("h", "p")], 16)
+    save_sprite_sheet("clouds", [cloud_frame("y", "g"), cloud_frame("h", "p"), cloud_frame("o", "n"),
+                                 cloud_frame("d", "m")], 16)
     save_species("geodude", GEODUDE_1, GEODUDE_2)
     save_species("diglett", DIGLETT_1, DIGLETT_2, 16, [DIGLETT_MOUND])
     save_species("zubat", ZUBAT_1, ZUBAT_2)
@@ -1834,6 +2066,12 @@ def main():
     save_species("bulbasaur", BULBASAUR_1, BULBASAUR_2)
     save_species("sandshrew", SANDSHREW_1, SANDSHREW_2)
     save_sprite_sheet("pickups", [ITEM_BALL, JOURNAL_PAGE], 16)
+    save_species("vulpix", VULPIX_1, VULPIX_2)
+    save_species("ponyta", PONYTA_1, PONYTA_2)
+    save_species("growlithe", GROWLITHE_1, GROWLITHE_2)
+    save_species("magmar", MAGMAR_1, MAGMAR_2)
+    save_species("squirtle", SQUIRTLE_1, SQUIRTLE_2)
+    save_species("moltres", moltres_frame(0, False), moltres_frame(1, False), 32, [moltres_frame(0, True)])
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
@@ -1845,6 +2083,7 @@ def main():
     save_tiles("cave", CAVE_TILES, CAVE_PALETTE)
     save_tiles("lake", LAKE_TILES, LAKE_PALETTE)
     save_tiles("plant", PLANT_TILES, PLANT_PALETTE)
+    save_tiles("volcano", VOLCANO_TILES, VOLCANO_PALETTE)
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 

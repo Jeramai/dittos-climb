@@ -80,6 +80,13 @@ namespace
         { "VINE WHIP", "V.WHIP", pokemon_type::grass, 45, 0, melee, 18, 0, 0, 0, 6, 0 },
         { "LEECH SEED", "L.SEED", pokemon_type::grass, 30, 10, shot, 36, 1, 0, 2, 50, projectile_frames::leaf,
           no_status, 0, true },
+        { "FIRE SPIN", "F.SPIN", pokemon_type::fire, 35, 15, cloud, 50, 1, 0, 0.9, 80, cloud_frames::fire },
+        { "CONFUSE RAY", "C.RAY", pokemon_type::ghost, 0, 15, shot, 50, 1, 0, 1.8, 50, projectile_frames::psybeam,
+          status_effect::confusion, 100 },
+        { "FIRE PUNCH", "F.PUNCH", pokemon_type::fire, 55, 0, melee, 20, 0, 0, 0, 6, 0 },
+        { "SMOG", "SMOG", pokemon_type::poison, 20, 20, cloud, 50, 1, 0, 0.8, 90, cloud_frames::smog,
+          status_effect::poison, 40 },
+        { "SKY ATTACK", "SKY ATK", pokemon_type::flying, 140, 5, dash, 70, 0, 0, 4.5, 16, 0 },
     };
 }
 

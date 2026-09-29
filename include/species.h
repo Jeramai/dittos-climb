@@ -35,6 +35,12 @@ enum class species_id
     charmander,
     bulbasaur,
     sandshrew,
+    vulpix,
+    ponyta,
+    growlithe,
+    magmar,
+    squirtle,
+    moltres,
 };
 
 namespace species_frames

@@ -7,24 +7,30 @@
 #include "bn_sprite_items_diglett.h"
 #include "bn_sprite_items_ditto.h"
 #include "bn_sprite_items_geodude.h"
+#include "bn_sprite_items_growlithe.h"
 #include "bn_sprite_items_gyarados.h"
 #include "bn_sprite_items_horsea.h"
 #include "bn_sprite_items_machop.h"
 #include "bn_sprite_items_magikarp.h"
+#include "bn_sprite_items_magmar.h"
 #include "bn_sprite_items_magnemite.h"
 #include "bn_sprite_items_meowth.h"
+#include "bn_sprite_items_moltres.h"
 #include "bn_sprite_items_oddish.h"
 #include "bn_sprite_items_onix.h"
 #include "bn_sprite_items_paras.h"
 #include "bn_sprite_items_pikachu.h"
 #include "bn_sprite_items_poliwag.h"
+#include "bn_sprite_items_ponyta.h"
 #include "bn_sprite_items_porygon.h"
 #include "bn_sprite_items_rattata.h"
 #include "bn_sprite_items_sandshrew.h"
 #include "bn_sprite_items_snorlax.h"
+#include "bn_sprite_items_squirtle.h"
 #include "bn_sprite_items_staryu.h"
 #include "bn_sprite_items_venusaur.h"
 #include "bn_sprite_items_voltorb.h"
+#include "bn_sprite_items_vulpix.h"
 #include "bn_sprite_items_zapdos.h"
 #include "bn_sprite_items_zubat.h"
 
@@ -85,6 +91,18 @@ namespace
           &bn::sprite_items::bulbasaur },
         { "SANDSHREW", pokemon_type::ground, pokemon_type::none, 18, 1, move_id::scratch, move_id::dig,
           &bn::sprite_items::sandshrew },
+        { "VULPIX", pokemon_type::fire, pokemon_type::none, 16, 1.3, move_id::ember, move_id::confuse_ray,
+          &bn::sprite_items::vulpix },
+        { "PONYTA", pokemon_type::fire, pokemon_type::none, 18, 1.8, move_id::tackle, move_id::fire_spin,
+          &bn::sprite_items::ponyta },
+        { "GROWLITHE", pokemon_type::fire, pokemon_type::none, 18, 1.4, move_id::bite, move_id::flamethrower,
+          &bn::sprite_items::growlithe },
+        { "MAGMAR", pokemon_type::fire, pokemon_type::none, 20, 1, move_id::fire_punch, move_id::smog,
+          &bn::sprite_items::magmar },
+        { "SQUIRTLE", pokemon_type::water, pokemon_type::none, 18, 1, move_id::water_gun, move_id::bubblebeam,
+          &bn::sprite_items::squirtle },
+        { "MOLTRES", pokemon_type::fire, pokemon_type::flying, 70, 1.4, move_id::ember, move_id::sky_attack,
+          &bn::sprite_items::moltres },
     };
 }
 
