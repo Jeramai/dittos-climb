@@ -174,6 +174,11 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
             {
                 _slide = bn::fixed_point();
                 _move(spin * spin_speed);
+
+                if(moving)
+                {
+                    _move(directions::vectors[move_direction] * body().speed);
+                }
             }
             else if(_slide != bn::fixed_point())
             {

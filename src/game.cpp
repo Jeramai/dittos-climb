@@ -925,9 +925,9 @@ void game::_update_struggle_check()
 
         for(move_id move : own_moves)
         {
-            pokemon_type type = moves::get(move).type;
+            const move_data& data = moves::get(move);
 
-            if(types::effectiveness(type, foe.type_1, foe.type_2))
+            if(data.power && types::effectiveness(data.type, foe.type_1, foe.type_2))
             {
                 can_affect = true;
             }
