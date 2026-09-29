@@ -19,6 +19,11 @@ hit_result resolve(const attack& value, pokemon_type target_type_1, pokemon_type
         return hit_result{ 0, 0 };
     }
 
+    if(! value.power)
+    {
+        return hit_result{ 0, effectiveness };
+    }
+
     int damage = value.power * effectiveness / (10 * types::neutral);
     return hit_result{ damage > 0 ? damage : 1, effectiveness };
 }

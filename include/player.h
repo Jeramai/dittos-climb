@@ -73,7 +73,16 @@ public:
         return _area_half_size;
     }
 
-    void take_hit(const attack& hit, message_box& messages);
+    [[nodiscard]] hit_result take_hit(const attack& hit, message_box& messages);
+
+    void apply_status(status_effect effect, message_box& messages);
+
+    [[nodiscard]] status_effect status() const
+    {
+        return _status;
+    }
+
+    void heal(int amount);
 
     void recoil(message_box& messages);
 
@@ -81,7 +90,6 @@ public:
 
     void set_position(const bn::fixed_point& position);
 
-    void restore();
 
     void set_visible(bool visible);
 
@@ -108,6 +116,12 @@ private:
     int _transform_frames = 0;
     species_id _transform_target = species_id::ditto;
     int _switch_flash_frames = 0;
+    status_effect _status = status_effect::none;
+    int _status_frames = 0;
+    int _poison_timer = 0;
+    int _charge_frames = 0;
+    attack _charge_attack;
+    int _frame_counter = 0;
 
     void _use_move(bool move_a, player_projectiles& projectiles, message_box& messages);
 
@@ -118,6 +132,10 @@ private:
     void _start_area(const attack& hit, int frames, int half_size);
 
     void _update_wave();
+
+    [[nodiscard]] bool _update_status(message_box& messages);
+
+    void _lose_hp(int amount);
 
     void _update_sprite(bool moving);
 };

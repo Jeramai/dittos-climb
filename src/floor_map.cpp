@@ -6,7 +6,7 @@
 
 using namespace directions_of_floor;
 
-void floor_map::generate(int floor_number, bn::random& random)
+void floor_map::generate(int floor_number, int overgrown_percent, bn::random& random)
 {
     for(auto& row : _grid)
     {
@@ -19,7 +19,7 @@ void floor_map::generate(int floor_number, bn::random& random)
     _rooms.clear();
 
     int center = grid_size / 2;
-    _rooms.push_back(floor_room{ center, center, 0, room_kind::start, true, true });
+    _rooms.push_back(floor_room{ center, center, 0, room_kind::start, true, true, {} });
     _grid[center][center] = 0;
 
     int target = bn::min(7 + floor_number / 2, max_rooms);
@@ -38,7 +38,7 @@ void floor_map::generate(int floor_number, bn::random& random)
 
         _grid[y][x] = _rooms.size();
         _rooms.push_back(floor_room{ x, y, random.get_int(room_layouts::combat_count), room_kind::combat,
-                                     false, false });
+                                     false, false, {} });
     }
 
     int distances[max_rooms];
@@ -82,6 +82,31 @@ void floor_map::generate(int floor_number, bn::random& random)
 
     _rooms[stairs].kind = room_kind::stairs;
     _rooms[stairs].cleared = true;
+
+    for(int index = 1; index < _rooms.size(); ++index)
+    {
+        for(direction side : { direction::east, direction::south })
+        {
+            int other = neighbor(index, side);
+
+            if(other > 0 && random.get_int(100) < overgrown_percent)
+            {
+                _rooms[index].overgrown[int(side)] = true;
+                _rooms[other].overgrown[int(opposite(side))] = true;
+            }
+        }
+    }
+}
+
+void floor_map::clear_overgrown(int index, direction side)
+{
+    _rooms[index].overgrown[int(side)] = false;
+    int other = neighbor(index, side);
+
+    if(other >= 0)
+    {
+        _rooms[other].overgrown[int(opposite(side))] = false;
+    }
 }
 
 int floor_map::room_at(int x, int y) const

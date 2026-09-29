@@ -137,5 +137,8 @@ Bonus floors after the end: Steel, Dark and Fairy.
 3. **Floor 1 complete.** (done) Porygon (Tri Attack, Psybeam). One combat room drops the Poké Flute. Snorlax
    sleeps on the stairs; the flute wakes it. Body Slam jumps with a shockwave ring; Rest heals once at low HP.
    Its outline gives the Snorlax form (Headbutt, Body Slam).
-4. **Floor 2.** Viridian Forest, tall grass, Cut, Venusaur.
+4. **Floor 2.** (done) Per-floor themes (tileset, door messages, wild Pokémon, boss). Viridian Forest: wild
+   Pokémon hide in tall grass until Ditto is near; some doors are overgrown and a Grass form CUTs them. Oddish,
+   Caterpie, Paras and Beedrill bring paralysis, poison, sleep and drain moves. Venusaur uses Razor Leaf, Sleep
+   Powder clouds and a charged Solar Beam, and speeds up below half HP. Floors 3+ reuse the forest for now.
 5. Then one floor per milestone.

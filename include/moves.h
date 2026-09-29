@@ -11,6 +11,8 @@ enum class move_pattern
     melee,
     dash,
     wave,
+    cloud,
+    beam,
     fail,
 };
 
@@ -26,6 +28,23 @@ enum class move_id
     psybeam,
     headbutt,
     body_slam,
+    absorb,
+    stun_spore,
+    string_shot,
+    leech_life,
+    twineedle,
+    fury_attack,
+    razor_leaf,
+    solar_beam,
+    sleep_powder,
+};
+
+enum class status_effect
+{
+    none,
+    paralysis,
+    poison,
+    sleep,
 };
 
 struct move_data
@@ -42,6 +61,9 @@ struct move_data
     bn::fixed speed;
     int life;
     int projectile_frame;
+    status_effect status = status_effect::none;
+    int status_chance = 0;
+    bool drain = false;
 };
 
 namespace moves

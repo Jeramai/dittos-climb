@@ -54,6 +54,15 @@ public:
 
     [[nodiscard]] bool hit_by_area(int serial);
 
+    void apply_status(status_effect effect);
+
+    [[nodiscard]] bool take_reveal()
+    {
+        bool result = _just_revealed;
+        _just_revealed = false;
+        return result;
+    }
+
 private:
     enum class state
     {
@@ -78,6 +87,12 @@ private:
     int _last_area_serial = -1;
     bool _dash_connected = false;
     bool _facing_left = false;
+    bool _hidden = false;
+    bool _was_hidden = false;
+    bool _just_revealed = false;
+    status_effect _status = status_effect::none;
+    int _status_frames = 0;
+    int _frame_counter = 0;
     attack _dash_attack;
 
     [[nodiscard]] move_id _move(int index) const;
@@ -85,6 +100,10 @@ private:
     [[nodiscard]] bool _try_start_attack(const bn::fixed_point& target);
 
     void _execute(enemy_projectiles& projectiles, bn::random& random);
+
+    [[nodiscard]] bool _update_status();
+
+    void _update_hidden(const bn::fixed_point& target);
 
     void _walk(const bn::fixed_point& step);
 

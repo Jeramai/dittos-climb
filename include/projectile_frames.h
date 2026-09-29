@@ -9,6 +9,16 @@ namespace projectile_frames
     constexpr int coin = 3;
     constexpr int tri = 4;
     constexpr int psybeam = 5;
+    constexpr int leaf = 6;
+    constexpr int needle = 7;
+    constexpr int string = 8;
+    constexpr int beam = 9;
+}
+
+namespace cloud_frames
+{
+    constexpr int stun = 0;
+    constexpr int sleep = 1;
 }
 
 #endif

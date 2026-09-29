@@ -7,10 +7,11 @@
 
 #include "directions.h"
 #include "projectile_frames.h"
-#include "species.h"
 
 namespace
 {
+    constexpr int boss_hp = 120;
+    constexpr int slam_radius = 24;
     constexpr bn::fixed walk_speed = 0.35;
     constexpr int waking_frames = 50;
     constexpr int windup_frames = 30;
@@ -22,19 +23,15 @@ namespace
     constexpr int shockwave_count = 8;
     constexpr bn::fixed shockwave_speed = 1.4;
     constexpr int shockwave_life = 70;
-
-    attack wild(move_id move, int power)
-    {
-        return attack{ move, pokemon_type::normal, power };
-    }
+    constexpr int shockwave_power = 40;
 }
 
 snorlax_boss::snorlax_boss(const bn::fixed_point& position, const bn::camera_ptr& camera) :
+    boss(species_id::snorlax, boss_hp, position),
     _sprite(bn::sprite_items::snorlax.create_sprite(position, species_frames::asleep)),
     _camera(camera),
-    _position(position),
-    _slam_attack(wild(move_id::body_slam, 85)),
-    _shockwave_attack(wild(move_id::body_slam, 40))
+    _slam_attack(wild_attack(move_id::body_slam)),
+    _shockwave_attack(attack{ move_id::body_slam, pokemon_type::normal, shockwave_power })
 {
     _sprite.set_camera(camera);
     _update_sprite(0);
@@ -50,6 +47,16 @@ void snorlax_boss::wake(message_box& messages)
     messages.show("SNORLAX woke up!");
     _state = state::waking;
     _state_frames = waking_frames;
+}
+
+bn::optional<boss_area_hit> snorlax_boss::area_hit() const
+{
+    if(! _landed_this_frame)
+    {
+        return bn::nullopt;
+    }
+
+    return boss_area_hit{ _position + bn::fixed_point(0, 8), slam_radius, _slam_attack };
 }
 
 void snorlax_boss::update(const bn::fixed_point& target, enemy_projectiles& projectiles, bn::random& random,
@@ -77,7 +84,7 @@ void snorlax_boss::update(const bn::fixed_point& target, enemy_projectiles& proj
         break;
 
     case state::walking:
-        if(! _rested && _hp * 100 < max_hp * 35)
+        if(! _rested && _hp * 100 < _max_hp * 35)
         {
             _rested = true;
             messages.show("SNORLAX used REST!");
@@ -87,7 +94,10 @@ void snorlax_boss::update(const bn::fixed_point& target, enemy_projectiles& proj
             break;
         }
 
-        _walk(target);
+        if(walk(directions::toward(_position, target) * walk_speed))
+        {
+            ++_walk_frames;
+        }
 
         if(--_slam_timer <= 0)
         {
@@ -137,7 +147,7 @@ void snorlax_boss::update(const bn::fixed_point& target, enemy_projectiles& proj
     case state::resting:
         if(! --_state_frames)
         {
-            _hp = bn::min(_hp + rest_heal, max_hp);
+            _hp = bn::min(_hp + rest_heal, _max_hp);
             messages.show("SNORLAX woke up!");
             _state = state::walking;
         }
@@ -150,57 +160,6 @@ void snorlax_boss::update(const bn::fixed_point& target, enemy_projectiles& proj
     }
 
     _update_sprite(height);
-}
-
-bool snorlax_boss::contains(const bn::fixed_point& point, int half_size) const
-{
-    bn::fixed_point delta = point - _position;
-    return bn::abs(delta.x()) < 12 + half_size && bn::abs(delta.y()) < 13 + half_size;
-}
-
-hit_result snorlax_boss::take_hit(const attack& hit)
-{
-    if(! awake() || _state == state::jumping)
-    {
-        return hit_result{ 0, types::neutral };
-    }
-
-    const species_data& data = species::get(species_id::snorlax);
-    hit_result result = combat::resolve(hit, data.type_1, data.type_2);
-    _hp -= result.damage;
-    _flash_frames = 4;
-    return result;
-}
-
-bool snorlax_boss::hit_by_area(int serial)
-{
-    if(_last_area_serial == serial)
-    {
-        return false;
-    }
-
-    _last_area_serial = serial;
-    return true;
-}
-
-void snorlax_boss::_walk(const bn::fixed_point& target)
-{
-    bn::fixed_point step = directions::toward(_position, target) * walk_speed;
-    bn::fixed_point next(_position.x() + step.x(), _position.y());
-
-    if(! room::area_is_blocked(next.x() - 10, next.y() + 6, next.x() + 10, next.y() + 14))
-    {
-        _position = next;
-    }
-
-    next = bn::fixed_point(_position.x(), _position.y() + step.y());
-
-    if(! room::area_is_blocked(next.x() - 10, next.y() + 6, next.x() + 10, next.y() + 14))
-    {
-        _position = next;
-    }
-
-    ++_walk_frames;
 }
 
 void snorlax_boss::_land(enemy_projectiles& projectiles)

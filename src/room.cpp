@@ -16,7 +16,7 @@ namespace
 
     [[nodiscard]] bool solid_cell(char value)
     {
-        return value != cells::floor && value != cells::stairs;
+        return value != cells::floor && value != cells::stairs && value != cells::grass;
     }
 
     void set_axis(int first, int last, int screen_size, bn::fixed& min, bn::fixed& max, int map_size)

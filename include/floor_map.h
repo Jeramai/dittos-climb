@@ -27,6 +27,7 @@ struct floor_room
     room_kind kind;
     bool visited;
     bool cleared;
+    bool overgrown[4];
 };
 
 class floor_map
@@ -36,7 +37,9 @@ public:
     static constexpr int grid_size = 5;
     static constexpr int max_rooms = 11;
 
-    void generate(int floor_number, bn::random& random);
+    void generate(int floor_number, int overgrown_percent, bn::random& random);
+
+    void clear_overgrown(int index, direction side);
 
     [[nodiscard]] int room_at(int x, int y) const;
 

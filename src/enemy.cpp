@@ -15,6 +15,11 @@ namespace
     constexpr bn::fixed walk_speed_scale = 0.4;
     constexpr bn::fixed dash_speed_scale = 0.85;
     constexpr bn::fixed shot_speed_scale = 0.6;
+    constexpr int reveal_distance = 44;
+    constexpr int paralysis_frames = 240;
+    constexpr int poison_frames = 360;
+    constexpr int poison_tick_frames = 60;
+    constexpr int sleep_frames = 150;
 
     attack wild_attack(move_id move, const species_data& user)
     {
@@ -53,6 +58,12 @@ namespace
         case move_pattern::shot:
             return shot_range;
 
+        case move_pattern::cloud:
+            return shot_range * 2 / 3;
+
+        case move_pattern::beam:
+            return shot_range;
+
         default:
             return 0;
         }
@@ -78,9 +89,19 @@ enemy::enemy(species_id id, const bn::fixed_point& position, const bn::camera_pt
 
 void enemy::update(const bn::fixed_point& target, enemy_projectiles& projectiles, bn::random& random)
 {
+    ++_frame_counter;
+
+    if(_state != state::spawning && ! _update_status())
+    {
+        _update_sprite(false);
+        return;
+    }
+
+    bool slowed = _status == status_effect::paralysis;
+
     for(int& cooldown : _cooldowns)
     {
-        if(cooldown)
+        if(cooldown && (! slowed || _frame_counter % 2))
         {
             --cooldown;
         }
@@ -109,7 +130,9 @@ void enemy::update(const bn::fixed_point& target, enemy_projectiles& projectiles
         return;
 
     case state::moving:
-        if(! _try_start_attack(target))
+        _update_hidden(target);
+
+        if(_hidden || ! _try_start_attack(target))
         {
             bool shooter = moves::get(_move(0)).pattern == move_pattern::shot ||
                            moves::get(_move(1)).pattern == move_pattern::shot;
@@ -117,7 +140,8 @@ void enemy::update(const bn::fixed_point& target, enemy_projectiles& projectiles
 
             if(distance(target, _position) > keep_distance)
             {
-                _walk(directions::toward(_position, target) * data().speed * walk_speed_scale);
+                bn::fixed speed = data().speed * walk_speed_scale;
+                _walk(directions::toward(_position, target) * (slowed ? speed / 2 : speed));
                 moving = true;
             }
 
@@ -170,6 +194,59 @@ hit_result enemy::take_hit(const attack& hit)
     _hp -= result.damage;
     _flash_frames = 4;
     return result;
+}
+
+void enemy::apply_status(status_effect effect)
+{
+    if(effect == status_effect::none || _status != status_effect::none)
+    {
+        return;
+    }
+
+    _status = effect;
+    _status_frames = effect == status_effect::paralysis ? paralysis_frames :
+                     effect == status_effect::poison ? poison_frames : sleep_frames;
+
+    if(effect == status_effect::sleep && _state != state::spawning)
+    {
+        _state = state::moving;
+    }
+}
+
+bool enemy::_update_status()
+{
+    if(_status == status_effect::none)
+    {
+        return true;
+    }
+
+    if(_status == status_effect::poison && _frame_counter % poison_tick_frames == 0)
+    {
+        --_hp;
+        _flash_frames = 2;
+    }
+
+    bool asleep = _status == status_effect::sleep;
+
+    if(--_status_frames <= 0)
+    {
+        _status = status_effect::none;
+    }
+
+    return ! asleep;
+}
+
+void enemy::_update_hidden(const bn::fixed_point& target)
+{
+    bool in_grass = room::at(_position.x(), _position.y() + 4) == room::cells::grass;
+    _hidden = in_grass && distance(target, _position) > reveal_distance && ! _flash_frames;
+
+    if(_was_hidden && ! _hidden)
+    {
+        _just_revealed = true;
+    }
+
+    _was_hidden = _hidden;
 }
 
 bool enemy::dash_hits(const bn::fixed_point& point)
@@ -243,6 +320,14 @@ void enemy::_execute(enemy_projectiles& projectiles, bn::random& random)
         attacks::slash(projectiles, hit, _position, _attack_direction);
         break;
 
+    case move_pattern::cloud:
+        attacks::cloud(projectiles, hit, _position, _attack_direction, 1);
+        break;
+
+    case move_pattern::beam:
+        attacks::beam(projectiles, hit, _position, _attack_direction);
+        break;
+
     case move_pattern::dash:
         _dash_attack = hit;
         _dash_connected = false;
@@ -287,6 +372,7 @@ void enemy::_update_sprite(bool moving)
     }
 
     _sprite.set_tiles(data().sprite->tiles_item(), frame);
+    _sprite.set_visible(! _hidden);
     _sprite.set_position(_position);
     _sprite.set_horizontal_flip(_facing_left);
     _sprite.set_z_order(-_position.y().round_integer());

@@ -15,6 +15,8 @@
 #include "common_variable_8x16_sprite_font.h"
 
 #include "projectile_frames.h"
+#include "snorlax_boss.h"
+#include "venusaur_boss.h"
 
 namespace
 {
@@ -25,7 +27,6 @@ namespace
     constexpr int outline_blink_frames = 90;
     constexpr int fade_frames = 8;
     constexpr int min_spawn_distance = 72;
-    constexpr int boss_floor = 1;
     constexpr int boss_talk_distance = 36;
 
     constexpr const char* floor_names[] = {
@@ -75,6 +76,11 @@ game::game(bn::random& random) :
 {
     set_fade(0);
     _view.set_camera(_camera);
+
+    #ifdef DITTO_TEST_FLOOR
+        _floor_number = DITTO_TEST_FLOOR;
+    #endif
+
     _start_floor();
 
     #ifdef DITTO_TEST_FORM
@@ -101,12 +107,12 @@ void game::run()
 
 void game::_start_floor()
 {
-    _floor.generate(_floor_number, _random);
+    _floor.generate(_floor_number, _theme().overgrown_percent, _random);
     _has_flute = false;
     _boss_defeated = false;
     _flute_room = -1;
 
-    if(_floor_number == boss_floor)
+    if(_theme().boss == boss_kind::snorlax)
     {
         bn::vector<int, floor_map::max_rooms> combat_rooms;
 
@@ -133,7 +139,21 @@ void game::_start_floor()
             if(_floor[index].kind == room_kind(DITTO_TEST_START_KIND))
             {
                 _has_flute = room_kind(DITTO_TEST_START_KIND) == room_kind::stairs;
-                _flute_room = _has_flute ? -1 : index;
+                _flute_room = _has_flute || _theme().boss != boss_kind::snorlax ? -1 : index;
+
+                #ifdef DITTO_TEST_OVERGROWN
+                    for(int side = 0; side < 4; ++side)
+                    {
+                        int other = _floor.neighbor(index, direction(side));
+
+                        if(other >= 0)
+                        {
+                            _floor[index].overgrown[side] = true;
+                            _floor[other].overgrown[int(directions_of_floor::opposite(direction(side)))] = true;
+                        }
+                    }
+                #endif
+
                 _enter_room(index, bn::nullopt);
                 _messages.show(floor_label(_floor_number));
                 return;
@@ -158,28 +178,26 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
         doors[side] = _floor.neighbor(index, direction(side)) >= 0;
     }
 
-    _locked = value.kind == room_kind::combat && ! value.cleared;
-    _view.build(value, doors, _locked);
+    bool boss_room = value.kind == room_kind::stairs && _theme().boss != boss_kind::none && ! _boss_defeated;
+    _locked = (value.kind == room_kind::combat && ! value.cleared) ||
+              (boss_room && _theme().boss == boss_kind::venusaur);
+    _view.build(value, doors, _locked, _theme(), _floor_number * 977 + index * 131 + 7);
     _player.set_position(entered_from ? _view.entry_position(*entered_from) : _view.interior_center());
     value.visited = true;
 
-    if(_locked)
+    if(value.kind == room_kind::combat && _locked)
     {
         _spawn_delay = spawn_delay_frames;
-        _messages.show("The lab doors locked!");
+        _messages.show(_theme().lock_message);
     }
 
-    if(value.kind == room_kind::stairs)
+    if(boss_room)
     {
-        if(_floor_number == boss_floor && ! _boss_defeated)
-        {
-            _boss.emplace(_view.interior_center() - bn::fixed_point(0, 12), _camera);
-            _messages.show("A SNORLAX sleeps on the stairs!");
-        }
-        else
-        {
-            _messages.show("There are stairs going up!");
-        }
+        _spawn_boss();
+    }
+    else if(value.kind == room_kind::stairs)
+    {
+        _messages.show("There are stairs going up!");
     }
 
     _update_flute();
@@ -205,7 +223,14 @@ void game::_update_play()
     for(enemy& value : _enemies)
     {
         value.update(_player.position(), _enemy_projectiles, _random);
+
+        if(value.take_reveal())
+        {
+            show_name_message(_messages, "A wild ", value.data().name, " jumped out!");
+        }
     }
+
+    _handle_cut();
 
     _player_projectiles.update([this](const bn::fixed_point& position) { _spawn_effect(position); });
     _enemy_projectiles.update([this](const bn::fixed_point& position) { _spawn_effect(position); });
@@ -234,7 +259,7 @@ void game::_update_room_state()
         _locked = false;
         _floor[_room].cleared = true;
         _view.set_locked(false);
-        _messages.show("The doors opened!");
+        _messages.show(_theme().unlock_message);
         _update_flute();
     }
 
@@ -275,7 +300,7 @@ void game::_handle_player_attacks()
             if(value.active() && value.contains(shot.position, shot.half_size))
             {
                 hit_result result = value.take_hit(shot.hit);
-                _messages.show(combat::effectiveness_message(result.effectiveness));
+                _after_player_hit(shot.hit, result, &value);
                 _spawn_effect(shot.position);
                 return true;
             }
@@ -283,14 +308,14 @@ void game::_handle_player_attacks()
 
         if(_boss && _boss->contains(shot.position, shot.half_size))
         {
-            if(_boss->awake())
+            if(_boss->vulnerable())
             {
                 hit_result result = _boss->take_hit(shot.hit);
-                _messages.show(combat::effectiveness_message(result.effectiveness));
+                _after_player_hit(shot.hit, result, nullptr);
             }
-            else
+            else if(_boss->asleep())
             {
-                _messages.show("SNORLAX is fast asleep...");
+                show_name_message(_messages, "", _boss->name(), " is fast asleep...");
             }
 
             _spawn_effect(shot.position);
@@ -310,7 +335,7 @@ void game::_handle_player_attacks()
                value.hit_by_area(serial))
             {
                 hit_result result = value.take_hit(_player.area_attack());
-                _messages.show(combat::effectiveness_message(result.effectiveness));
+                _after_player_hit(_player.area_attack(), result, &value);
                 _spawn_effect(value.position());
 
                 if(_player.area_attack().move == move_id::struggle && serial != _last_recoil_serial)
@@ -322,11 +347,11 @@ void game::_handle_player_attacks()
         }
     }
 
-    if(_player.area_active() && _boss && _boss->awake() &&
+    if(_player.area_active() && _boss && _boss->vulnerable() &&
        _boss->contains(_player.position(), _player.area_half_size()) && _boss->hit_by_area(_player.area_serial()))
     {
         hit_result result = _boss->take_hit(_player.area_attack());
-        _messages.show(combat::effectiveness_message(result.effectiveness));
+        _after_player_hit(_player.area_attack(), result, nullptr);
         _spawn_effect(_boss->position());
         int serial = _player.area_serial();
 
@@ -369,6 +394,22 @@ void game::_spawn_outline(species_id id, const bn::fixed_point& position)
     _outlines.push_back(outline{ bn::move(sprite), id, outline_frames });
 }
 
+void game::_spawn_boss()
+{
+    bn::fixed_point position = _view.interior_center() - bn::fixed_point(0, 12);
+
+    if(_theme().boss == boss_kind::snorlax)
+    {
+        _boss.reset(new snorlax_boss(position, _camera));
+        _messages.show("A SNORLAX sleeps on the stairs!");
+    }
+    else
+    {
+        _boss.reset(new venusaur_boss(position, _camera));
+        _messages.show("A wild VENUSAUR blocks the stairs!");
+    }
+}
+
 void game::_update_boss()
 {
     if(! _boss)
@@ -402,28 +443,104 @@ void game::_update_boss()
         return;
     }
 
-    _hud.show_boss("SNORLAX", _boss->hp(), snorlax_boss::max_hp);
+    _hud.show_boss(_boss->name(), _boss->hp(), _boss->max_hp());
 
-    if(_boss->landed_this_frame())
+    if(bn::optional<boss_area_hit> area = _boss->area_hit())
     {
         _shake_frames = shake_frames * 2;
 
-        if(_player.vulnerable() && within(_boss->position() + bn::fixed_point(0, 8), _player.position(),
-                                          snorlax_boss::slam_radius, snorlax_boss::slam_radius))
+        if(_player.vulnerable() && within(area->center, _player.position(), area->radius, area->radius))
         {
-            _player.take_hit(_boss->slam_attack(), _messages);
+            hit_result result = _player.take_hit(area->hit, _messages);
+
+            if(result.effectiveness)
+            {
+                _player.apply_status(_roll_status(area->hit.move), _messages);
+            }
         }
     }
 
     if(_boss->dead())
     {
-        _messages.show("SNORLAX fainted!");
+        show_name_message(_messages, "", _boss->name(), " fainted!");
         _spawn_effect(_boss->position());
-        _spawn_outline(species_id::snorlax, _boss->position());
+        _spawn_outline(_boss->species(), _boss->position());
         _boss.reset();
         _boss_defeated = true;
         _hud.hide_boss();
         _enemy_projectiles.clear();
+    }
+}
+
+void game::_handle_cut()
+{
+    const species_data& body = _player.body();
+    bool grass_form = body.type_1 == pokemon_type::grass || body.type_2 == pokemon_type::grass;
+    bn::fixed_point feet = _player.position() + bn::fixed_point(0, 4);
+
+    if(! grass_form)
+    {
+        for(bn::fixed_point offset : { bn::fixed_point(-10, 0), bn::fixed_point(10, 0), bn::fixed_point(0, -10),
+                                       bn::fixed_point(0, 10) })
+        {
+            bn::fixed_point probe = feet + offset;
+
+            if(room::at(probe.x(), probe.y()) == room::cells::bush)
+            {
+                _messages.show("A GRASS POKEMON could CUT this bush.");
+                return;
+            }
+        }
+
+        return;
+    }
+
+    if(! _view.cut_bushes(feet, 8))
+    {
+        return;
+    }
+
+    _messages.show("DITTO used CUT!");
+    _spawn_effect(feet);
+
+    for(int side = 0; side < 4; ++side)
+    {
+        if(_floor[_room].overgrown[side] && ! _view.bushes_remaining(direction(side)))
+        {
+            _floor.clear_overgrown(_room, direction(side));
+        }
+    }
+}
+
+status_effect game::_roll_status(move_id move)
+{
+    const move_data& data = moves::get(move);
+
+    if(data.status == status_effect::none || _random.get_int(100) >= data.status_chance)
+    {
+        return status_effect::none;
+    }
+
+    return data.status;
+}
+
+void game::_after_player_hit(const attack& hit, const hit_result& result, enemy* target)
+{
+    _messages.show(combat::effectiveness_message(result.effectiveness));
+
+    if(! result.effectiveness)
+    {
+        return;
+    }
+
+    if(target)
+    {
+        target->apply_status(_roll_status(hit.move));
+    }
+
+    if(result.damage && moves::get(hit.move).drain)
+    {
+        _player.heal(bn::max(result.damage / 2, 1));
     }
 }
 
@@ -472,8 +589,13 @@ void game::_handle_enemy_attacks()
 
     if(hit)
     {
-        _player.take_hit(*hit, _messages);
+        hit_result result = _player.take_hit(*hit, _messages);
         _shake_frames = shake_frames;
+
+        if(result.effectiveness)
+        {
+            _player.apply_status(_roll_status(hit->move), _messages);
+        }
     }
 }
 
@@ -517,6 +639,15 @@ void game::_spawn_enemies()
         for(int attempt = 0; attempt < 20; ++attempt)
         {
             bn::fixed_point position = _view.random_floor_position(_random);
+
+            if(_theme().tall_grass && _random.get_int(100) < 60)
+            {
+                if(bn::optional<bn::fixed_point> grass = _view.random_grass_position(_random))
+                {
+                    position = *grass;
+                }
+            }
+
             bn::fixed_point delta = position - _player.position();
 
             if(bn::abs(delta.x()) + bn::abs(delta.y()) < min_spawn_distance)
@@ -524,14 +655,17 @@ void game::_spawn_enemies()
                 continue;
             }
 
-            int roll = _random.get_int(100);
-            species_id id = roll < 20 ? species_id::porygon : roll < 55 ? species_id::meowth : species_id::rattata;
+            species_id id = floor_themes::pick_species(_theme(), _random.get_int(100));
             _enemies.emplace_back(id, position, _camera, _random);
             break;
         }
     }
 
-    if(_enemies.size() == 1)
+    if(_theme().tall_grass)
+    {
+        _messages.show("Something rustles in the grass...");
+    }
+    else if(_enemies.size() == 1)
     {
         show_name_message(_messages, "A wild ", _enemies[0].data().name, " appeared!");
     }

@@ -13,6 +13,11 @@ enum class species_id
     meowth,
     porygon,
     snorlax,
+    oddish,
+    caterpie,
+    paras,
+    beedrill,
+    venusaur,
 };
 
 namespace species_frames
@@ -22,6 +27,7 @@ namespace species_frames
     constexpr int own_walk = 3;
     constexpr int ditto_flat = 5;
     constexpr int asleep = 5;
+    constexpr int charging = 5;
 }
 
 struct species_data

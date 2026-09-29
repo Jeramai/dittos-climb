@@ -5,8 +5,7 @@
 #include "bn_regular_bg_map_cell_info.h"
 #include "bn_regular_bg_map_item.h"
 
-#include "bn_bg_palette_items_lab_palette.h"
-#include "bn_regular_bg_tiles_items_lab_tiles.h"
+#include "bn_math.h"
 
 #include "room.h"
 
@@ -23,16 +22,20 @@ namespace
         constexpr int door = 6;
         constexpr int stairs = 7;
         constexpr int floor_crack = 11;
+        constexpr int tall_grass = 12;
+        constexpr int bush = 13;
     }
+
+    constexpr int grass_patches = 3;
 
     alignas(int) bn::regular_bg_map_cell map_cells[room::columns * room::rows];
 
     const bn::regular_bg_map_item map_item(map_cells[0], bn::size(room::columns, room::rows));
 
-    bn::regular_bg_ptr create_bg()
+    bn::regular_bg_ptr create_bg(const floor_theme& theme)
     {
         bn::bg_tiles::set_allow_offset(false);
-        bn::regular_bg_item item(bn::regular_bg_tiles_items::lab_tiles, bn::bg_palette_items::lab_palette, map_item);
+        bn::regular_bg_item item(*theme.tiles, *theme.palette, map_item);
         bn::regular_bg_ptr result = item.create_bg(0, 0);
         bn::bg_tiles::set_allow_offset(true);
         return result;
@@ -40,7 +43,13 @@ namespace
 
     bool walkable(char value)
     {
-        return value == room::cells::floor || value == room::cells::stairs;
+        return value == room::cells::floor || value == room::cells::stairs || value == room::cells::grass;
+    }
+
+    int next_seed(unsigned& seed)
+    {
+        seed = seed * 1103515245 + 12345;
+        return int((seed >> 16) & 0x7fff);
     }
 
     int quad_tile(int first_tile, int column, int row)
@@ -50,14 +59,16 @@ namespace
 }
 
 room_view::room_view() :
-    _bg(create_bg()),
+    _bg(create_bg(floor_themes::get(1))),
     _bg_map(_bg.map()),
+    _theme(&floor_themes::get(1)),
     _layout(room_layouts::start)
 {
 }
 
-void room_view::build(const floor_room& value, const bool doors[4], bool locked)
+void room_view::build(const floor_room& value, const bool doors[4], bool locked, const floor_theme& theme, int seed)
 {
+    _set_theme(theme);
     _kind = value.kind;
 
     switch(value.kind)
@@ -100,6 +111,12 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked)
     {
         _fill(_door_column() - 1, _door_row() - 1, 2, 2, room::cells::stairs);
     }
+    else if(value.kind == room_kind::combat && theme.tall_grass)
+    {
+        _plant_grass(seed);
+    }
+
+    _plant_bushes(value);
 
     room::set_camera_bounds(_left, _top - 2, _left + _width - 1, _top + _height);
     set_locked(locked);
@@ -113,6 +130,7 @@ void room_view::set_locked(bool locked)
 
 void room_view::set_camera(const bn::camera_ptr& camera)
 {
+    _camera = camera;
     _bg.set_camera(camera);
 }
 
@@ -185,6 +203,80 @@ bn::fixed_point room_view::random_floor_position(bn::random& random) const
     return interior_center();
 }
 
+bn::optional<bn::fixed_point> room_view::random_grass_position(bn::random& random) const
+{
+    for(int attempt = 0; attempt < 40; ++attempt)
+    {
+        int column = _interior_left() + 1 + random.get_int(_layout.width - 2);
+        int row = _interior_top() + 1 + random.get_int(_layout.height - 2);
+
+        if(room::get(column, row) == room::cells::grass)
+        {
+            bn::fixed_point position = room::cell_center(column, row);
+
+            if(! room::feet_are_blocked(position))
+            {
+                return position;
+            }
+        }
+    }
+
+    return bn::nullopt;
+}
+
+bool room_view::cut_bushes(const bn::fixed_point& center, int half_size)
+{
+    bool cut = false;
+
+    for(int side = 0; side < 4; ++side)
+    {
+        int column, row, width, height;
+        _bush_area(direction(side), column, row, width, height);
+
+        for(int y = row; y < row + height; ++y)
+        {
+            for(int x = column; x < column + width; ++x)
+            {
+                bn::fixed_point cell = room::cell_center(x, y);
+                bn::fixed_point delta = cell - center;
+
+                if(room::get(x, y) == room::cells::bush && bn::abs(delta.x()) < half_size + 4 &&
+                   bn::abs(delta.y()) < half_size + 4)
+                {
+                    room::set(x, y, room::cells::floor);
+                    cut = true;
+                }
+            }
+        }
+    }
+
+    if(cut)
+    {
+        _render();
+    }
+
+    return cut;
+}
+
+bool room_view::bushes_remaining(direction side) const
+{
+    int column, row, width, height;
+    _bush_area(side, column, row, width, height);
+
+    for(int y = row; y < row + height; ++y)
+    {
+        for(int x = column; x < column + width; ++x)
+        {
+            if(room::get(x, y) == room::cells::bush)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 bn::fixed_point room_view::interior_center() const
 {
     return room::cell_center(_door_column(), _door_row()) - bn::fixed_point(room::tile_size / 2, 0);
@@ -229,6 +321,97 @@ void room_view::_carve_doors(bool locked)
     }
 }
 
+void room_view::_set_theme(const floor_theme& theme)
+{
+    if(_theme == &theme)
+    {
+        return;
+    }
+
+    _theme = &theme;
+    _bg = create_bg(theme);
+    _bg_map = _bg.map();
+
+    if(_camera)
+    {
+        _bg.set_camera(*_camera);
+    }
+}
+
+void room_view::_plant_grass(int initial_seed)
+{
+    unsigned seed = unsigned(initial_seed);
+
+    for(int patch = 0; patch < grass_patches; ++patch)
+    {
+        int width = 4 + next_seed(seed) % 6;
+        int height = 3 + next_seed(seed) % 3;
+        int column = _interior_left() + 1 + next_seed(seed) % bn::max(_layout.width - width - 2, 1);
+        int row = _interior_top() + 1 + next_seed(seed) % bn::max(_layout.height - height - 2, 1);
+
+        for(int y = row; y < row + height; ++y)
+        {
+            for(int x = column; x < column + width; ++x)
+            {
+                if(room::get(x, y) == room::cells::floor)
+                {
+                    room::set(x, y, room::cells::grass);
+                }
+            }
+        }
+    }
+}
+
+void room_view::_plant_bushes(const floor_room& value)
+{
+    for(int side = 0; side < 4; ++side)
+    {
+        if(_doors[side] && value.overgrown[side])
+        {
+            int column, row, width, height;
+            _bush_area(direction(side), column, row, width, height);
+            _fill(column, row, width, height, room::cells::bush);
+        }
+    }
+}
+
+void room_view::_bush_area(direction side, int& column, int& row, int& width, int& height) const
+{
+    int half = room_layouts::door_width / 2;
+
+    switch(side)
+    {
+
+    case direction::north:
+        column = _door_column() - half;
+        row = _interior_top();
+        width = room_layouts::door_width;
+        height = 1;
+        break;
+
+    case direction::south:
+        column = _door_column() - half;
+        row = _interior_top() + _layout.height - 1;
+        width = room_layouts::door_width;
+        height = 1;
+        break;
+
+    case direction::west:
+        column = _interior_left();
+        row = _door_row() - half;
+        width = 1;
+        height = room_layouts::door_width;
+        break;
+
+    default:
+        column = _interior_left() + _layout.width - 1;
+        row = _door_row() - half;
+        width = 1;
+        height = room_layouts::door_width;
+        break;
+    }
+}
+
 void room_view::_render()
 {
     int stairs_column = _door_column() - 1;
@@ -250,7 +433,7 @@ void room_view::_render()
 
             case room::cells::floor:
                 if(room::get(column, row - 1) == room::cells::wall ||
-                        room::get(column, row - 1) == room::cells::door)
+                   room::get(column, row - 1) == room::cells::door || room::get(column, row - 1) == room::cells::bush)
                 {
                     tile = tiles::floor_shadow;
                 }
@@ -270,6 +453,14 @@ void room_view::_render()
 
             case room::cells::stairs:
                 tile = quad_tile(tiles::stairs, column - stairs_column, row - stairs_row);
+                break;
+
+            case room::cells::grass:
+                tile = tiles::tall_grass;
+                break;
+
+            case room::cells::bush:
+                tile = tiles::bush;
                 break;
 
             default:

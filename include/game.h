@@ -4,17 +4,19 @@
 #include "bn_camera_ptr.h"
 #include "bn_optional.h"
 #include "bn_random.h"
+#include "bn_unique_ptr.h"
 #include "bn_vector.h"
 
+#include "boss.h"
 #include "enemy.h"
 #include "floor_map.h"
+#include "floor_theme.h"
 #include "hud.h"
 #include "message_box.h"
 #include "overlay.h"
 #include "player.h"
 #include "projectiles.h"
 #include "room_view.h"
-#include "snorlax_boss.h"
 
 class game
 {
@@ -49,7 +51,7 @@ private:
     bn::vector<enemy, 6> _enemies;
     bn::vector<outline, 6> _outlines;
     bn::vector<effect, 10> _effects;
-    bn::optional<snorlax_boss> _boss;
+    bn::unique_ptr<boss> _boss;
     bn::optional<bn::sprite_ptr> _flute_pickup;
     hud _hud;
     floor_map _floor;
@@ -69,6 +71,11 @@ private:
         return _floor[_room];
     }
 
+    [[nodiscard]] const floor_theme& _theme() const
+    {
+        return floor_themes::get(_floor_number);
+    }
+
     void _start_floor();
 
     void _enter_room(int index, bn::optional<direction> entered_from);
@@ -82,6 +89,14 @@ private:
     void _handle_enemy_attacks();
 
     void _update_boss();
+
+    void _spawn_boss();
+
+    void _handle_cut();
+
+    [[nodiscard]] status_effect _roll_status(move_id move);
+
+    void _after_player_hit(const attack& hit, const hit_result& result, enemy* target);
 
     void _update_flute();
 

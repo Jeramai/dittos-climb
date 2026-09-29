@@ -18,6 +18,8 @@ namespace room
         constexpr char floor = '.';
         constexpr char door = 'D';
         constexpr char stairs = 'S';
+        constexpr char grass = '"';
+        constexpr char bush = 'B';
     }
 
     void clear();
