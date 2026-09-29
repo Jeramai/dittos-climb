@@ -2,6 +2,7 @@
 """Generates the placeholder sprites, tilesets and palettes."""
 
 import json
+import math
 from pathlib import Path
 
 from PIL import Image
@@ -50,6 +51,8 @@ COLORS = {
     "L": (112, 128, 152),
     "O": (160, 152, 192),
     "P": (104, 96, 136),
+    "F": (200, 96, 56),
+    "f": (240, 160, 96),
 }
 
 DITTO = [
@@ -917,20 +920,22 @@ EMBER = [
 
 VULPIX_TOP = [
     "",
-    "   kk    kk",
-    "  kbok  kobk",
-    "  kbook koobk",
-    "   koookooook  kk",
-    "   koowooowok kook",
-    "    kookoookk koook",
-    "    koooooook kooook",
-    "     kocccok  koook",
-    "    kooccccokkoook",
-    "    koocccoooook",
+    "         kk  kk",
+    "        kbFkkFbk",
+    " kk kk  kFffFFFk",
+    "kffkffkkFfFFFFFk",
+    "kfFkfFkkFFFwkFFk",
+    " kFFFFkkFFFFFFck",
+    "kffkFFkkcFFFFckk",
+    "kfFkFFFFkcFFFk",
+    " kkFFFFFFkccck",
+    "  kFFFFFFFFcck",
+    "   kFFFFFFFFk",
+    "    kFkkkkFk",
 ]
 
-VULPIX_1 = [row[:16] for row in VULPIX_TOP + ["    kbk kbkkk", "    kkk kkk"]]
-VULPIX_2 = [row[:16] for row in VULPIX_TOP + ["   kbk   kbkk", "   kkk   kkk"]]
+VULPIX_1 = VULPIX_TOP + ["    kbk  kbk", "    kk   kk"]
+VULPIX_2 = VULPIX_TOP + ["   kbk    kbk", "   kk     kk"]
 
 PONYTA_TOP = [
     "",
@@ -952,21 +957,22 @@ PONYTA_2 = [row[:16] for row in PONYTA_TOP + ["   kbbk    kbbk", "   kkk     kkk
 
 GROWLITHE_TOP = [
     "",
-    "   kk     kk",
-    "  kook   kook",
-    "  koookkkoook",
-    "  kookoookook",
-    "  kooowooowok",
-    "   kccookccck",
-    "  kccccccccck",
-    "  koookkkoook  kk",
-    " koooooooooookcck",
-    " kokoookoookookk",
-    "  kooooooooook",
+    "         kk  kk",
+    "        kockkcok",
+    "  kkk   kccccook",
+    " kccck kccoooook",
+    " kcccck kooowkok",
+    "  kccckkoooookok",
+    "   kckoookooocck",
+    "   kkoookoocccck",
+    "  kookoookoccck",
+    "  kookoooooccck",
+    "  koooooooocck",
+    "   koooooooook",
 ]
 
-GROWLITHE_1 = [row[:16] for row in GROWLITHE_TOP + ["  kook    kook", "  kkk     kkk"]]
-GROWLITHE_2 = [row[:16] for row in GROWLITHE_TOP + [" kook      kook", " kkk       kkk"]]
+GROWLITHE_1 = GROWLITHE_TOP + ["   kook  kook", "   kkk   kkk"]
+GROWLITHE_2 = GROWLITHE_TOP + ["  kook    kook", "  kkk     kkk"]
 
 MAGMAR_TOP = [
     "",
@@ -1587,17 +1593,18 @@ ABRA_2 = ABRA_TOP + ["  kyk    kyk", "  kkk    kkk"]
 
 KADABRA_TOP = [
     "",
-    "  kk      kk",
-    " kyyk    kyyk",
-    " kyyykkkkyyyk",
-    "  kyyyyyyyyk",
-    "  kynkyyknyk",
-    "  kyyyyyyyyk  kk",
-    "   kyykkyyk  ksk",
-    "  kbbkyykbbkksk",
-    " kbbbkkkkbbbkk",
-    "  kkyyyyyykk",
-    "   kyyxxyyk",
+    " kk      kk",
+    " kyk    kyk   kk",
+    " kyykkkkyyk  ksk",
+    "  kyynnyyk   ksk",
+    "  kykyykyk    kk",
+    "  kyyyyyyk   ksk",
+    " kbkyyyykbk  ksk",
+    "kbkkbbbbkkbk kyk",
+    "kk kbbyybbkkkyyk",
+    "   kbyyyybkkkk",
+    "   kyyyyyyk",
+    "    kyyyyk",
 ]
 
 KADABRA_1 = KADABRA_TOP + ["   kyk  kyk", "   kkk  kkk"]
@@ -1783,11 +1790,16 @@ def arbok_frame(step, charging):
     for i in range(10):
         cx = 16 + (6 if (i // 2 + step) % 2 else -6) * (1 if i > 4 else 0)
         ellipse(grid, cx, 30 - i * 1.2, 5, 2.5, "z")
-    ellipse(grid, 16, 14, 11, 9, "z")
-    ellipse(grid, 16, 15, 7, 6, "y")
-    ellipse(grid, 16, 15, 4.5, 4, "n")
-    grid[13][14] = grid[13][18] = "k"
-    grid[16][16] = "k"
+    ellipse(grid, 16, 15, 12, 9, "Z")
+    ellipse(grid, 16, 15, 11, 8, "z")
+    for cx in (10, 22):
+        ellipse(grid, cx, 13, 3.5, 3, "y")
+        ellipse(grid, cx, 13, 2.2, 1.8, "n")
+        grid[13][cx] = "k"
+    for x in range(9, 24):
+        y = 19 - round(2.5 * math.cos((x - 16) / 7 * math.pi / 2))
+        grid[y][x] = "y"
+        grid[y + 1][x] = "k"
     ellipse(grid, 16, 5, 5, 3.5, "z")
     grid[4][14] = grid[4][18] = "w" if charging else "e"
     for x in range(14, 19):
@@ -1814,48 +1826,74 @@ def weezing_frame(step, charging):
 
 def pidgeot_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
-    wing = 2 * step
-    for side in (-1, 1):
+    lift = 2 * step
+    wing = [(12, 11), (20, 9 - lift), (31, 5 - lift), (31, 9 - lift), (29, 13 - lift), (30, 15 - lift),
+            (26, 16 - lift), (26, 18), (22, 18), (20, 20)]
+    for side in (1, -1):
+        pts = wing if side == 1 else mirrored(wing)
+        polygon(grid, pts, "x")
         for i in range(12):
             x = 16 + side * (4 + i)
-            top = 8 + i // 2 - wing
-            for y in range(top, 18 + i // 4):
-                if 0 <= x < 32 and 0 <= y < 32:
-                    grid[y][x] = "b" if y < top + 5 else "x"
-    ellipse(grid, 16, 17, 5.5, 7, "c")
-    ellipse(grid, 16, 10, 4, 3.5, "b")
-    for i, x in enumerate(range(12, 18)):
-        grid[3 + (i % 2)][x] = "n"
-        grid[2 + (i % 2)][x + 1] = "y"
-    for x in range(18, 22):
-        grid[11][x] = "y"
-    grid[9][18] = "w" if charging else "k"
-    for y in range(23, 31):
-        for x in range(13 - (y - 23) // 2, 20 + (y - 23) // 2):
-            grid[y][x] = "n" if (x + y) % 3 == 0 else "b"
+            column = [y for y in range(32) if grid[y][x] == "x"]
+            if column:
+                for y in column[:2]:
+                    grid[y][x] = "b"
+                if i > 7:
+                    for y in column[2:]:
+                        grid[y][x] = "b"
+    for index, color in enumerate("nynyn"):
+        angle = math.radians(50 + index * 20)
+        for r in range(9):
+            x = 16 + math.cos(angle) * r * 1.3
+            y = 21 + math.sin(angle) * r * 1.1
+            if 0 <= round(y) < 32:
+                ellipse(grid, x, y, 1.2, 1.2, color)
+    ellipse(grid, 16, 17, 5, 7, "c")
+    ellipse(grid, 16, 9, 4, 3.5, "x")
+    for i in range(10):
+        x = 16 - i * 0.9
+        y = 5 - i * 0.5 + (i * i) * 0.02
+        grid[max(0, round(y))][round(x)] = "n"
+        grid[max(0, round(y) + 1)][round(x) + 1] = "y"
+    grid[9][14] = grid[9][18] = "w" if charging else "k"
+    grid[9][13] = grid[9][19] = "k"
+    grid[11][16] = grid[12][16] = "q"
+    grid[11][15] = "q"
     return ["".join(row) for row in outline(grid)]
 
 
 def articuno_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
-    wing = 2 * step
-    for side in (-1, 1):
+    lift = 2 * step
+    wing = [(12, 10), (20, 9 - lift), (31, 3 - lift), (31, 7 - lift), (28, 11 - lift), (29, 13 - lift),
+            (25, 14 - lift), (25, 16), (21, 16), (20, 18)]
+    for side in (1, -1):
+        pts = wing if side == 1 else mirrored(wing)
+        polygon(grid, pts, "i")
         for i in range(12):
             x = 16 + side * (4 + i)
-            top = 7 + i // 2 - wing
-            for y in range(top, 16 + i // 4):
-                if 0 <= x < 32 and 0 <= y < 32:
-                    grid[y][x] = "i" if y > top + 1 else "w"
-    ellipse(grid, 16, 16, 5, 6.5, "i")
-    ellipse(grid, 16, 9, 3.5, 3.5, "i")
-    for i, x in enumerate(range(14, 19)):
-        grid[4 - (i % 2)][x] = "B"
-    for x in range(18, 21):
-        grid[10][x] = "s"
-    grid[8][17] = "w" if charging else "k"
-    for y in range(22, 31):
-        for x in range(14 - (y - 22) // 3, 19 + (y - 22) // 3):
-            grid[y][x] = "B"
+            top = next((y for y in range(32) if grid[y][x] == "i"), None)
+            if top is not None:
+                grid[top][x] = "w"
+                if i > 8:
+                    for y in range(top + 1, 32):
+                        if grid[y][x] == "i":
+                            grid[y][x] = "B"
+    for t in range(40):
+        y = 18 + t * 0.33
+        x = 16 + 4 * math.sin(t / 6)
+        width = 2.6 - t * 0.04
+        ellipse(grid, x, y, width, 1.2, "B")
+        if width > 1.4:
+            grid[round(y)][round(x)] = "u"
+    ellipse(grid, 16, 15, 4.5, 6, "i")
+    ellipse(grid, 16, 15, 2.5, 4, "w")
+    ellipse(grid, 16, 8, 3.5, 3.2, "i")
+    for x, y in ((15, 3), (15, 2), (16, 1), (16, 0), (17, 2), (18, 3), (14, 4), (16, 4), (16, 3), (17, 4), (15, 5), (16, 5)):
+        grid[y][x] = "B"
+    for x in (14, 18):
+        grid[8][x] = "w" if charging else "e"
+    grid[10][16] = grid[11][16] = "s"
     return ["".join(row) for row in outline(grid)]
 
 
@@ -1891,30 +1929,29 @@ def moltres_frame(step, charging):
 
 def zapdos_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
-    wing = 2 * step
-    for side in (-1, 1):
-        for i in range(12):
-            x = 16 + side * (4 + i)
-            top = 8 + i // 2 - wing + (i % 3)
-            for y in range(top, 18 + i // 3):
-                if 0 <= x < 32 and 0 <= y < 32:
-                    grid[y][x] = "y"
-            if i % 3 == 0 and 0 <= x < 32:
-                grid[top][x] = "k"
-    ellipse(grid, 16, 17, 6, 7, "y")
+    lift = 2 * step
+    tips = [(31, 1 - lift), (31, 7 - lift), (29, 13 - lift), (25, 17 - lift), (21, 20)]
+    for side in (1, -1):
+        for index, (tx, ty) in enumerate(tips):
+            base = [(16 + side * 3, 8 + index * 2), (16 + side * 3, 13 + index * 2)]
+            polygon(grid, [base[0], (16 + side * (tx - 16), ty), base[1]], "y" if index % 2 == 0 else "g")
+    ellipse(grid, 16, 17, 5, 6.5, "y")
+    for tip in (13, 16, 19):
+        polygon(grid, [(tip - 2, 17), (tip + 2, 17), (tip, 22)], "g")
     ellipse(grid, 16, 9, 4, 3.5, "y")
-    for i, x in enumerate(range(13, 20)):
-        grid[4 - (i % 2)][x] = "y"
-    for x in range(17, 22):
-        grid[10][x] = "o"
-    grid[9][21] = "o"
-    grid[8][17] = "w" if charging else "k"
-    for y in (15, 18, 21):
-        for x in range(13, 20):
-            grid[y][x] = "k"
-    for x in (13, 19):
-        for y in range(24, 29):
+    for tip, height in ((12, 3), (14, 1), (16, 0), (18, 1), (20, 3)):
+        polygon(grid, [(tip - 1, 8), (tip + 1.5, 8), (tip + 0.5, height)], "y")
+    polygon(grid, [(14.5, 10), (18.5, 10), (16.5, 15)], "o")
+    for x, y in ((14, 8), (18, 8)):
+        grid[y][x] = "w" if charging else "k"
+    grid[7][13] = grid[7][19] = "k"
+    for tip in (13, 19):
+        polygon(grid, [(tip - 2, 22), (tip + 3, 22), (tip + 0.5, 30)], "y")
+    for x in (14, 18):
+        for y in range(23, 28):
             grid[y][x] = "o"
+        for dx in (-1, 0, 1):
+            grid[28][x + dx] = "o"
     return ["".join(row) for row in outline(grid)]
 
 
@@ -1997,6 +2034,23 @@ def outline(grid):
                     result[y][x] = "k"
                     break
     return result
+
+
+def polygon(grid, points, color):
+    size = len(grid)
+    for y in range(size):
+        for x in range(len(grid[0])):
+            px, py = x + 0.5, y + 0.5
+            inside = False
+            for (x1, y1), (x2, y2) in zip(points, points[1:] + points[:1]):
+                if (y1 > py) != (y2 > py) and px < x1 + (py - y1) * (x2 - x1) / (y2 - y1):
+                    inside = not inside
+            if inside:
+                grid[y][x] = color
+
+
+def mirrored(points):
+    return [(32 - x, y) for x, y in points]
 
 
 def snorlax_frame(step, asleep):
