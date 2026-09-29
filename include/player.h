@@ -122,6 +122,7 @@ private:
     int _dash_frames = 0;
     bool _digging = false;
     bool _self_destructing = false;
+    bn::fixed_point _slide;
     bn::fixed_point _dash_velocity;
     int _area_frames = 0;
     int _area_serial = 0;
@@ -144,7 +145,9 @@ private:
 
     void _finish_transform(message_box& messages);
 
-    void _move(const bn::fixed_point& delta);
+    bool _move(const bn::fixed_point& delta);
+
+    [[nodiscard]] bool _on_slippery_ice() const;
 
     void _update_water(message_box& messages);
 

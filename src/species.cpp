@@ -1,5 +1,6 @@
 #include "species.h"
 
+#include "bn_sprite_items_articuno.h"
 #include "bn_sprite_items_beedrill.h"
 #include "bn_sprite_items_bulbasaur.h"
 #include "bn_sprite_items_charmander.h"
@@ -10,6 +11,7 @@
 #include "bn_sprite_items_growlithe.h"
 #include "bn_sprite_items_gyarados.h"
 #include "bn_sprite_items_horsea.h"
+#include "bn_sprite_items_jynx.h"
 #include "bn_sprite_items_machop.h"
 #include "bn_sprite_items_magikarp.h"
 #include "bn_sprite_items_magmar.h"
@@ -17,6 +19,7 @@
 #include "bn_sprite_items_meowth.h"
 #include "bn_sprite_items_moltres.h"
 #include "bn_sprite_items_oddish.h"
+#include "bn_sprite_items_omanyte.h"
 #include "bn_sprite_items_onix.h"
 #include "bn_sprite_items_paras.h"
 #include "bn_sprite_items_pikachu.h"
@@ -25,6 +28,8 @@
 #include "bn_sprite_items_porygon.h"
 #include "bn_sprite_items_rattata.h"
 #include "bn_sprite_items_sandshrew.h"
+#include "bn_sprite_items_seel.h"
+#include "bn_sprite_items_shellder.h"
 #include "bn_sprite_items_snorlax.h"
 #include "bn_sprite_items_squirtle.h"
 #include "bn_sprite_items_staryu.h"
@@ -103,6 +108,16 @@ namespace
           &bn::sprite_items::squirtle },
         { "MOLTRES", pokemon_type::fire, pokemon_type::flying, 70, 1.4, move_id::ember, move_id::sky_attack,
           &bn::sprite_items::moltres },
+        { "SEEL", pokemon_type::water, pokemon_type::none, 18, 1, move_id::headbutt, move_id::aurora_beam,
+          &bn::sprite_items::seel },
+        { "JYNX", pokemon_type::ice, pokemon_type::psychic, 18, 1, move_id::ice_punch, move_id::lovely_kiss,
+          &bn::sprite_items::jynx },
+        { "SHELLDER", pokemon_type::water, pokemon_type::none, 14, 0.9, move_id::clamp, move_id::ice_beam,
+          &bn::sprite_items::shellder },
+        { "OMANYTE", pokemon_type::rock, pokemon_type::water, 16, 0.8, move_id::water_gun, move_id::rock_slide,
+          &bn::sprite_items::omanyte },
+        { "ARTICUNO", pokemon_type::ice, pokemon_type::flying, 70, 1.4, move_id::ice_shard, move_id::blizzard,
+          &bn::sprite_items::articuno },
     };
 }
 

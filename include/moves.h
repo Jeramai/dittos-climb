@@ -72,6 +72,14 @@ enum class move_id
     fire_punch,
     smog,
     sky_attack,
+    aurora_beam,
+    ice_punch,
+    lovely_kiss,
+    clamp,
+    ice_beam,
+    rock_slide,
+    ice_shard,
+    blizzard,
 };
 
 enum class status_effect
@@ -81,6 +89,7 @@ enum class status_effect
     poison,
     sleep,
     confusion,
+    freeze,
 };
 
 struct move_data

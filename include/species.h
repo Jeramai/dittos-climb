@@ -41,6 +41,11 @@ enum class species_id
     magmar,
     squirtle,
     moltres,
+    seel,
+    jynx,
+    shellder,
+    omanyte,
+    articuno,
 };
 
 namespace species_frames

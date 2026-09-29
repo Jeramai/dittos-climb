@@ -15,6 +15,14 @@ enum class boss_kind
     gyarados,
     zapdos,
     moltres,
+    articuno,
+};
+
+enum class gate_kind
+{
+    none,
+    bush,
+    ice,
 };
 
 enum class hazard_kind
@@ -44,6 +52,8 @@ struct floor_theme
     bool water;
     hazard_kind hazard;
     bool ember_rain;
+    bool ice_floor;
+    gate_kind gate;
     int overgrown_percent;
     boss_kind boss;
     species_id rare;

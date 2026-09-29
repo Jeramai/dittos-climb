@@ -20,6 +20,7 @@
 
 #include "gyarados_boss.h"
 #include "journal.h"
+#include "articuno_boss.h"
 #include "moltres_boss.h"
 #include "onix_boss.h"
 #include "projectile_frames.h"
@@ -513,10 +514,15 @@ void game::_spawn_boss()
         _boss.reset(new zapdos_boss(position, _camera));
         _messages.show("ZAPDOS appeared in a flash of lightning!");
     }
-    else
+    else if(_theme().boss == boss_kind::moltres)
     {
         _boss.reset(new moltres_boss(position, _camera));
         _messages.show("MOLTRES rose from the magma!");
+    }
+    else
+    {
+        _boss.reset(new articuno_boss(position, _camera));
+        _messages.show("A freezing wind... ARTICUNO appeared!");
     }
 }
 
@@ -773,11 +779,20 @@ void game::_handle_explosions()
 
 void game::_handle_cut()
 {
+    gate_kind gate = _theme().gate;
+
+    if(gate == gate_kind::none)
+    {
+        return;
+    }
+
+    bool ice = gate == gate_kind::ice;
+    pokemon_type needed = ice ? pokemon_type::fire : pokemon_type::grass;
     const species_data& body = _player.body();
-    bool grass_form = body.type_1 == pokemon_type::grass || body.type_2 == pokemon_type::grass;
+    bool can_clear = body.type_1 == needed || body.type_2 == needed;
     bn::fixed_point feet = _player.position() + bn::fixed_point(0, 4);
 
-    if(! grass_form)
+    if(! can_clear)
     {
         for(bn::fixed_point offset : { bn::fixed_point(-10, 0), bn::fixed_point(10, 0), bn::fixed_point(0, -10),
                                        bn::fixed_point(0, 10) })
@@ -786,7 +801,7 @@ void game::_handle_cut()
 
             if(room::at(probe.x(), probe.y()) == room::cells::bush)
             {
-                _messages.show("A GRASS POKEMON could CUT this bush.");
+                _messages.show(ice ? "A FIRE POKEMON could melt this ice." : "A GRASS POKEMON could CUT this bush.");
                 return;
             }
         }
@@ -799,7 +814,7 @@ void game::_handle_cut()
         return;
     }
 
-    _messages.show("DITTO used CUT!");
+    _messages.show(ice ? "DITTO melted the ice!" : "DITTO used CUT!");
     _spawn_effect(feet);
 
     for(int side = 0; side < 4; ++side)

@@ -23,6 +23,8 @@ namespace water_frames
     constexpr int drop = 1;
     constexpr int star = 2;
     constexpr int dragon = 3;
+    constexpr int ice_shard = 4;
+    constexpr int heart = 5;
 }
 
 namespace electric_frames
@@ -39,6 +41,7 @@ namespace cloud_frames
     constexpr int sleep = 1;
     constexpr int fire = 2;
     constexpr int smog = 3;
+    constexpr int snow = 4;
 }
 
 #endif

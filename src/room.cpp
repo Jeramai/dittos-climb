@@ -21,7 +21,8 @@ namespace
             return ! can_swim;
         }
 
-        return value != cells::floor && value != cells::stairs && value != cells::grass && value != cells::plate;
+        return value != cells::floor && value != cells::stairs && value != cells::grass && value != cells::plate &&
+               value != cells::ice;
     }
 
     void set_axis(int first, int last, int screen_size, bn::fixed& min, bn::fixed& max, int map_size)

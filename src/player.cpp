@@ -30,6 +30,8 @@ namespace
     constexpr int poison_tick_frames = 45;
     constexpr int sleep_frames = 60;
     constexpr int confusion_frames = 150;
+    constexpr int freeze_frames = 80;
+    constexpr bn::fixed slide_speed = 2.2;
     constexpr bn::fixed current_speed = 0.6;
     constexpr int leftovers_frames = 120;
     constexpr int rare_candy_hp = 5;
@@ -163,9 +165,21 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
         }
         else
         {
-            if(moving)
+            if(_slide != bn::fixed_point())
+            {
+                if(! _on_slippery_ice() || ! _move(_slide))
+                {
+                    _slide = bn::fixed_point();
+                }
+            }
+            else if(moving)
             {
                 _move(directions::vectors[move_direction] * (slowed ? body().speed / 2 : body().speed));
+
+                if(_on_slippery_ice())
+                {
+                    _slide = directions::vectors[move_direction] * slide_speed;
+                }
             }
 
             if(outline_below && ! _form && bn::keypad::b_pressed())
@@ -275,6 +289,24 @@ void player::apply_status(status_effect effect, message_box& messages)
         messages.show("DITTO became confused!");
         break;
 
+    case status_effect::freeze:
+    {
+        const species_data& current = body();
+
+        if(current.type_1 == pokemon_type::fire || current.type_2 == pokemon_type::fire ||
+           current.type_1 == pokemon_type::ice || current.type_2 == pokemon_type::ice)
+        {
+            _status = status_effect::none;
+            return;
+        }
+
+        _status_frames = freeze_frames;
+        _charge_frames = 0;
+        _slide = bn::fixed_point();
+        messages.show("DITTO was frozen solid!");
+        break;
+    }
+
     default:
         _status_frames = sleep_frames;
         _charge_frames = 0;
@@ -363,11 +395,15 @@ bool player::_update_status(message_box& messages)
         _lose_hp(1);
     }
 
-    bool asleep = _status == status_effect::sleep;
+    bool asleep = _status == status_effect::sleep || _status == status_effect::freeze;
 
     if(--_status_frames <= 0)
     {
-        if(asleep)
+        if(_status == status_effect::freeze)
+        {
+            messages.show("DITTO thawed out!");
+        }
+        else if(asleep)
         {
             messages.show("DITTO woke up!");
         }
@@ -435,6 +471,7 @@ void player::set_position(const bn::fixed_point& position)
     _position = position;
     _dash_frames = 0;
     _digging = false;
+    _slide = bn::fixed_point();
     _dodge_frames = 0;
     _area_frames = 0;
     _update_sprite(false);
@@ -574,14 +611,19 @@ void player::_finish_transform(message_box& messages)
     messages.show(message);
 }
 
-void player::_move(const bn::fixed_point& delta)
+bool player::_move(const bn::fixed_point& delta)
 {
     bool can_swim = species::can_swim(body());
+    bool moved = true;
     bn::fixed_point next(_position.x() + delta.x(), _position.y());
 
     if(! room::feet_are_blocked(next, can_swim))
     {
         _position = next;
+    }
+    else if(delta.x() != 0)
+    {
+        moved = false;
     }
 
     next = bn::fixed_point(_position.x(), _position.y() + delta.y());
@@ -590,6 +632,24 @@ void player::_move(const bn::fixed_point& delta)
     {
         _position = next;
     }
+    else if(delta.y() != 0)
+    {
+        moved = false;
+    }
+
+    return moved;
+}
+
+bool player::_on_slippery_ice() const
+{
+    const species_data& current = body();
+
+    if(current.type_1 == pokemon_type::ice || current.type_2 == pokemon_type::ice)
+    {
+        return false;
+    }
+
+    return room::at(_position.x(), _position.y() + 4) == room::cells::ice;
 }
 
 void player::_update_water(message_box& messages)

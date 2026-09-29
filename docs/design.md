@@ -78,6 +78,11 @@ holds a reward that shows once the room is clear:
 
 The pause screen shows the held item and the journal count.
 
+### Save and quit (later)
+
+No save slots: a run is meant to be short. A "save and quit" option on the pause screen could store the current
+run once, to resume it later.
+
 ### Poké Mart (later)
 
 - No Pokémon Center: Transform already heals Ditto.
@@ -182,4 +187,9 @@ Bonus floors after the end: Steel, Dark and Fairy.
    Spin), Growlithe (Bite, Flamethrower), Magmar (Fire Punch, Smog) — Magmar replaces Slugma, which is Gen 2.
    Rare: Squirtle. Moltres orbits Ditto with Flamethrower bursts and a Fire Spin ring, and glows before a Sky
    Attack sweep; the ember rain falls faster in its room.
-9. Then one floor per milestone.
+9. **Floor 7.** (done) Seafoam Cave: ice patches make Ditto slide in a straight line until it hits a wall or
+   leaves the ice (Ice forms keep their grip). Side doors can be frozen shut; a Fire form melts the ice (the same
+   gate system as the forest bushes). New status Freeze: no action for a moment; Fire and Ice types are immune.
+   Seel (Headbutt, Aurora Beam), Jynx (Ice Punch, Lovely Kiss), Shellder (Clamp, Ice Beam). Rare: Omanyte.
+   Articuno: Ice Shard bursts, a Blizzard ring of snow clouds, a telegraphed Ice Beam and a diving attack.
+10. Then one floor per milestone.

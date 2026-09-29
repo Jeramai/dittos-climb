@@ -223,11 +223,23 @@ void enemy::apply_status(status_effect effect)
     }
 
     _status = effect;
+    if(effect == status_effect::freeze)
+    {
+        const species_data& current = data();
+
+        if(current.type_1 == pokemon_type::fire || current.type_2 == pokemon_type::fire ||
+           current.type_1 == pokemon_type::ice || current.type_2 == pokemon_type::ice)
+        {
+            _status = status_effect::none;
+            return;
+        }
+    }
+
     _status_frames = effect == status_effect::paralysis ? paralysis_frames :
                      effect == status_effect::poison ? poison_frames :
                      effect == status_effect::confusion ? confusion_frames : sleep_frames;
 
-    if(effect == status_effect::sleep && _state != state::spawning)
+    if((effect == status_effect::sleep || effect == status_effect::freeze) && _state != state::spawning)
     {
         _state = state::moving;
     }
@@ -246,7 +258,7 @@ bool enemy::_update_status()
         _flash_frames = 2;
     }
 
-    bool asleep = _status == status_effect::sleep;
+    bool asleep = _status == status_effect::sleep || _status == status_effect::freeze;
 
     if(--_status_frames <= 0)
     {

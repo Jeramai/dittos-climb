@@ -23,6 +23,7 @@ namespace
         constexpr int stairs = 7;
         constexpr int floor_crack = 11;
         constexpr int tall_grass = 12;
+        constexpr int ice = 12;
         constexpr int bush = 13;
         constexpr int water = 14;
         constexpr int flow_right = 15;
@@ -53,7 +54,7 @@ namespace
     bool walkable(char value)
     {
         return value == room::cells::floor || value == room::cells::stairs || value == room::cells::grass ||
-               value == room::cells::plate || room::is_water(value);
+               value == room::cells::plate || value == room::cells::ice || room::is_water(value);
     }
 
     int next_seed(unsigned& seed)
@@ -135,6 +136,11 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked,
     if(theme.hazard != hazard_kind::none && value.kind != room_kind::start)
     {
         _plant_plates(seed);
+    }
+
+    if(theme.ice_floor && value.kind != room_kind::start)
+    {
+        _plant_ice(seed);
     }
 
     _plant_bushes(value);
@@ -506,6 +512,30 @@ void room_view::_plant_plates(int initial_seed)
     }
 }
 
+void room_view::_plant_ice(int initial_seed)
+{
+    unsigned seed = unsigned(initial_seed) * 11 + 5;
+
+    for(int patch = 0; patch < 2; ++patch)
+    {
+        int width = 6 + next_seed(seed) % 5;
+        int height = 4 + next_seed(seed) % 3;
+        int column = _interior_left() + 1 + next_seed(seed) % bn::max(_layout.width - width - 2, 1);
+        int row = _interior_top() + 1 + next_seed(seed) % bn::max(_layout.height - height - 2, 1);
+
+        for(int y = row; y < row + height; ++y)
+        {
+            for(int x = column; x < column + width; ++x)
+            {
+                if(room::get(x, y) == room::cells::floor)
+                {
+                    room::set(x, y, room::cells::ice);
+                }
+            }
+        }
+    }
+}
+
 void room_view::_plant_bushes(const floor_room& value)
 {
     for(int side = 0; side < 4; ++side)
@@ -609,6 +639,10 @@ void room_view::_render()
 
             case room::cells::water:
                 tile = tiles::water;
+                break;
+
+            case room::cells::ice:
+                tile = tiles::ice;
                 break;
 
             case room::cells::plate:

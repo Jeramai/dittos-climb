@@ -87,6 +87,19 @@ namespace
         { "SMOG", "SMOG", pokemon_type::poison, 20, 20, cloud, 50, 1, 0, 0.8, 90, cloud_frames::smog,
           status_effect::poison, 40 },
         { "SKY ATTACK", "SKY ATK", pokemon_type::flying, 140, 5, dash, 70, 0, 0, 4.5, 16, 0 },
+        { "AURORA BEAM", "AURORA", pokemon_type::ice, 50, 15, shot, 34, 1, 0, 2.8, 45, water_frames::ice_shard,
+          status_effect::freeze, 10, false, water },
+        { "ICE PUNCH", "I.PUNCH", pokemon_type::ice, 55, 0, melee, 20, 0, 0, 0, 6, 0, status_effect::freeze, 10 },
+        { "LOVELY KISS", "L.KISS", pokemon_type::normal, 0, 10, shot, 50, 1, 0, 1.8, 50, water_frames::heart,
+          status_effect::sleep, 100, false, water },
+        { "CLAMP", "CLAMP", pokemon_type::water, 35, 0, melee, 18, 0, 0, 0, 6, 0 },
+        { "ICE BEAM", "I.BEAM", pokemon_type::ice, 90, 10, beam, 70, 6, 0, 5, 24, water_frames::ice_shard,
+          status_effect::freeze, 30, false, water },
+        { "ROCK SLIDE", "R.SLIDE", pokemon_type::rock, 60, 10, shot, 40, 3, 12, 2.4, 50, projectile_frames::rock },
+        { "ICE SHARD", "I.SHARD", pokemon_type::ice, 40, 0, shot, 20, 1, 0, 3.4, 40, water_frames::ice_shard,
+          no_status, 0, false, water },
+        { "BLIZZARD", "BLIZZARD", pokemon_type::ice, 60, 5, cloud, 70, 1, 0, 1, 90, cloud_frames::snow,
+          status_effect::freeze, 30 },
     };
 }
 

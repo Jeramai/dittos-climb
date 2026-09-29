@@ -1004,6 +1004,124 @@ SQUIRTLE_1 = [row[:16] for row in SQUIRTLE_TOP + ["   kiik kiik", "   kkk  kkk"]
 SQUIRTLE_2 = [row[:16] for row in SQUIRTLE_TOP + ["  kiik   kiik", "  kkk    kkk"]]
 
 
+SEEL_TOP = [
+    "",
+    "",
+    "     kkk",
+    "    kwwwk",
+    "   kwwwwwk",
+    "   kwkwkwk",
+    "   kwwnwwk",
+    "  kkwwwwwkkk",
+    " kwwwwwwwwwwk",
+    " kwwwwwwwwwwwk  kk",
+    "  kwwwwwwwwwwwkkwk",
+    "   kkwwwwwwwwwwwk",
+]
+
+SEEL_1 = [row[:16] for row in SEEL_TOP + ["    kiik  kiikk", "    kkk   kkk"]]
+SEEL_2 = [row[:16] for row in SEEL_TOP + ["   kiik    kiik", "   kkk     kkk"]]
+
+JYNX_TOP = [
+    "",
+    "    kkkkkk",
+    "   kyyyyyyk",
+    "  kyyyyyyyyk",
+    "  kyzzzzzzyk",
+    "  kyzkzzkzyk",
+    "  kyzznnzzyk",
+    "  kyyzzzzyyk",
+    " kyykmmmmkyyk",
+    "  kkmmmmmmkk",
+    "   kmmmmmmk",
+    "  kmmmmmmmmk",
+]
+
+JYNX_1 = JYNX_TOP + ["  kmmmmmmmmk", "   kkkkkkkk"]
+JYNX_2 = JYNX_TOP + [" kmmmmmmmmmmk", "  kkkkkkkkkk"]
+
+SHELLDER_1 = [
+    "",
+    "",
+    "      kkkk",
+    "    kkzzzzkk",
+    "   kzZzzzzZzk",
+    "  kzZzzZZzzZzk",
+    "  kzzkkkkkkzzk",
+    " kzzkwwkkwwkzzk",
+    " kzzkwkkkkwkzzk",
+    " kzzkkqqqqkkzzk",
+    "  kzZkqqqqkZzk",
+    "  kzzZzzzzZzzk",
+    "   kkzzzzzzkk",
+    "     kkkkkk",
+]
+
+SHELLDER_2 = [""] + SHELLDER_1[:-1]
+
+OMANYTE_1 = [
+    "",
+    "",
+    "     kkkkk",
+    "   kkiiiiikk",
+    "  kiiBBBBiiik",
+    " kiiBkkkkBiiik",
+    " kiBkiiiikBiik",
+    " kiBkiBBikBiik",
+    " kiiBkkkiBiik",
+    "  kiiBBBBiik",
+    "  kkkkkkkkkk",
+    " kcckcckcckk",
+    " kckkckkckk",
+    "  k  k  k",
+]
+
+OMANYTE_2 = [""] + OMANYTE_1[:-1]
+
+ICE_SHARD = [
+    "",
+    "   kk",
+    "  kwik",
+    " kwiik",
+    " kiiBk",
+    "  kiBk",
+    "   kk",
+]
+
+HEART = [
+    "",
+    " kk kk",
+    "kqqkqqk",
+    "kqwqqqk",
+    " kqqqk",
+    "  kqk",
+    "   k",
+]
+
+
+def articuno_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    wing = 2 * step
+    for side in (-1, 1):
+        for i in range(12):
+            x = 16 + side * (4 + i)
+            top = 7 + i // 2 - wing
+            for y in range(top, 16 + i // 4):
+                if 0 <= x < 32 and 0 <= y < 32:
+                    grid[y][x] = "i" if y > top + 1 else "w"
+    ellipse(grid, 16, 16, 5, 6.5, "i")
+    ellipse(grid, 16, 9, 3.5, 3.5, "i")
+    for i, x in enumerate(range(14, 19)):
+        grid[4 - (i % 2)][x] = "B"
+    for x in range(18, 21):
+        grid[10][x] = "s"
+    grid[8][17] = "w" if charging else "k"
+    for y in range(22, 31):
+        for x in range(14 - (y - 22) // 3, 19 + (y - 22) // 3):
+            grid[y][x] = "B"
+    return ["".join(row) for row in outline(grid)]
+
+
 def moltres_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
     wing = 2 * step
@@ -1881,6 +1999,114 @@ def lava_tile(state):
     return tile
 
 
+ICE_PALETTE = [
+    (8, 12, 20),
+    (176, 200, 216),
+    (152, 176, 200),
+    (216, 232, 240),
+    (120, 144, 168),
+    (48, 64, 88),
+    (72, 96, 128),
+    (112, 144, 176),
+    (80, 104, 136),
+    (168, 200, 224),
+    (104, 128, 152),
+    (144, 208, 240),
+    (200, 240, 255),
+    (248, 252, 255),
+    (88, 160, 208),
+    (32, 40, 56),
+]
+
+
+def ice_floor_tile(variant):
+    tile = blank(1)
+    for x, y in ((2, 2), (6, 5), (1, 6)):
+        tile[y][x] = 2
+    if variant:
+        tile[3][4] = tile[4][5] = 3
+    return tile
+
+
+def ice_shadow_tile():
+    tile = blank(4)
+    tile[2][3] = tile[6][6] = 10
+    return tile
+
+
+def ice_wall_top_tile():
+    tile = blank(5)
+    for x, y in ((1, 2), (5, 1), (3, 5), (6, 6)):
+        tile[y][x] = 6
+    return tile
+
+
+def ice_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [9] * 8
+    tile[7] = [8] * 8
+    for y in range(1, 7):
+        tile[y][(y * 3 + 2) % 8] = 8
+    tile[2][2] = tile[3][2] = 12
+    return tile
+
+
+def ice_door_tile():
+    tile = blank(14)
+    for y in range(8):
+        tile[y][(y * 3) % 8] = 12
+        tile[y][(y * 3 + 5) % 8] = 11
+    return tile
+
+
+def ice_stairs_tiles():
+    big = [[15] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 13
+            big[top + 1][x] = 3
+            big[top + 2][x] = 7
+    return split_quad(big)
+
+
+def frost_tile():
+    tile = ice_floor_tile(0)
+    tile[3][2] = tile[2][3] = tile[4][3] = tile[3][4] = 13
+    return tile
+
+
+def slippery_ice_tile():
+    tile = blank(11)
+    tile[1][2] = tile[1][3] = tile[2][1] = 13
+    tile[5][5] = tile[6][4] = 12
+    tile[4][1] = 14
+    return tile
+
+
+def ice_block_tile():
+    tile = blank(12)
+    for i in range(8):
+        tile[0][i] = tile[i][0] = 13
+        tile[7][i] = tile[i][7] = 14
+    tile[2][2] = tile[3][3] = 13
+    return tile
+
+
+ICE_TILES = [
+    blank(0),
+    ice_floor_tile(0),
+    ice_floor_tile(1),
+    ice_shadow_tile(),
+    ice_wall_top_tile(),
+    ice_wall_face_tile(),
+    ice_door_tile(),
+    *ice_stairs_tiles(),
+    frost_tile(),
+    slippery_ice_tile(),
+    ice_block_tile(),
+]
+
 VOLCANO_TILES = [
     blank(0),
     volcano_floor_tile(0),
@@ -2043,7 +2269,7 @@ def main():
     save_species("beedrill", BEEDRILL_1, BEEDRILL_2)
     save_species("venusaur", venusaur_frame(0, False), venusaur_frame(1, False), 32, [venusaur_frame(0, True)])
     save_sprite_sheet("clouds", [cloud_frame("y", "g"), cloud_frame("h", "p"), cloud_frame("o", "n"),
-                                 cloud_frame("d", "m")], 16)
+                                 cloud_frame("d", "m"), cloud_frame("w", "i")], 16)
     save_species("geodude", GEODUDE_1, GEODUDE_2)
     save_species("diglett", DIGLETT_1, DIGLETT_2, 16, [DIGLETT_MOUND])
     save_species("zubat", ZUBAT_1, ZUBAT_2)
@@ -2055,7 +2281,7 @@ def main():
     save_species("staryu", STARYU_1, STARYU_2)
     save_species("horsea", HORSEA_1, HORSEA_2)
     save_species("gyarados", gyarados_frame(0, False), gyarados_frame(1, False), 32, [gyarados_frame(0, True)])
-    save_sprite_sheet("water_projectiles", [BUBBLE, WATER_DROP, STAR, DRAGON_FIRE], 8)
+    save_sprite_sheet("water_projectiles", [BUBBLE, WATER_DROP, STAR, DRAGON_FIRE, ICE_SHARD, HEART], 8)
     save_species("pikachu", PIKACHU_1, PIKACHU_2)
     save_species("voltorb", VOLTORB_1, VOLTORB_2)
     save_species("magnemite", MAGNEMITE_1, MAGNEMITE_2)
@@ -2072,6 +2298,11 @@ def main():
     save_species("magmar", MAGMAR_1, MAGMAR_2)
     save_species("squirtle", SQUIRTLE_1, SQUIRTLE_2)
     save_species("moltres", moltres_frame(0, False), moltres_frame(1, False), 32, [moltres_frame(0, True)])
+    save_species("seel", SEEL_1, SEEL_2)
+    save_species("jynx", JYNX_1, JYNX_2)
+    save_species("shellder", SHELLDER_1, SHELLDER_2)
+    save_species("omanyte", OMANYTE_1, OMANYTE_2)
+    save_species("articuno", articuno_frame(0, False), articuno_frame(1, False), 32, [articuno_frame(0, True)])
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
@@ -2084,6 +2315,7 @@ def main():
     save_tiles("lake", LAKE_TILES, LAKE_PALETTE)
     save_tiles("plant", PLANT_TILES, PLANT_PALETTE)
     save_tiles("volcano", VOLCANO_TILES, VOLCANO_PALETTE)
+    save_tiles("ice", ICE_TILES, ICE_PALETTE)
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 
