@@ -37,13 +37,6 @@ namespace room_layouts
 
     constexpr room_layout start = { 26, 15, 0, {} };
     constexpr room_layout stairs = { 26, 15, 0, {} };
-    constexpr room_layout center = { 26, 13, 0, {} };
-
-    constexpr int center_counter_x = 8;
-    constexpr int center_counter_width = 10;
-    constexpr int center_counter_y = 2;
-    constexpr int center_pc_x = 21;
-    constexpr int center_pc_y = 1;
 }
 
 #endif

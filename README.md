@@ -15,7 +15,7 @@ make run
 
 `make assets` regenerates the placeholder art from `tools/gen_assets.py`.
 
-A test build can start in a room of one kind (1 combat, 2 Pokémon Center, 3 stairs), with every form registered:
+A test build can start in a room of one kind (1 combat, 2 stairs):
 
 ```
 make TARGET=test-kind-2 BUILD=build-test-2 USERFLAGS=-DDITTO_TEST_START_KIND=2

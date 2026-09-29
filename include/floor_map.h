@@ -8,7 +8,6 @@ enum class room_kind
 {
     start,
     combat,
-    center,
     stairs,
 };
 

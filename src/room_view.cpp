@@ -22,11 +22,7 @@ namespace
         constexpr int wall_face = 5;
         constexpr int door = 6;
         constexpr int stairs = 7;
-        constexpr int center_floor = 11;
-        constexpr int counter_top = 12;
-        constexpr int counter_front = 13;
-        constexpr int pc = 14;
-        constexpr int floor_crack = 18;
+        constexpr int floor_crack = 11;
     }
 
     alignas(int) bn::regular_bg_map_cell map_cells[room::columns * room::rows];
@@ -71,10 +67,6 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked)
         _layout = room_layouts::combat[value.layout];
         break;
 
-    case room_kind::center:
-        _layout = room_layouts::center;
-        break;
-
     case room_kind::stairs:
         _layout = room_layouts::stairs;
         break;
@@ -107,13 +99,6 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked)
     if(value.kind == room_kind::stairs)
     {
         _fill(_door_column() - 1, _door_row() - 1, 2, 2, room::cells::stairs);
-    }
-    else if(value.kind == room_kind::center)
-    {
-        _fill(_interior_left() + room_layouts::center_counter_x, _interior_top() + room_layouts::center_counter_y,
-              room_layouts::center_counter_width, 2, room::cells::counter);
-        _fill(_interior_left() + room_layouts::center_pc_x, _interior_top() + room_layouts::center_pc_y, 2, 2,
-              room::cells::pc);
     }
 
     room::set_camera_bounds(_left, _top - 2, _left + _width - 1, _top + _height);
@@ -205,19 +190,6 @@ bn::fixed_point room_view::interior_center() const
     return room::cell_center(_door_column(), _door_row()) - bn::fixed_point(room::tile_size / 2, 0);
 }
 
-bn::fixed_point room_view::chansey_position() const
-{
-    int column = _interior_left() + room_layouts::center_counter_x + room_layouts::center_counter_width / 2;
-    int row = _interior_top() + room_layouts::center_counter_y - 1;
-    return room::cell_center(column, row) - bn::fixed_point(room::tile_size / 2, 2);
-}
-
-bn::fixed_point room_view::pc_position() const
-{
-    return room::cell_center(_interior_left() + room_layouts::center_pc_x, _interior_top() + room_layouts::center_pc_y) +
-           bn::fixed_point(room::tile_size / 2, room::tile_size / 2);
-}
-
 void room_view::_fill(int column, int row, int width, int height, char value)
 {
     for(int y = row; y < row + height; ++y)
@@ -261,8 +233,6 @@ void room_view::_render()
 {
     int stairs_column = _door_column() - 1;
     int stairs_row = _door_row() - 1;
-    int pc_column = _interior_left() + room_layouts::center_pc_x;
-    int pc_row = _interior_top() + room_layouts::center_pc_y;
 
     for(int row = 0; row < room::rows; ++row)
     {
@@ -279,11 +249,7 @@ void room_view::_render()
                 break;
 
             case room::cells::floor:
-                if(_kind == room_kind::center)
-                {
-                    tile = tiles::center_floor;
-                }
-                else if(room::get(column, row - 1) == room::cells::wall ||
+                if(room::get(column, row - 1) == room::cells::wall ||
                         room::get(column, row - 1) == room::cells::door)
                 {
                     tile = tiles::floor_shadow;
@@ -304,14 +270,6 @@ void room_view::_render()
 
             case room::cells::stairs:
                 tile = quad_tile(tiles::stairs, column - stairs_column, row - stairs_row);
-                break;
-
-            case room::cells::counter:
-                tile = room::get(column, row + 1) == room::cells::counter ? tiles::counter_top : tiles::counter_front;
-                break;
-
-            case room::cells::pc:
-                tile = quad_tile(tiles::pc, column - pc_column, row - pc_row);
                 break;
 
             default:

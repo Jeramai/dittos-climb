@@ -288,34 +288,6 @@ def save_text_box():
 
 
 
-CHANSEY_BODY = [
-    "",
-    "   kk      kk",
-    "  kppk    kppk",
-    "  kpppkkkkpppk",
-    "   kppppppppk",
-    "  kpppkppkpppk",
-    "  kpppkppkpppk",
-    " kpppppeepppppk",
-    " kppwwwwwwwwppk",
-    "kppwwkwwwwkwwppk",
-    "kppwwwwwwwwwwppk",
-    " kpwwwwwwwwwwpk",
-    " kppwwwwwwwwppk",
-    "  kppppppppppk",
-]
-
-CHANSEY_1 = CHANSEY_BODY + [
-    "   kpppkkpppk",
-    "   kkkk  kkkk",
-]
-
-CHANSEY_2 = CHANSEY_BODY + [
-    "  kpppk  kpppk",
-    "  kkkk    kkkk",
-]
-
-CHANSEY_COLORS = {"p": "h", "e": "e"}
 
 LAB_PALETTE = [
     (16, 16, 24),
@@ -406,43 +378,12 @@ def split_quad(big):
     return [[row[x0:x0 + 8] for row in big[y0:y0 + 8]] for y0 in (0, 8) for x0 in (0, 8)]
 
 
-def center_floor_tile():
-    tile = blank(13)
-    for i in range(8):
-        tile[i][7] = 12
-        tile[7][i] = 12
-    return tile
 
 
-def counter_top_tile():
-    tile = blank(3)
-    tile[0] = [13] * 8
-    tile[7] = [9] * 8
-    return tile
 
 
-def counter_front_tile():
-    tile = blank(12)
-    tile[0] = [13] * 8
-    tile[3] = [13] * 8
-    tile[7] = [15] * 8
-    return tile
 
 
-def pc_tiles():
-    big = [[0] * 16 for _ in range(16)]
-    for y in range(16):
-        for x in range(16):
-            if 1 <= x <= 14 and 1 <= y <= 10:
-                big[y][x] = 9
-            if 3 <= x <= 12 and 3 <= y <= 8:
-                big[y][x] = 11
-            if 2 <= x <= 13 and 11 <= y <= 14:
-                big[y][x] = 7
-            if y == 15 or x in (0, 15) and y <= 11:
-                big[y][x] = 5
-    big[4][4] = big[4][5] = 13
-    return split_quad(big)
 
 
 LAB_TILES = [
@@ -454,10 +395,6 @@ LAB_TILES = [
     wall_face_tile(),
     door_tile(),
     *stairs_tiles(),
-    center_floor_tile(),
-    counter_top_tile(),
-    counter_front_tile(),
-    *pc_tiles(),
     crack_tile(),
 ]
 
@@ -486,10 +423,6 @@ def room_marker(fill, border, icon=None, icon_color=None):
             for x in range(4 + step * 2, 12):
                 big[10 - step * 2][x] = icon_color
                 big[11 - step * 2][x] = icon_color
-    elif icon == "center":
-        for i in range(4, 12):
-            big[7][i] = big[8][i] = icon_color
-            big[i][7] = big[i][8] = icon_color
     return split_quad(big)
 
 
@@ -510,7 +443,6 @@ OVERLAY_TILES = [
     *room_marker(4, 5),
     *room_marker(6, 7),
     *room_marker(4, 5, "stairs", 8),
-    *room_marker(4, 5, "center", 9),
     connector(True),
     connector(False),
 ]
@@ -529,14 +461,13 @@ def save_tiles(name, tiles, palette):
 
 def main():
     GRAPHICS.mkdir(exist_ok=True)
-    for old in ["room"]:
+    for old in ["room", "chansey"]:
         for suffix in [".bmp", ".json"]:
             (GRAPHICS / f"{old}{suffix}").unlink(missing_ok=True)
 
     save_sprite_sheet("ditto", [DITTO, DITTO_SQUISH, whiten(DITTO), DITTO, DITTO_SQUISH, DITTO_FLAT], 16)
     save_species("rattata", RATTATA_1, RATTATA_2)
     save_species("meowth", MEOWTH_1, MEOWTH_2)
-    save_sprite_sheet("chansey", [recolor(CHANSEY_1, CHANSEY_COLORS), recolor(CHANSEY_2, CHANSEY_COLORS)], 16)
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN], 8)
     save_sprite_sheet("slash", [SLASH], 16)
     save_wave()

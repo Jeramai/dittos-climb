@@ -8,7 +8,6 @@
 #include "bn_sprite_text_generator.h"
 #include "bn_string.h"
 
-#include "bn_sprite_items_chansey.h"
 #include "bn_sprite_items_projectiles.h"
 
 #include "common_fixed_8x8_sprite_font.h"
@@ -96,12 +95,7 @@ void game::run()
 void game::_start_floor()
 {
     _floor.generate(_floor_number, _random);
-    _center_healed = false;
-    _pc_used = false;
-
     #ifdef DITTO_TEST_START_KIND
-        _pokedex = ~0u;
-
         for(int index = 0; index < _floor.size(); ++index)
         {
             if(_floor[index].kind == room_kind(DITTO_TEST_START_KIND))
@@ -141,14 +135,7 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
         _messages.show("The lab doors locked!");
     }
 
-    if(value.kind == room_kind::center)
-    {
-        bn::sprite_ptr chansey = bn::sprite_items::chansey.create_sprite(_view.chansey_position());
-        chansey.set_camera(_camera);
-        _chansey = bn::move(chansey);
-        _messages.show("Welcome to the POKEMON CENTER!");
-    }
-    else if(value.kind == room_kind::stairs)
+    if(value.kind == room_kind::stairs)
     {
         _messages.show("There are stairs going up!");
     }
@@ -166,16 +153,9 @@ void game::_update_play()
         _messages.show("Press B to TRANSFORM!");
     }
 
-    bool peaceful = _current_room().kind == room_kind::center;
-
-    if(_player.update(_player_projectiles, _messages, outline_species, peaceful))
+    if(_player.update(_player_projectiles, _messages, outline_species))
     {
         _outlines.erase(_outlines.begin() + outline_index);
-    }
-
-    if(const form* current = _player.active_form())
-    {
-        _pokedex |= 1u << int(current->species);
     }
 
     for(enemy& value : _enemies)
@@ -189,12 +169,6 @@ void game::_update_play()
     _handle_player_attacks();
     _handle_enemy_attacks();
     _update_outlines();
-
-    if(_chansey)
-    {
-        _chansey->set_tiles(bn::sprite_items::chansey.tiles_item(), (_random.get_int(90) == 0) ? 1 : 0);
-        _handle_center();
-    }
 
     _update_effects();
     _update_camera(false);
@@ -339,32 +313,6 @@ void game::_handle_enemy_attacks()
     {
         _player.take_hit(*hit, _messages);
         _shake_frames = shake_frames;
-    }
-}
-
-void game::_handle_center()
-{
-    if(! bn::keypad::a_pressed() || _player.transforming())
-    {
-        return;
-    }
-
-    if(within(_player.position(), _view.chansey_position() + bn::fixed_point(0, 24), 24, 14))
-    {
-        if(_center_healed)
-        {
-            _messages.show("We hope to see you again!");
-        }
-        else
-        {
-            _center_healed = true;
-            _player.restore();
-            _messages.show("CHANSEY healed DITTO fully!");
-        }
-    }
-    else if(within(_player.position(), _view.pc_position() + bn::fixed_point(0, 18), 14, 12))
-    {
-        _bills_pc();
     }
 }
 
@@ -521,7 +469,6 @@ void game::_clear_room_objects()
     _effects.clear();
     _enemies.clear();
     _outlines.clear();
-    _chansey.reset();
     _spawn_delay = 0;
 }
 
@@ -557,102 +504,6 @@ void game::_pause_map()
     text.clear();
     _overlay.hide();
     _set_world_visible(true);
-    bn::core::update();
-}
-
-void game::_bills_pc()
-{
-    if(_player.active_form())
-    {
-        _messages.show("BILL's PC only accepts DITTO!");
-        return;
-    }
-
-    if(_pc_used)
-    {
-        _messages.show("The PC needs to recharge...");
-        return;
-    }
-
-    bn::vector<species_id, 8> entries;
-
-    for(species_id id : { species_id::rattata, species_id::meowth })
-    {
-        if(_pokedex & (1u << int(id)))
-        {
-            entries.push_back(id);
-        }
-    }
-
-    if(entries.empty())
-    {
-        _messages.show("No POKEMON are registered yet.");
-        return;
-    }
-
-    _set_world_visible(false);
-    _overlay.show_black();
-
-    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
-    big.set_bg_priority(0);
-
-    bn::vector<bn::sprite_ptr, 32> text;
-    big.set_center_alignment();
-    big.generate(0, -60, "BILL's PC", text);
-    big.generate(0, -40, "Take out which form?", text);
-    big.set_left_alignment();
-
-    for(int index = 0; index < entries.size(); ++index)
-    {
-        big.generate(-40, -12 + index * 18, species::get(entries[index]).name, text);
-    }
-
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
-    small.set_center_alignment();
-    small.set_bg_priority(0);
-    small.generate(0, 70, "A: TAKE OUT   B: CANCEL", text);
-
-    bn::vector<bn::sprite_ptr, 2> cursor;
-    int selected = 0;
-    bn::optional<species_id> choice;
-    bn::core::update();
-
-    while(true)
-    {
-        cursor.clear();
-        big.generate(-56, -12 + selected * 18, ">", cursor);
-        bn::core::update();
-
-        if(bn::keypad::up_pressed())
-        {
-            selected = (selected + entries.size() - 1) % entries.size();
-        }
-        else if(bn::keypad::down_pressed())
-        {
-            selected = (selected + 1) % entries.size();
-        }
-        else if(bn::keypad::a_pressed())
-        {
-            choice = entries[selected];
-            break;
-        }
-        else if(bn::keypad::b_pressed())
-        {
-            break;
-        }
-    }
-
-    text.clear();
-    cursor.clear();
-    _overlay.hide();
-    _set_world_visible(true);
-
-    if(choice)
-    {
-        _pc_used = true;
-        _player.start_transform(*choice);
-    }
-
     bn::core::update();
 }
 

@@ -48,7 +48,6 @@ private:
     bn::vector<enemy, 6> _enemies;
     bn::vector<outline, 6> _outlines;
     bn::vector<effect, 10> _effects;
-    bn::optional<bn::sprite_ptr> _chansey;
     hud _hud;
     floor_map _floor;
     bn::fixed_point _camera_position;
@@ -57,10 +56,7 @@ private:
     int _spawn_delay = 0;
     int _shake_frames = 0;
     int _last_recoil_serial = -1;
-    unsigned _pokedex = 0;
     bool _locked = false;
-    bool _center_healed = false;
-    bool _pc_used = false;
 
     [[nodiscard]] const floor_room& _current_room() const
     {
@@ -78,8 +74,6 @@ private:
     void _handle_player_attacks();
 
     void _handle_enemy_attacks();
-
-    void _handle_center();
 
     [[nodiscard]] int _outline_below_player() const;
 
@@ -104,8 +98,6 @@ private:
     void _set_world_visible(bool visible);
 
     void _pause_map();
-
-    void _bills_pc();
 
     void _game_over();
 };

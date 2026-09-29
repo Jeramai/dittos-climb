@@ -38,8 +38,7 @@ player::player(const bn::camera_ptr& camera, const bn::fixed_point& position) :
     _sprite.set_camera(camera);
 }
 
-bool player::update(player_projectiles& projectiles, message_box& messages, const species_id* outline_below,
-                    bool peaceful)
+bool player::update(player_projectiles& projectiles, message_box& messages, const species_id* outline_below)
 {
     bool used_outline = false;
 
@@ -126,7 +125,7 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
                 start_transform(*outline_below);
                 used_outline = true;
             }
-            else if(! _cooldown && ! peaceful)
+            else if(! _cooldown)
             {
                 if(bn::keypad::a_held())
                 {

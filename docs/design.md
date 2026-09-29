@@ -57,12 +57,12 @@ the Unknown Dungeon.
 
 - The Gen 1 type chart, with the modern fixes (Ghost hits Psychic ×2, Bug vs Poison ×0.5).
 - Text box messages: *"It's super effective!"*, *"It's not very effective…"*, *"It doesn't affect GASTLY…"*.
-- A floor's forms are super effective against a later floor. Old forms stay useful because of Bill's PC.
+- A floor's forms are super effective against a later floor.
 
-### Pokémon Center and Bill's PC
+### Poké Mart (later)
 
-- One Center room per floor. Chansey restores HP and PP.
-- Bill's PC stores every form in the Pokédex. Base Ditto can take out any registered form at full HP.
+- No Pokémon Center: Transform already heals Ditto.
+- A Poké Mart later sells boost items. It needs a currency first, for example Pay Day coins.
 
 ### Field abilities
 
@@ -88,7 +88,7 @@ Some types open paths, like HMs:
 - Magikarp's Splash: *"But nothing happened!"* Stay a Magikarp through a full room and it evolves.
 - Snorlax sleeps on the stairs of floor 1. You need the Poké Flute to wake it.
 - Rare shiny enemies (1 in 64). A shiny form has other colors and does ×1.25 damage.
-- Meowth's Pay Day drops coins. Coins buy items at the Center.
+- Meowth's Pay Day drops coins. Coins buy items at the Poké Mart (later).
 - Items: Potion, Oran Berry, Rare Candy, Escape Rope, Poké Flute, Silph Scope.
 
 ## Floors
@@ -133,7 +133,7 @@ Bonus floors after the end: Steel, Dark and Fairy.
 1. **Ditto and floor 1.** (done) Base Ditto with Struggle. Transform. Rattata and Meowth with 2 moves each and PP.
    HP bars, the text box, the type chart, the intro story.
 2. **Floor structure.** (done) Random floors of 7–11 rooms, doors that lock until the room is clear, the floor
-   map on Start, stairs, the Pokémon Center (Chansey heals once per floor; Bill's PC gives one form per floor).
+   map on Start, stairs.
 3. **Floor 1 complete.** Porygon, the Poké Flute, the Snorlax boss.
 4. **Floor 2.** Viridian Forest, tall grass, Cut, Venusaur.
 5. Then one floor per milestone.

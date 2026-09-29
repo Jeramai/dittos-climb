@@ -26,7 +26,7 @@ public:
     player(const bn::camera_ptr& camera, const bn::fixed_point& position);
 
     [[nodiscard]] bool update(player_projectiles& projectiles, message_box& messages,
-                              const species_id* outline_below, bool peaceful);
+                              const species_id* outline_below);
 
     [[nodiscard]] const bn::fixed_point& position() const
     {

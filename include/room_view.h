@@ -29,10 +29,6 @@ public:
 
     [[nodiscard]] bn::fixed_point interior_center() const;
 
-    [[nodiscard]] bn::fixed_point chansey_position() const;
-
-    [[nodiscard]] bn::fixed_point pc_position() const;
-
 private:
     bn::regular_bg_ptr _bg;
     bn::regular_bg_map_ptr _bg_map;

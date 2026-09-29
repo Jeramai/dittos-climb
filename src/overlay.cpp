@@ -25,9 +25,8 @@ namespace
         constexpr int visited = 6;
         constexpr int current = 10;
         constexpr int stairs = 14;
-        constexpr int center = 18;
-        constexpr int connector_horizontal = 22;
-        constexpr int connector_vertical = 23;
+        constexpr int connector_horizontal = 18;
+        constexpr int connector_vertical = 19;
     }
 
     alignas(int) bn::regular_bg_map_cell map_cells[columns * rows];
@@ -93,8 +92,7 @@ void overlay::show_map(const floor_map& floor, int current_room)
         }
         else if(value.visited)
         {
-            first_tile = value.kind == room_kind::stairs ? tiles::stairs :
-                         value.kind == room_kind::center ? tiles::center : tiles::visited;
+            first_tile = value.kind == room_kind::stairs ? tiles::stairs : tiles::visited;
         }
 
         int column = map_left + value.x * cell_step;

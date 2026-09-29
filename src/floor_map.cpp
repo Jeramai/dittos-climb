@@ -81,32 +81,6 @@ void floor_map::generate(int floor_number, bn::random& random)
     }
 
     _rooms[stairs].kind = room_kind::stairs;
-
-    int center_room = -1;
-
-    for(int attempt = 0; attempt < 40; ++attempt)
-    {
-        int candidate = 1 + random.get_int(_rooms.size() - 1);
-
-        if(candidate == stairs)
-        {
-            continue;
-        }
-
-        center_room = candidate;
-
-        if(_neighbor_count(_rooms[candidate].x, _rooms[candidate].y) == 1)
-        {
-            break;
-        }
-    }
-
-    if(center_room >= 0)
-    {
-        _rooms[center_room].kind = room_kind::center;
-        _rooms[center_room].cleared = true;
-    }
-
     _rooms[stairs].cleared = true;
 }
 
