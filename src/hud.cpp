@@ -64,8 +64,6 @@ void hud::update(const player& value)
 
     if(current)
     {
-        key.append(bn::to_string<4>(current->pp_a));
-        key.append(",");
         key.append(bn::to_string<4>(current->pp_b));
     }
 
@@ -85,7 +83,7 @@ void hud::update(const player& value)
 
     if(current)
     {
-        append_move(line_a, "A ", body.move_a, current->pp_a);
+        append_move(line_a, "A ", body.move_a, -1);
         append_move(line_b, "B ", body.move_b, current->pp_b);
     }
     else

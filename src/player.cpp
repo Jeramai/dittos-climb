@@ -237,7 +237,6 @@ void player::restore()
     {
         const species_data& shape = species::get(_form->species);
         _form->hp = shape.hp * form_hp_scale;
-        _form->pp_a = moves::get(shape.move_a).pp;
         _form->pp_b = moves::get(shape.move_b).pp;
     }
 }
@@ -252,9 +251,9 @@ void player::_use_move(bool move_a, player_projectiles& projectiles, message_box
     const species_data& current = body();
     move_id move = move_a ? current.move_a : current.move_b;
 
-    if(_form)
+    if(_form && ! move_a)
     {
-        int& pp = move_a ? _form->pp_a : _form->pp_b;
+        int& pp = _form->pp_b;
 
         if(pp)
         {
@@ -308,7 +307,7 @@ void player::_use_move(bool move_a, player_projectiles& projectiles, message_box
 void player::_finish_transform(message_box& messages)
 {
     const species_data& target = species::get(_transform_target);
-    _form = form{ _transform_target, target.hp * form_hp_scale, moves::get(target.move_a).pp,
+    _form = form{ _transform_target, target.hp * form_hp_scale,
                   moves::get(target.move_b).pp };
     _hp = ditto().hp;
 

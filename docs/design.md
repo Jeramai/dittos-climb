@@ -49,8 +49,8 @@ the Unknown Dungeon.
 
 ### Moves and PP
 
-- Every move has a type, power, PP and an attack pattern: shot, spread, melee, dash, beam, cloud or status.
-- A move with 0 PP becomes Struggle.
+- Every move has a type, power and an attack pattern: shot, spread, melee, dash, beam, cloud or status.
+- Move A (weak) has no PP limit. Move B (strong) has PP; at 0 PP it becomes Struggle.
 - **STAB**: a move of the same type as the user does ×1.5.
 
 ### Type chart
@@ -116,8 +116,8 @@ Bonus floors after the end: Steel, Dark and Fairy.
 | Button | Action |
 |---|---|
 | D-pad | Move |
-| A | Move 1: weak, a lot of PP |
-| B | Move 2: strong, little PP |
+| A | Move 1: weak, no PP limit |
+| B | Move 2: strong, uses PP |
 | L | Dodge (per form: a roll, a Dig, a Teleport) |
 | R (hold) | Lock the aim direction |
 | Start | Menu / pause |

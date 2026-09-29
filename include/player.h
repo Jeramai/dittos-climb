@@ -13,7 +13,6 @@ struct form
 {
     species_id species;
     int hp;
-    int pp_a;
     int pp_b;
 };
 
