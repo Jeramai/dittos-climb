@@ -53,6 +53,9 @@ COLORS = {
     "P": (104, 96, 136),
     "F": (200, 96, 56),
     "f": (240, 160, 96),
+    "4": (244, 176, 192),
+    "5": (248, 192, 216),
+    "6": (216, 136, 176),
 }
 
 DITTO = [
@@ -1014,20 +1017,138 @@ SQUIRTLE_2 = [row[:16] for row in SQUIRTLE_TOP + ["  kiik   kiik", "  kkk    kkk
 SEEL_TOP = [
     "",
     "",
-    "     kkk",
-    "    kwwwk",
-    "   kwwwwwk",
-    "   kwkwkwk",
-    "   kwwnwwk",
-    "  kkwwwwwkkk",
-    " kwwwwwwwwwwk",
-    " kwwwwwwwwwwwk  kk",
-    "  kwwwwwwwwwwwkkwk",
-    "   kkwwwwwwwwwwwk",
+    "",
+    "",
+    "            k",
+    "           kwk",
+    "         kkkwkk",
+    "        kwwwwwwk",
+    "        kwwwkwwk",
+    "    kkkkwwwwwwwk",
+    "  kkwwwwwwwwwwqk",
+    "kkwwwwwwwwwwwwqk",
+    "kiikwwwwwwwwwwk",
+    " kkiiwwwwwwiiik",
 ]
 
-SEEL_1 = [row[:16] for row in SEEL_TOP + ["    kiik  kiikk", "    kkk   kkk"]]
-SEEL_2 = [row[:16] for row in SEEL_TOP + ["   kiik    kiik", "   kkk     kkk"]]
+SEEL_1 = SEEL_TOP + ["    kiik  kiik", "    kkk   kkk"]
+
+SEEL_2 = SEEL_TOP + ["   kiik    kiik", "   kkk     kkk"]
+
+AERODACTYL_1 = [
+    "",
+    "k      kk      k",
+    "kk    kOOk    kk",
+    "kPk  kOOOOk  kPk",
+    "kPPk kkOOkk kPPk",
+    "kPPPkOOOOOOkPPPk",
+    " kPPkwkwkwkkPPk",
+    " kPPPkOOOOkPPPk",
+    "  kPkPkOOkPkPk",
+    "  k k kOOk k k",
+    "      kOOk",
+    "     kOkkOk",
+    "     kk  kk",
+]
+
+AERODACTYL_2 = [
+    "",
+    "",
+    "",
+    "       kk",
+    "      kOOk",
+    "kkk  kOOOOk  kkk",
+    "kPPk kkOOkk kPPk",
+    "kPPPkOOOOOOkPPPk",
+    " kPPkwkwkwkkPPk",
+    "  kPPkOOOOkPPk",
+    "   kPkkOOkkPk",
+    "    k kOOk k",
+    "      kOOk",
+    "     kOkkOk",
+    "     kk  kk",
+]
+
+SLOWPOKE_TOP = [
+    "",
+    "         kkkk",
+    "  kk   kk4444kk",
+    " kcck k44444444k",
+    " kcqk k44kkk444k",
+    "  kqk k44kwk44ck",
+    "  kqk k444k44cck",
+    "  kqkk44444cccck",
+    "   kq4444kkkkkk",
+    "   kq444444qk",
+    "    k444444qqk",
+    "    k4444444qk",
+    "     kqqqqqqqk",
+]
+
+SLOWPOKE_1 = SLOWPOKE_TOP + ["     kck  kck", "     kkk  kkk"]
+
+SLOWPOKE_2 = SLOWPOKE_TOP + ["    kck    kck", "    kkk    kkk"]
+
+BALLOON = [
+    "  kk        kk",
+    " kbck kkkk kcbk",
+    " kbcckcggckccbk",
+    "  kccckGGkccck",
+    " kcckkcccckkcck",
+    "kkcccwkcckwccckk",
+    "k kcccccccccck k",
+    "kkkcckkkkkkcckkk",
+    "  kccckwwkccck",
+    "   kkcccccckk",
+    "    k kkkk k",
+    "    k      k",
+    "   kkkkkkkkkk",
+    "   kbxbxbxbxk",
+    "   kxbxbxbxbk",
+    "    kkkkkkkk",
+]
+
+EXEGGCUTE_1 = [
+    "      kkk",
+    "     k4w4k",
+    "    k44444k",
+    "    k4k4k4k",
+    "   kkk4q44kkk",
+    "  k4w4k44k4w4k",
+    " k4k444kk44444k",
+    " k44k4kkk4k4k4k",
+    " k44444kk44q44k",
+    "  kkk4kkkk4kkk",
+    " k4w4k4w4kk4w4k",
+    "k444k44444kk444k",
+    "k4k4k4k4k4k4k4kk",
+    "k44qk44q44k4444k",
+    " k444k444kk444k",
+    "  kkk kkk  kkk",
+]
+
+EXEGGCUTE_2 = [""] + EXEGGCUTE_1[:-1]
+
+MEW_1 = [
+    "",
+    "  kk      kk kkk",
+    "  k5k    k5k k5k",
+    "  k55kkkk55k k5k",
+    " k5555555555kk5k",
+    " k55kk55kk55kk5k",
+    " k5kBwkkBwk5kk5k",
+    " k5kBBkkBBk5kk5k",
+    " k55kk55kk55kk5k",
+    "  k555q5555k k5k",
+    "   kk5555kk  k5k",
+    "    k5555k  k5k",
+    "   k5k55k5kk5k",
+    "    k555555k5k",
+    "    k6kkkk6kk",
+    "    kk    kk",
+]
+
+MEW_2 = [""] + MEW_1[:-1]
 
 JYNX_TOP = [
     "",
@@ -1140,43 +1261,6 @@ SPEAROW_TOP = [
 SPEAROW_1 = SPEAROW_TOP + ["      kykyk", "      kk kk"]
 SPEAROW_2 = SPEAROW_TOP + ["     kyk kyk", "     kk   kk"]
 
-AERODACTYL_1 = [
-    "",
-    "  k           k",
-    " kzk   kkk   kzk",
-    " kzzk kzzzk kzzk",
-    " kzzzkzwzzzkzzzk",
-    "  kzzzzkzzzzzzk",
-    "  kzzzzzzzzzzzk",
-    "   kzzkzwzwzkzk",
-    "   kzk kzzzk kzk",
-    "    k  kzzzk  k",
-    "       kzzk",
-    "      kzzk",
-    "      kzk",
-    "       k",
-]
-
-AERODACTYL_2 = [
-    "",
-    "",
-    "",
-    "        kkk",
-    "  kkkk kzzzk kkkk",
-    " kzzzzkzwzzzkzzzzk",
-    "  kzzzzkzzzzzzzk",
-    "   kzzkzwzwzkzk",
-    "    kk kzzzk kk",
-    "       kzzzk",
-    "       kzzk",
-    "      kzzk",
-    "      kzk",
-    "       k",
-]
-
-AERODACTYL_1 = [row[:16] for row in AERODACTYL_1]
-AERODACTYL_2 = [row[:16] for row in AERODACTYL_2]
-
 KABUTO_1 = [
     "",
     "",
@@ -1259,43 +1343,6 @@ GRIMER_TOP = [
 
 GRIMER_1 = GRIMER_TOP + [" kmmpmmmmmmpmmk", "kmmmmmmmmmmmmmmk", " kkkkkkkkkkkkkk"]
 GRIMER_2 = GRIMER_TOP + ["kmmpmmmmmmmmpmmk", "kmmmmmmmmmmmmmmk", "kkkkkkkkkkkkkkkk"]
-
-SLOWPOKE_TOP = [
-    "",
-    "",
-    "   kkk",
-    "  kqqqk",
-    " kqqqqqk",
-    " kqwkqqk",
-    " kqqqqqqkkkkk",
-    "  kcckqqqqqqqqk",
-    "   kkqqqqqqqqqk",
-    "     kqqqqqqqqk  k",
-    "     kqqqqqqqqkkwk",
-    "     kqqqqqqqqqqqk",
-]
-
-SLOWPOKE_1 = [row[:16] for row in SLOWPOKE_TOP + ["      kqk  kqk", "      kkk  kkk"]]
-SLOWPOKE_2 = [row[:16] for row in SLOWPOKE_TOP + ["     kqk    kqk", "     kkk    kkk"]]
-
-BALLOON = [
-    "     kkkkkk",
-    "   kkzzzzzzkk",
-    "  kzzwzzzzzzzk",
-    " kzzwzzzzzzzzzk",
-    " kzzzzzkkzzzzzk",
-    " kzzzzkwwkzzzzk",
-    " kzzzzkwwkzzzzk",
-    "  kzzzzkkzzzzk",
-    "   kkzzzzzzkk",
-    "     kkzzkk",
-    "   kk  kk  kk",
-    "  kbck kk kcbk",
-    "  kcckkkkkkcck",
-    "   kckekkekck",
-    "   kccccccccck",
-    "    kkkkkkkkk",
-]
 
 SILPH_SCOPE = [
     "",
@@ -1455,24 +1502,6 @@ CUBONE_TOP = [
 CUBONE_1 = CUBONE_TOP + ["   kbbk kbbk", "   kkk  kkk"]
 CUBONE_2 = CUBONE_TOP + ["  kbbk   kbbk", "  kkk    kkk"]
 
-EXEGGCUTE_1 = [
-    "",
-    "",
-    "",
-    "    kkk  kkk",
-    "   kqqqkkqqqk",
-    "   kqkqkkqkqk",
-    "   kqqqkkqqqk",
-    " kkkkkkkkkkkkkk",
-    "kqqqkkqqqkkqqqk",
-    "kqkqkkqkqkkqkqk",
-    "kqqqkkqqqkkqqqk",
-    "kqqqkkqqqkkqqqk",
-    " kkk  kkk  kkk",
-]
-
-EXEGGCUTE_2 = [""] + EXEGGCUTE_1[:-1]
-
 SHADOW_BALL = [
     "",
     "  kkkk",
@@ -1498,80 +1527,85 @@ BONE = [
 
 DRATINI_1 = [
     "",
-    "",
-    "    kkk",
-    "   kuuuk",
-    "  kwkuuuk",
-    "  kuuuuuk kk",
-    "   kkkuuukwk",
-    "     kuuuukk",
-    "    kuuuuk",
-    "   kuuuukk",
-    "  kuwwuk  kkkk",
-    "  kuwwukkkuuuuk",
-    "   kuuuuuuuuuk",
-    "    kkkkkkkkk",
+    "          kkkk",
+    "    kkk  kiiiik",
+    "   kwwwkkiiiiiik",
+    "    kkwkiiwkiiik",
+    "      kkiiiiiiik",
+    "       kiiiiikk",
+    "      kiiwwkk",
+    "     kiiwwk",
+    "    kiiwwk",
+    "   kiiwwk     kk",
+    "   kiiwwk   kkik",
+    "   kiiiwwkkkiiik",
+    "    kiiiiiiiiikk",
+    "     kkkkkkkkk",
 ]
 
 DRATINI_2 = [""] + DRATINI_1[:-1]
 
 DRAGONAIR_1 = [
     "",
-    "   kkk",
-    "  kuuuk   k",
-    " kwkuuuk kwk",
-    " kuuuuuukwk",
-    "  kkkuuuuk",
-    "     kiuk",
-    "    kuiuk",
-    "   kuuiuk",
-    "  kuuiuk   kkkk",
-    "  kuiuuk  kuuuuk",
-    "  kuuiukkkuiuuk",
-    "   kuuuuuuuuuk",
-    "    kkkkkkkkkk",
+    "           k",
+    "     kk   kwk",
+    "    kwwk kuwuk",
+    "     kwwkuuuuuk",
+    "      kkuwkuuuk",
+    "       kuuuuuuk",
+    "      kiikuukk",
+    "      kuuwwk",
+    "     kuuwwk",
+    "    kuuwwk    kk",
+    "   kuuwwk   kkik",
+    "   kuuuwwkkkuuik",
+    "    kuuuuuuuuukk",
+    "     kkkkkkkkk",
 ]
 
-DRAGONAIR_1 = [row[:16] for row in DRAGONAIR_1]
 DRAGONAIR_2 = [""] + DRAGONAIR_1[:-1]
 
 SEADRA_1 = [
     "",
-    "     kkkk",
-    "    kBBBBk",
-    "  kkkBwkBBk",
-    " kBBBBBBBBkkk",
-    "  kkkBBBBkBBk",
-    "     kBByBkk",
-    "  kk kBByyBk",
-    " kBBkkBByyBk",
-    "  kkBBBByyBk",
-    "     kBByBk",
-    "      kBBBk",
-    "    kk kBk",
-    "     kkBk",
-    "       k",
+    "    k k k",
+    "   kBkBkBk",
+    "   kBBBBBBkkkk",
+    "   kBwkBBBBBBBk",
+    "   kBBBBBBkkkk",
+    " kk  kBBBck",
+    "kBBk kBBcck",
+    " kBBkkBBcck",
+    "kBBBBkBBBck",
+    " kBBkkBBcck",
+    "  kk kBBBck",
+    "      kBBck",
+    "   kBk kBk",
+    "   kBkkBk",
+    "    kkkk",
 ]
 
 SEADRA_2 = [""] + SEADRA_1[:-1]
 
 LAPRAS_TOP = [
     "",
-    "   kkk",
-    "  kiiik",
-    " kiwkiik",
-    " kiiiiik",
-    "  kkiik",
-    "    kiik  kkk",
-    "    kiik kcckk",
-    "   kkiikkcckcck",
-    "  kiiiikcckckcck",
-    " kiiiiiikkcckcck",
-    " kiiiiiiiikkkcck",
+    "           k",
+    "          kik",
+    "         kkiikk",
+    "        kiiiiiik",
+    "        kiwkiiik",
+    "         kiiicck",
+    "     kk   kiikk",
+    "   kkAAkk kiik",
+    "  kssAssskkiik",
+    " ksAsssAssiiik",
+    " kssssssssiik",
+    "kiiiiiiiiiiiik",
+    "kiicccccccciik",
 ]
 
-LAPRAS_1 = LAPRAS_TOP + ["  kiiiiiiiiiiik", "   kkkkkkkkkkk"]
-LAPRAS_2 = LAPRAS_TOP + [" kiiiiiiiiiiiik", "  kkkkkkkkkkkk"]
+LAPRAS_1 = LAPRAS_TOP + [" kiik     kiik", "  kk       kk"]
+
+LAPRAS_2 = LAPRAS_TOP + ["kiik       kiik", " kk         kk"]
 
 ABRA_TOP = [
     "",
@@ -1659,47 +1693,144 @@ VENOMOTH_2 = [
     "  kkk  kk  kkk",
 ]
 
-MEW_1 = [
-    "",
-    "",
-    "  kk     kk",
-    "  kqk   kqk",
-    "  kqqkkkqqk",
-    "  kqqqqqqqk",
-    "  kqkBqqkBk",
-    "  kqqqqqqqk",
-    "   kqqqqqk     kk",
-    "    kqqqk     kqk",
-    "   kqqqqqk   kqk",
-    "  kqkqqqkqkkqqk",
-    "   k kqqqk kqk",
-    "      kqqkkqk",
-    "      kqqqqk",
-    "       kkkk",
-]
 
-MEW_1 = [row[:16] for row in MEW_1]
-MEW_2 = [""] + MEW_1[:-1]
+def moltres_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    lift = 2 * step
+    for side in (1, -1):
+        for index, (tx, ty) in enumerate(((31, 2 - lift), (31, 8 - lift), (28, 14 - lift), (23, 18))):
+            base = [(16 + side * 3, 9 + index * 2), (16 + side * 3, 14 + index * 2)]
+            polygon(grid, [base[0], (16 + side * (tx - 16), ty), base[1]], "o")
+        for flame in range(4):
+            x = 16 + side * (7 + flame * 2.6)
+            y = 7 + flame * -0.9 - lift + (flame % 2)
+            polygon(grid, [(x - 1.5, y + 4), (x + 1.5, y + 4), (x + side * 0.5, y - 2)], "n")
+            polygon(grid, [(x - 0.7, y + 4), (x + 0.7, y + 4), (x + side * 0.3, y)], "y")
+    ellipse(grid, 16, 17, 5, 6.5, "y")
+    ellipse(grid, 16, 18, 3, 4.5, "g")
+    ellipse(grid, 16, 9, 3.5, 3.5, "y")
+    for tip, height in ((12, 2), (14, 0), (16, 1), (18, 0), (20, 2)):
+        polygon(grid, [(tip - 1.5, 7), (tip + 1.5, 7), (tip, height)], "n")
+        polygon(grid, [(tip - 0.6, 7), (tip + 0.6, 7), (tip, height + 3)], "o")
+    polygon(grid, [(15, 10), (18, 10), (16.5, 14)], "o")
+    for x in (14, 18):
+        grid[8][x] = "w" if charging else "k"
+    for x in (14, 18):
+        for y in range(23, 27):
+            grid[y][x] = "s"
+    for tip in (12, 16, 20):
+        polygon(grid, [(tip - 2, 23), (tip + 2, 23), (tip, 31)], "n")
+        polygon(grid, [(tip - 1, 23), (tip + 1, 23), (tip, 28)], "y")
+    return ["".join(row) for row in outline(grid)]
 
+def gengar_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    for tip_x, tip_y in ((6, 1), (26, 1)):
+        polygon(grid, [(tip_x - 3 if tip_x < 16 else tip_x - 5, 11), (tip_x + 5 if tip_x < 16 else tip_x + 3, 9),
+                       (tip_x, tip_y + step)], "z")
+    for index, x in enumerate((10, 13, 16, 19, 22)):
+        polygon(grid, [(x - 2.5, 9), (x + 2.5, 9), (x + (index - 2) * 0.8, 3 + abs(index - 2) + step)], "z")
+    ellipse(grid, 16, 17 + step, 12, 10, "z")
+    ellipse(grid, 16, 21 + step, 10, 5, "Z")
+    ellipse(grid, 16, 18 + step, 11, 6, "z")
+    for side in (-1, 1):
+        polygon(grid, [(16 + side * 11, 17 + step), (16 + side * 11, 22 + step), (16 + side * 15, 20 + step)], "z")
+        polygon(grid, [(16 + side * 5, 25), (16 + side * 9, 25), (16 + side * 8, 30)], "Z")
+        polygon(grid, [(16 + side * 3, 11 + step), (16 + side * 8, 10 + step), (16 + side * 7, 15 + step),
+                       (16 + side * 4, 14 + step)], "w" if charging else "n")
+        grid[12 + step][16 + side * 6] = "k"
+    for x in range(8, 25):
+        depth = round(3.5 * math.sin((x - 7.5) / 17 * math.pi))
+        for y in range(18 + step, 18 + step + depth + 1):
+            grid[y][x] = "w"
+        grid[18 + step + depth + 1][x] = "k"
+    for x in range(9, 24, 3):
+        grid[19 + step][x] = "k"
+    return ["".join(row) for row in outline(grid)]
 
 def dragonite_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
-    ellipse(grid, 16, 18, 10, 11, "o")
-    ellipse(grid, 16, 20, 6, 7, "c")
-    ellipse(grid, 16, 6, 6, 5, "o")
+    lift = 2 * step
     for side in (-1, 1):
-        for i in range(8):
-            x = 16 + side * (9 + i)
-            for y in range(8 - step * 2 + i // 2, 16 + i // 3):
-                if 0 <= x < 32:
-                    grid[y][x] = "G" if y < 11 else "g"
-    grid[5][14] = grid[5][18] = "w" if charging else "k"
-    for x in range(13, 20):
-        grid[8][x] = "k"
-    grid[0][13] = grid[1][13] = grid[0][19] = grid[1][19] = "o"
-    for x in (11, 12, 20, 21):
-        for y in range(28, 31):
-            grid[y][x] = "o"
+        polygon(grid, [(16 + side * 7, 13), (16 + side * 13, 8 - lift), (16 + side * 14, 13 - lift),
+                       (16 + side * 12, 14), (16 + side * 13, 17), (16 + side * 8, 17)], "j")
+        polygon(grid, [(16 + side * 8, 15), (16 + side * 13, 11 - lift), (16 + side * 14, 13 - lift),
+                       (16 + side * 12, 14), (16 + side * 13, 17), (16 + side * 8, 17)], "J")
+    polygon(grid, [(20, 25), (30, 28), (31, 31), (20, 30)], "o")
+    ellipse(grid, 16, 20, 8.5, 9, "o")
+    ellipse(grid, 16, 22, 5.5, 6.5, "c")
+    for y in (19, 22, 25):
+        for x in range(12, 21):
+            if grid[y][x] == "c":
+                grid[y][x] = "C"
+    ellipse(grid, 16, 7, 6, 5, "o")
+    ellipse(grid, 16, 9, 4, 2.5, "c")
+    for side in (-1, 1):
+        for i, (dx, dy) in enumerate(((1, 2), (2, 1), (3, 0), (4, 0), (5, 1))):
+            grid[dy][16 + side * dx] = "o"
+        polygon(grid, [(16 + side * 8, 17), (16 + side * 11, 18), (16 + side * 9, 21)], "o")
+        for x in (16 + side * 4, 16 + side * 5):
+            for y in range(28, 31):
+                grid[y][x] = "o"
+    for x in (13, 19):
+        grid[6][x] = "w" if charging else "k"
+        grid[5][x] = "w" if charging else "k"
+    for x in range(14, 19):
+        grid[10][x] = "k"
+    grid[9][13] = grid[9][19] = "k"
+    return ["".join(row) for row in outline(grid)]
+
+def hitmon_frame(step, charging, kicker):
+    grid = [["."] * 32 for _ in range(32)]
+    if kicker:
+        ellipse(grid, 16, 10, 7, 7.5, "b")
+        ellipse(grid, 16, 17, 7.5, 5, "c")
+        ellipse(grid, 16, 14.5, 7, 2.5, "b")
+        for side in (-1, 1):
+            for i in range(7):
+                x = 16 + side * (7 + i // 2)
+                grid[9 + i][x] = grid[9 + i][x + side] = "b"
+            for x in range(16 + side * 9, 16 + side * 12, side):
+                grid[15][x] = grid[16][x] = "c"
+        kick = 1 if step else -1
+        for i in range(10):
+            grid[21 + i][15 - i // 3] = grid[21 + i][14 - i // 3] = "b"
+        for i in range(10):
+            if step:
+                x, y = 17 + i, 21 + i // 3
+            else:
+                x, y = 17 + i // 3, 21 + i
+            grid[y][x] = "b"
+            grid[min(31, y + 1)][x] = "b"
+        grid[30][10] = grid[30][11] = grid[30][12] = "c"
+        if step:
+            for y in (23, 24, 25):
+                grid[y][27] = grid[y][28] = "c"
+        else:
+            for x in (19, 20, 21):
+                grid[30][x] = "c"
+        for x in (13, 19):
+            grid[7][x] = "w" if charging else "k"
+            grid[8][x] = "w" if charging else "k"
+    else:
+        ellipse(grid, 16, 16, 7, 7, "z")
+        ellipse(grid, 16, 16, 4, 5, "Z")
+        ellipse(grid, 16, 6, 5, 4.5, "x")
+        polygon(grid, [(11, 5), (21, 5), (16, -1)], "b")
+        for side in (-1, 1):
+            polygon(grid, [(16 + side * 5, 11), (16 + side * 8, 12), (16 + side * 9, 16), (16 + side * 6, 15)], "x")
+            ellipse(grid, 16 + side * (11 + step), 15, 3.8, 3.8, "n")
+            grid[13][16 + side * (11 + step) - side] = "w"
+            for y in range(22, 30):
+                grid[y][16 + side * 3] = grid[y][16 + side * 4] = "x"
+            for x in range(16 + side * 2, 16 + side * 6, side):
+                grid[30][x] = "b"
+        for x in range(10, 23):
+            grid[22][x] = "Z"
+        for x in (14, 18):
+            grid[6][x] = "w" if charging else "k"
+        for x in range(14, 19):
+            grid[9][x] = "k"
     return ["".join(row) for row in outline(grid)]
 
 
@@ -1729,60 +1860,6 @@ def mewtwo_frame(step, charging):
     return ["".join(row) for row in outline(grid)]
 
 
-def gengar_frame(step, charging):
-    grid = [["."] * 32 for _ in range(32)]
-    ellipse(grid, 16, 17 + step, 12, 11, "z")
-    for x in (7, 11, 21, 25):
-        for y in range(3, 8):
-            if abs(x - 16) // 3 + (7 - y) < 6:
-                grid[y + step][x] = "z"
-                grid[y + step][x + 1] = "z"
-    for x in (6, 26):
-        for y in range(9, 13):
-            grid[y + step][x] = "z"
-    for dx in (-5, 5):
-        ellipse(grid, 16 + dx, 13 + step, 2.5, 1.5, "n" if not charging else "w")
-    for x in range(9, 24):
-        grid[20 + step][x] = "k"
-        if x % 2:
-            grid[21 + step][x] = "w"
-    for x in range(10, 23):
-        grid[22 + step][x] = "k"
-    for x in (9, 10, 22, 23):
-        for y in range(27, 31):
-            grid[y][x] = "z"
-    return ["".join(row) for row in outline(grid)]
-
-
-def hitmon_frame(step, charging, kicker):
-    grid = [["."] * 32 for _ in range(32)]
-    ellipse(grid, 16, 13, 7, 8, "b")
-    ellipse(grid, 16, 6, 5, 4.5, "b" if kicker else "x")
-    grid[5][14] = grid[5][18] = "w" if charging else "k"
-    if kicker:
-        for i in range(10):
-            left = 11 - i // 3 - (step if i > 5 else 0)
-            right = 21 + i // 3 + (0 if i > 5 else step)
-            grid[20 + i][left] = grid[20 + i][left + 1] = "b"
-            grid[20 + i][right] = grid[20 + i][right - 1] = "b"
-        for x in (8, 9, 10, 22, 23, 24):
-            grid[30][x] = "c"
-        for y in range(10, 16):
-            grid[y][7] = grid[y][25] = "b"
-    else:
-        for x in range(9, 13):
-            for y in range(20, 26):
-                grid[y][x] = "b"
-        for x in range(20, 24):
-            for y in range(20, 26):
-                grid[y][x] = "b"
-        ellipse(grid, 6 - step, 13, 3.5, 3.5, "n")
-        ellipse(grid, 26 + step, 13, 3.5, 3.5, "n")
-        for y in range(10, 20):
-            grid[y][4] = "c"
-    for x in range(12, 21):
-        grid[16][x] = "c" if kicker else "o"
-    return ["".join(row) for row in outline(grid)]
 
 
 def arbok_frame(step, charging):
@@ -1896,35 +1973,6 @@ def articuno_frame(step, charging):
     grid[10][16] = grid[11][16] = "s"
     return ["".join(row) for row in outline(grid)]
 
-
-def moltres_frame(step, charging):
-    grid = [["."] * 32 for _ in range(32)]
-    wing = 2 * step
-    for side in (-1, 1):
-        for i in range(12):
-            x = 16 + side * (4 + i)
-            top = 6 + i // 2 - wing
-            for y in range(top, 17 + i // 3):
-                if 0 <= x < 32 and 0 <= y < 32:
-                    grid[y][x] = "n" if y < top + 3 else "o"
-            if 0 <= x < 32 and top - 2 >= 0:
-                grid[top - 1][x] = "y"
-                if i % 2:
-                    grid[top - 2][x] = "y"
-    ellipse(grid, 16, 17, 5.5, 7, "y")
-    ellipse(grid, 16, 9, 3.5, 3.5, "y")
-    for i, x in enumerate(range(13, 20)):
-        grid[4 - (i % 3)][x] = "n"
-        grid[5][x] = "o"
-    for x in range(18, 22):
-        grid[10][x] = "s"
-    grid[8][17] = "w" if charging else "k"
-    for x in (14, 18):
-        for y in range(24, 29):
-            grid[y][x] = "s"
-    for x in range(12, 21):
-        grid[25 + (x % 3)][x] = "n"
-    return ["".join(row) for row in outline(grid)]
 
 
 def zapdos_frame(step, charging):
