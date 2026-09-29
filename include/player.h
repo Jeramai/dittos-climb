@@ -5,6 +5,7 @@
 #include "bn_optional.h"
 #include "bn_sprite_ptr.h"
 
+#include "items.h"
 #include "message_box.h"
 #include "projectiles.h"
 #include "species.h"
@@ -52,6 +53,15 @@ public:
     {
         return _hp <= 0;
     }
+
+    [[nodiscard]] int max_hp() const;
+
+    [[nodiscard]] const bn::optional<item_id>& held_item() const
+    {
+        return _held;
+    }
+
+    [[nodiscard]] bool give_item(item_id id, message_box& messages);
 
     [[nodiscard]] bool area_active() const
     {
@@ -127,6 +137,8 @@ private:
     int _charge_frames = 0;
     attack _charge_attack;
     int _frame_counter = 0;
+    int _bonus_hp = 0;
+    bn::optional<item_id> _held;
 
     void _use_move(bool move_a, player_projectiles& projectiles, message_box& messages);
 

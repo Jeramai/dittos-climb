@@ -31,6 +31,8 @@ namespace
     constexpr int sleep_frames = 60;
     constexpr int confusion_frames = 150;
     constexpr bn::fixed current_speed = 0.6;
+    constexpr int leftovers_frames = 120;
+    constexpr int rare_candy_hp = 5;
 
     const species_data& ditto()
     {
@@ -84,6 +86,11 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
 
     ++_frame_counter;
     _update_water(messages);
+
+    if(_held && items::get(*_held).kind == item_kind::leftovers && _frame_counter % leftovers_frames == 0)
+    {
+        heal(1);
+    }
 
     if(! _update_status(messages))
     {
@@ -276,6 +283,48 @@ void player::apply_status(status_effect effect, message_box& messages)
     }
 }
 
+int player::max_hp() const
+{
+    return ditto().hp + _bonus_hp;
+}
+
+bool player::give_item(item_id id, message_box& messages)
+{
+    const item_data& item = items::get(id);
+    message_box::text message;
+
+    switch(item.kind)
+    {
+
+    case item_kind::ether:
+        if(! _form)
+        {
+            messages.show("DITTO has no PP to restore.");
+            return false;
+        }
+
+        _form->pp_b = moves::get(species::get(_form->species).move_b).pp;
+        messages.show("DITTO used the ETHER!");
+        messages.show("The PP of move B was restored!");
+        return true;
+
+    case item_kind::rare_candy:
+        _bonus_hp += rare_candy_hp;
+        _hp += rare_candy_hp;
+        messages.show("DITTO ate the RARE CANDY!");
+        messages.show("DITTO's max HP rose!");
+        return true;
+
+    default:
+        message.append("DITTO is now holding ");
+        message.append(item.name);
+        message.append("!");
+        _held = id;
+        messages.show(message);
+        return true;
+    }
+}
+
 void player::heal(int amount)
 {
     if(_form)
@@ -284,7 +333,7 @@ void player::heal(int amount)
     }
     else
     {
-        _hp = bn::min(_hp + amount, ditto().hp);
+        _hp = bn::min(_hp + amount, max_hp());
     }
 }
 
@@ -423,6 +472,20 @@ void player::_use_move(bool move_a, player_projectiles& projectiles, message_box
     const bn::fixed_point& aim = directions::vectors[_aim];
     _cooldown = data.cooldown;
 
+    if(_held)
+    {
+        const item_data& item = items::get(*_held);
+
+        if(item.kind == item_kind::type_boost && item.boosted_type == hit.type)
+        {
+            hit.power = hit.power * 6 / 5;
+        }
+        else if(item.kind == item_kind::quick_claw)
+        {
+            _cooldown = _cooldown * 4 / 5;
+        }
+    }
+
     switch(data.pattern)
     {
 
@@ -491,7 +554,7 @@ void player::_finish_transform(message_box& messages)
     const species_data& target = species::get(_transform_target);
     _form = form{ _transform_target, target.hp * form_hp_scale,
                   moves::get(target.move_b).pp };
-    _hp = ditto().hp;
+    _hp = max_hp();
 
     message_box::text message;
 

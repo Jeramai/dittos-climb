@@ -61,6 +61,12 @@ enum class move_id
     thunder_wave,
     thunder,
     drill_peck,
+    karate_chop,
+    low_kick,
+    ember,
+    flamethrower,
+    vine_whip,
+    leech_seed,
 };
 
 enum class status_effect

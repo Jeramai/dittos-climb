@@ -4,11 +4,21 @@
 #include "bn_random.h"
 #include "bn_vector.h"
 
+#include "items.h"
+
 enum class room_kind
 {
     start,
     combat,
     stairs,
+};
+
+enum class room_reward
+{
+    none,
+    journal,
+    rare,
+    item,
 };
 
 enum class direction
@@ -28,6 +38,9 @@ struct floor_room
     bool visited;
     bool cleared;
     bool overgrown[4];
+    room_reward reward = room_reward::none;
+    item_id item = item_id::ether;
+    bool reward_taken = false;
 };
 
 class floor_map

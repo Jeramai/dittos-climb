@@ -10,6 +10,7 @@
 #include "bn_window.h"
 
 #include "bn_sprite_items_light.h"
+#include "bn_sprite_items_pickups.h"
 #include "bn_sprite_items_poke_flute.h"
 #include "bn_sprite_items_projectiles.h"
 
@@ -17,6 +18,7 @@
 #include "common_variable_8x16_sprite_font.h"
 
 #include "gyarados_boss.h"
+#include "journal.h"
 #include "onix_boss.h"
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
@@ -133,9 +135,20 @@ void game::_start_floor()
 
         for(int index = 0; index < _floor.size(); ++index)
         {
-            if(_floor[index].kind == room_kind::combat)
+            if(_floor[index].kind == room_kind::combat && _floor[index].reward == room_reward::none)
             {
                 combat_rooms.push_back(index);
+            }
+        }
+
+        if(combat_rooms.empty())
+        {
+            for(int index = 0; index < _floor.size(); ++index)
+            {
+                if(_floor[index].kind == room_kind::combat)
+                {
+                    combat_rooms.push_back(index);
+                }
             }
         }
 
@@ -155,6 +168,15 @@ void game::_start_floor()
             {
                 _has_flute = room_kind(DITTO_TEST_START_KIND) == room_kind::stairs;
                 _flute_room = _has_flute || _theme().boss != boss_kind::snorlax ? -1 : index;
+
+                #ifdef DITTO_TEST_REWARD
+                    _floor[index].reward = room_reward(DITTO_TEST_REWARD);
+                    _flute_room = -1;
+                #endif
+
+                #ifdef DITTO_TEST_ITEM
+                    _floor[index].item = item_id(DITTO_TEST_ITEM);
+                #endif
 
                 #ifdef DITTO_TEST_OVERGROWN
                     for(int side = 0; side < 4; ++side)
@@ -216,6 +238,7 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
     }
 
     _update_flute();
+    _update_reward();
     _update_darkness(true);
 
     _update_camera(true);
@@ -280,7 +303,14 @@ void game::_update_room_state()
         _floor[_room].cleared = true;
         _view.set_locked(false);
         _messages.show(_theme().unlock_message);
+
+        if(_floor[_room].reward == room_reward::rare)
+        {
+            _floor[_room].reward_taken = true;
+        }
+
         _update_flute();
+        _update_reward();
 
         const form* current = _player.active_form();
 
@@ -289,6 +319,11 @@ void game::_update_room_state()
             _messages.show("What? MAGIKARP is evolving!");
             _player.evolve(species_id::gyarados);
         }
+    }
+
+    if(_reward_pickup && within(_reward_pickup->position(), _player.position(), 12, 12))
+    {
+        _collect_reward();
     }
 
     if(_flute_pickup && within(_flute_pickup->position(), _player.position(), 12, 12))
@@ -753,6 +788,83 @@ void game::_update_flute()
     _messages.show("Something shiny is on the floor!");
 }
 
+void game::_update_reward()
+{
+    floor_room& value = _floor[_room];
+    bool pickup = value.reward == room_reward::journal || value.reward == room_reward::item;
+
+    if(_reward_pickup || ! pickup || value.reward_taken || ! value.cleared)
+    {
+        return;
+    }
+
+    bool page = value.reward == room_reward::journal;
+    bn::fixed_point position = _view.interior_center() + bn::fixed_point(0, _flute_room == _room ? 20 : 0);
+    bn::sprite_ptr sprite = bn::sprite_items::pickups.create_sprite(position, page ? 1 : 0);
+    sprite.set_camera(_camera);
+    sprite.set_z_order(600);
+    _reward_pickup = bn::move(sprite);
+    _messages.show(page ? "A torn page is lying here!" : "There is an item on the floor!");
+}
+
+void game::_collect_reward()
+{
+    floor_room& value = _floor[_room];
+
+    if(value.reward == room_reward::journal)
+    {
+        _reward_pickup.reset();
+        value.reward_taken = true;
+        ++_journal_pages;
+        _show_journal_page(_floor_number - 1);
+        return;
+    }
+
+    if(_player.give_item(value.item, _messages))
+    {
+        _reward_pickup.reset();
+        value.reward_taken = true;
+    }
+}
+
+void game::_show_journal_page(int page)
+{
+    _set_world_visible(false);
+    _overlay.show_black();
+
+    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
+    big.set_center_alignment();
+    big.set_bg_priority(0);
+
+    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    small.set_center_alignment();
+    small.set_bg_priority(0);
+
+    bn::string<32> title("LAB JOURNAL  PAGE ");
+    title.append(bn::to_string<4>(page + 1));
+
+    bn::vector<bn::sprite_ptr, 40> text;
+    small.generate(0, -56, title, text);
+
+    for(int line = 0; line < journal::lines_per_page; ++line)
+    {
+        big.generate(0, -20 + line * 18, journal::line(page, line), text);
+    }
+
+    small.generate(0, 70, "A: CLOSE", text);
+    bn::core::update();
+
+    while(! bn::keypad::a_pressed())
+    {
+        bn::core::update();
+    }
+
+    text.clear();
+    _overlay.hide();
+    _set_world_visible(true);
+    bn::core::update();
+}
+
 void game::_handle_enemy_attacks()
 {
     if(! _player.vulnerable())
@@ -875,6 +987,16 @@ void game::_spawn_enemies()
         }
     }
 
+    floor_room& current_room = _floor[_room];
+
+    if(current_room.reward == room_reward::rare && ! current_room.reward_taken && ! _enemies.empty())
+    {
+        bn::fixed_point position = _enemies.back().position();
+        _enemies.pop_back();
+        _enemies.emplace_back(_theme().rare, position, _camera, _random);
+        show_name_message(_messages, "A rare ", species::get(_theme().rare).name, " is here!");
+    }
+
     if(_theme().tall_grass)
     {
         _messages.show("Something rustles in the grass...");
@@ -985,6 +1107,7 @@ void game::_clear_room_objects()
     _outlines.clear();
     _boss.reset();
     _flute_pickup.reset();
+    _reward_pickup.reset();
     _hud.hide_boss();
     _spawn_delay = 0;
 }
@@ -1008,9 +1131,19 @@ void game::_pause_map()
     small.set_center_alignment();
     small.set_bg_priority(0);
 
-    bn::vector<bn::sprite_ptr, 16> text;
-    big.generate(0, -62, floor_label(_floor_number), text);
-    small.generate(0, 70, "START: RESUME", text);
+    bn::string<32> held("HELD: ");
+    held.append(_player.held_item() ? items::get(*_player.held_item()).name : "NOTHING");
+
+    bn::string<32> pages("JOURNAL ");
+    pages.append(bn::to_string<4>(_journal_pages));
+    pages.append("/");
+    pages.append(bn::to_string<4>(journal::page_count));
+
+    bn::vector<bn::sprite_ptr, 32> text;
+    big.generate(0, -66, floor_label(_floor_number), text);
+    small.generate(0, -48, held, text);
+    small.generate(0, -38, pages, text);
+    small.generate(0, 74, "START: RESUME", text);
     bn::core::update();
 
     while(! bn::keypad::start_pressed())

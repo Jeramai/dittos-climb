@@ -30,6 +30,7 @@ namespace electric_frames
     constexpr int spark = 0;
     constexpr int bolt = 1;
     constexpr int wave = 2;
+    constexpr int ember = 3;
 }
 
 namespace cloud_frames

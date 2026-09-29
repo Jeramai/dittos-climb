@@ -61,6 +61,23 @@ the Unknown Dungeon.
 - Text box messages: *"It's super effective!"*, *"It's not very effective…"*, *"It doesn't affect GASTLY…"*.
 - A floor's forms are super effective against a later floor.
 
+### Side rooms
+
+Side rooms are combat rooms off the start-to-stairs path (rooms behind bushes are side rooms too). Each side room
+holds a reward that shows once the room is clear:
+
+- **Journal page** (one per floor): a page of the Cinnabar lab journal. Ditto was sample 132 — its Pokédex number.
+  If a floor has no side room, its page goes into a room on the path. Thirteen pages; all of them unlock a secret
+  ending (later).
+- **Rare Pokémon**: one extra wild Pokémon that is not in the floor's pool and counters its boss: Machop (Snorlax),
+  Charmander (Venusaur), Bulbasaur (Onix), Pikachu (Gyarados), Sandshrew (Zapdos).
+- **Item** in a Poké Ball. Ditto has one held-item slot; a new held item replaces the old one:
+  type boosters (Charcoal, Miracle Seed, Mystic Water, Magnet, Hard Stone, Soft Sand, SilverPowder, Black Belt:
+  +20% to that type), Leftovers (slow healing), Quick Claw (shorter cooldowns). Instant items: Ether (refills move
+  B's PP; it stays on the floor for base Ditto) and Rare Candy (+5 max HP for base Ditto).
+
+The pause screen shows the held item and the journal count.
+
 ### Poké Mart (later)
 
 - No Pokémon Center: Transform already heals Ditto.

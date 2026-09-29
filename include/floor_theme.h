@@ -37,6 +37,7 @@ struct floor_theme
     bool plates;
     int overgrown_percent;
     boss_kind boss;
+    species_id rare;
 };
 
 namespace floor_themes

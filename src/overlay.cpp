@@ -15,7 +15,7 @@ namespace
     constexpr int columns = 32;
     constexpr int rows = 32;
     constexpr int map_left = 9;
-    constexpr int map_top = 11;
+    constexpr int map_top = 12;
     constexpr int cell_step = 3;
 
     namespace tiles

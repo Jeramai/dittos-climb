@@ -71,6 +71,15 @@ namespace
         { "THUNDER", "THUNDER", pokemon_type::electric, 110, 5, beam, 80, 7, 0, 5, 24, electric_frames::bolt,
           status_effect::paralysis, 30, false, electric },
         { "DRILL PECK", "D.PECK", pokemon_type::flying, 80, 15, dash, 45, 0, 0, 3.5, 14, 0 },
+        { "KARATE CHOP", "K.CHOP", pokemon_type::fighting, 50, 0, melee, 18, 0, 0, 0, 6, 0 },
+        { "LOW KICK", "LOW KICK", pokemon_type::fighting, 60, 15, dash, 40, 0, 0, 3.5, 12, 0 },
+        { "EMBER", "EMBER", pokemon_type::fire, 40, 0, shot, 22, 1, 0, 2.8, 40, electric_frames::ember,
+          no_status, 0, false, electric },
+        { "FLAMETHROWER", "F.THROW", pokemon_type::fire, 55, 10, shot, 40, 3, 6, 3, 40, electric_frames::ember,
+          no_status, 0, false, electric },
+        { "VINE WHIP", "V.WHIP", pokemon_type::grass, 45, 0, melee, 18, 0, 0, 0, 6, 0 },
+        { "LEECH SEED", "L.SEED", pokemon_type::grass, 30, 10, shot, 36, 1, 0, 2, 50, projectile_frames::leaf,
+          no_status, 0, true },
     };
 }
 

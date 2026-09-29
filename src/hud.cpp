@@ -56,7 +56,7 @@ void hud::update(const player& value)
     const form* current = value.active_form();
     const species_data& body = value.body();
     int hp = current ? current->hp : value.hp();
-    int max_hp = current ? body.hp * player::form_hp_scale : body.hp;
+    int max_hp = current ? body.hp * player::form_hp_scale : value.max_hp();
     _hp_bar.set_tiles(bn::sprite_items::hp_bar.tiles_item(), bar_frame(hp, max_hp));
 
     bn::string<64> key;

@@ -31,6 +31,10 @@ enum class species_id
     voltorb,
     magnemite,
     zapdos,
+    machop,
+    charmander,
+    bulbasaur,
+    sandshrew,
 };
 
 namespace species_frames

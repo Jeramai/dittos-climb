@@ -1,12 +1,15 @@
 #include "species.h"
 
 #include "bn_sprite_items_beedrill.h"
+#include "bn_sprite_items_bulbasaur.h"
+#include "bn_sprite_items_charmander.h"
 #include "bn_sprite_items_caterpie.h"
 #include "bn_sprite_items_diglett.h"
 #include "bn_sprite_items_ditto.h"
 #include "bn_sprite_items_geodude.h"
 #include "bn_sprite_items_gyarados.h"
 #include "bn_sprite_items_horsea.h"
+#include "bn_sprite_items_machop.h"
 #include "bn_sprite_items_magikarp.h"
 #include "bn_sprite_items_magnemite.h"
 #include "bn_sprite_items_meowth.h"
@@ -17,6 +20,7 @@
 #include "bn_sprite_items_poliwag.h"
 #include "bn_sprite_items_porygon.h"
 #include "bn_sprite_items_rattata.h"
+#include "bn_sprite_items_sandshrew.h"
 #include "bn_sprite_items_snorlax.h"
 #include "bn_sprite_items_staryu.h"
 #include "bn_sprite_items_venusaur.h"
@@ -73,6 +77,14 @@ namespace
           move_id::thunder_wave, &bn::sprite_items::magnemite, species_behavior::flyer },
         { "ZAPDOS", pokemon_type::electric, pokemon_type::flying, 70, 1.4, move_id::thundershock, move_id::thunder,
           &bn::sprite_items::zapdos },
+        { "MACHOP", pokemon_type::fighting, pokemon_type::none, 18, 1.1, move_id::karate_chop, move_id::low_kick,
+          &bn::sprite_items::machop },
+        { "CHARMANDER", pokemon_type::fire, pokemon_type::none, 16, 1.2, move_id::ember, move_id::flamethrower,
+          &bn::sprite_items::charmander },
+        { "BULBASAUR", pokemon_type::grass, pokemon_type::poison, 18, 1, move_id::vine_whip, move_id::leech_seed,
+          &bn::sprite_items::bulbasaur },
+        { "SANDSHREW", pokemon_type::ground, pokemon_type::none, 18, 1, move_id::scratch, move_id::dig,
+          &bn::sprite_items::sandshrew },
     };
 }
 

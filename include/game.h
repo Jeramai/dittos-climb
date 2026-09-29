@@ -54,6 +54,7 @@ private:
     bn::unique_ptr<boss> _boss;
     bn::optional<bn::sprite_ptr> _flute_pickup;
     bn::optional<bn::sprite_ptr> _light;
+    bn::optional<bn::sprite_ptr> _reward_pickup;
     hud _hud;
     floor_map _floor;
     bn::fixed_point _camera_position;
@@ -66,6 +67,7 @@ private:
     int _plate_serial = -1000;
     int _flicker_timer = 400;
     int _flicker_frames = 0;
+    int _journal_pages = 0;
     int _flute_room = -1;
     bool _locked = false;
     bool _has_flute = false;
@@ -112,6 +114,12 @@ private:
     void _after_player_hit(const attack& hit, const hit_result& result, enemy* target);
 
     void _update_flute();
+
+    void _update_reward();
+
+    void _collect_reward();
+
+    void _show_journal_page(int page);
 
     void _spawn_outline(species_id id, const bn::fixed_point& position);
 

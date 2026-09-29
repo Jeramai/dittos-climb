@@ -800,6 +800,120 @@ THUNDER_WAVE = [
 ]
 
 
+MACHOP_TOP = [
+    "",
+    "      kkkk",
+    "     kssssk",
+    "    ksksskskk",
+    "    ksssssssk",
+    "    ksskkksk",
+    "  kk kssssk kk",
+    " kssksssssskssk",
+    " ksskssbbsskssk",
+    "  kk ksssssk kk",
+    "     ksssssk",
+    "     kssksk",
+]
+
+MACHOP_1 = MACHOP_TOP + ["    kssk kssk", "    kkkk kkkk"]
+MACHOP_2 = MACHOP_TOP + ["   kssk   kssk", "   kkkk   kkkk"]
+
+CHARMANDER_TOP = [
+    "",
+    "     kkkk",
+    "    koooook",
+    "   kooookook",
+    "   koookwkok",
+    "   kooooooook   n",
+    "    koooooook  nyn",
+    "     kkooook   nyn",
+    "    koocccok   kok",
+    "   kookccccok kook",
+    "   kok ccccokooook",
+    "       kcccooookk",
+]
+
+CHARMANDER_1 = [row[:16] for row in CHARMANDER_TOP + ["      koook kok", "      kkkk  kk"]]
+CHARMANDER_2 = [row[:16] for row in CHARMANDER_TOP + ["     koook  kok", "     kkkk   kk"]]
+
+BULBASAUR_TOP = [
+    "",
+    "      kkkk",
+    "     kvVvvk",
+    "    kvVvvVvk",
+    "   kvvVvvVvvk",
+    "  kjjkvvvvkjjk",
+    " kjjjjkkkkjjjjk",
+    " kjjejjjjjejjjk",
+    " kjjjjjjjjjjjjk",
+    "  kjjjkkkkjjjk",
+    "   kjjjjjjjjk",
+]
+
+BULBASAUR_1 = BULBASAUR_TOP + ["   kJk kk kJk", "   kkk    kkk"]
+BULBASAUR_2 = BULBASAUR_TOP + ["  kJk  kk  kJk", "  kkk      kkk"]
+
+SANDSHREW_TOP = [
+    "",
+    "",
+    "    kk    kk",
+    "    kykkkkyk",
+    "   kyyyyyyyyk",
+    "   kykyyyykyk",
+    "   kyyyxxyyyk",
+    "  kkyyyyyyyykk",
+    " kxxkxxxxxxkxxk",
+    " kxkxxxxxxxxkxk",
+    "  kkxxxxxxxxkk",
+    "   kyyyyyyyyk",
+]
+
+SANDSHREW_1 = SANDSHREW_TOP + ["   kwk    kwk", "   kkk    kkk"]
+SANDSHREW_2 = SANDSHREW_TOP + ["  kwk      kwk", "  kkk      kkk"]
+
+ITEM_BALL = [
+    "",
+    "",
+    "     kkkkkk",
+    "   kknnnnnnkk",
+    "  knnhnnnnnnnk",
+    "  knnnnnnnnnnk",
+    " knnnnnnnnnnnnk",
+    " kkkkkkwwkkkkkk",
+    " kwwwwkwwkwwwwk",
+    "  kwwwwkkwwwwk",
+    "  kwwwwwwwwwwk",
+    "   kkwwwwwwkk",
+    "     kkkkkk",
+]
+
+JOURNAL_PAGE = [
+    "",
+    "",
+    "   kkkkkkkkk",
+    "   kwwwwwwwkk",
+    "   kwkkkkwwkwk",
+    "   kwwwwwwwkkk",
+    "   kwkkkkkkwwk",
+    "   kwwwwwwwwwk",
+    "   kwkkkkkwwwk",
+    "   kwwwwwwwwwk",
+    "   kwkkkkkkwwk",
+    "   kwwwwwwwwwk",
+    "   kkkkkkkkkkk",
+]
+
+EMBER = [
+    "",
+    "   kk",
+    "  knyk",
+    " knyyk",
+    " kyywk",
+    "  kyyk",
+    "   kk",
+]
+
+
 def zapdos_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
     wing = 2 * step
@@ -1714,7 +1828,12 @@ def main():
     save_species("voltorb", VOLTORB_1, VOLTORB_2)
     save_species("magnemite", MAGNEMITE_1, MAGNEMITE_2)
     save_species("zapdos", zapdos_frame(0, False), zapdos_frame(1, False), 32, [zapdos_frame(0, True)])
-    save_sprite_sheet("electric_projectiles", [SPARK, BOLT, THUNDER_WAVE], 8)
+    save_sprite_sheet("electric_projectiles", [SPARK, BOLT, THUNDER_WAVE, EMBER], 8)
+    save_species("machop", MACHOP_1, MACHOP_2)
+    save_species("charmander", CHARMANDER_1, CHARMANDER_2)
+    save_species("bulbasaur", BULBASAUR_1, BULBASAUR_2)
+    save_species("sandshrew", SANDSHREW_1, SANDSHREW_2)
+    save_sprite_sheet("pickups", [ITEM_BALL, JOURNAL_PAGE], 16)
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)

@@ -2,6 +2,7 @@
 
 #include "bn_math.h"
 
+#include "journal.h"
 #include "room_layouts.h"
 
 using namespace directions_of_floor;
@@ -91,6 +92,51 @@ void floor_map::generate(int floor_number, int overgrown_percent, bn::random& ra
     for(int index = stairs; index >= 0; index = parents[index])
     {
         on_path[index] = true;
+    }
+
+    bn::vector<int, max_rooms> side_rooms;
+    bn::vector<int, max_rooms> path_rooms;
+
+    for(int index = 1; index < _rooms.size(); ++index)
+    {
+        if(_rooms[index].kind == room_kind::combat)
+        {
+            if(on_path[index])
+            {
+                path_rooms.push_back(index);
+            }
+            else
+            {
+                side_rooms.push_back(index);
+            }
+        }
+    }
+
+    if(floor_number <= journal::page_count)
+    {
+        bn::ivector<int>& pool = side_rooms.empty() ? path_rooms : side_rooms;
+
+        if(! pool.empty())
+        {
+            int pick = random.get_int(pool.size());
+            _rooms[pool[pick]].reward = room_reward::journal;
+            pool.erase(pool.begin() + pick);
+        }
+    }
+
+    for(int index : side_rooms)
+    {
+        floor_room& value = _rooms[index];
+
+        if(random.get_int(2))
+        {
+            value.reward = room_reward::rare;
+        }
+        else
+        {
+            value.reward = room_reward::item;
+            value.item = item_id(random.get_int(items::count));
+        }
     }
 
     for(int index = 1; index < _rooms.size(); ++index)
