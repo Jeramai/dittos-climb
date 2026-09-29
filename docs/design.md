@@ -157,6 +157,10 @@ Bonus floors after the end: Steel, Dark and Fairy.
 - Own pixel art, not ripped sprites. 16×16 for wild Pokémon, 32×32 or larger for bosses.
 - One 16-colour palette per sprite sheet.
 - The placeholder art comes from `tools/gen_assets.py`. A hand-made BMP of the same size replaces it.
+- Room tilesets follow Pokémon Emerald. Each floor has a 67-tile set with one 16-colour palette, built from
+  seamless 16×16 blocks (floor, floor detail, grass, water, gates, flows, the three special phases) and a wall
+  with a top, an upper face and a lower face. The renderer picks each 8×8 tile from the world position, so a
+  block repeats every 16 px. The sets live in `tools/tilesets/<floor>.py`; the art book shows a sample room of each.
 - The music and sound effects come from `tools/gen_audio.py` and play through Maxmod. Every floor has its own
   theme; bosses switch to a boss theme (Mewtwo has its own) and the floor theme returns when the boss faints.
   A hand-made MOD or WAV with the same name replaces a generated one.

@@ -1,6 +1,6 @@
 # Ditto's Climb — art book
 
-Every sprite and tileset in the game, per floor. All art is generated placeholder art from
+Every sprite and tileset in the game, per floor, with a sample room of each floor's tiles. All art is generated placeholder art from
 `tools/gen_assets.py`; a hand-drawn BMP of the same size and palette limit (16 colours) replaces it.
 
 Regenerate this page with `make artbook`.
@@ -12,7 +12,7 @@ mound) when the Pokémon has one.
 
 Tutorial lab. Doors lock until the room is clear. Find the Poké Flute to wake Snorlax.
 
-![CINNABAR LAB tiles](images/lab_tiles.png)
+![CINNABAR LAB room](images/lab_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -26,7 +26,7 @@ Tutorial lab. Doors lock until the room is clear. Find the Poké Flute to wake S
 
 Tall grass hides wild Pokémon. Bushes block side doors: a Grass form uses Cut.
 
-![VIRIDIAN FOREST tiles](images/forest_tiles.png)
+![VIRIDIAN FOREST room](images/forest_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -41,7 +41,7 @@ Tall grass hides wild Pokémon. Bushes block side doors: a Grass form uses Cut.
 
 Darkness: only a circle of light around Ditto. Diglett travel underground.
 
-![ROCK TUNNEL tiles](images/cave_tiles.png)
+![ROCK TUNNEL room](images/cave_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -56,7 +56,7 @@ Darkness: only a circle of light around Ditto. Diglett travel underground.
 
 Rivers with currents and ponds. Only Water and Flying forms swim; every river has a bridge.
 
-![UNDERGROUND LAKE tiles](images/lake_tiles.png)
+![UNDERGROUND LAKE room](images/lake_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -72,7 +72,7 @@ Rivers with currents and ponds. Only Water and Flying forms swim; every river ha
 
 Floor plates charge and shock; the lights flicker. Ground types are immune.
 
-![POWER PLANT tiles](images/plant_tiles.png)
+![POWER PLANT room](images/plant_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -86,7 +86,7 @@ Floor plates charge and shock; the lights flicker. Ground types are immune.
 
 Lava cycles crust, glow and molten; embers fall from the ceiling. Fire types walk on lava.
 
-![VOLCANO tiles](images/volcano_tiles.png)
+![VOLCANO room](images/volcano_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -101,7 +101,7 @@ Lava cycles crust, glow and molten; embers fall from the ceiling. Fire types wal
 
 Slippery ice patches. Frozen side doors: a Fire form melts them. Freeze status.
 
-![SEAFOAM CAVE tiles](images/ice_tiles.png)
+![SEAFOAM CAVE room](images/ice_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -115,7 +115,7 @@ Slippery ice patches. Frozen side doors: a Fire form melts them. Freeze status.
 
 Wind bands push walkers; pits drop Ditto one room back. Flying forms ignore both.
 
-![THE CHASM tiles](images/chasm_tiles.png)
+![THE CHASM room](images/chasm_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -129,7 +129,7 @@ Wind bands push walkers; pits drop Ditto one room back. Flying forms ignore both
 
 Spinner arrow lanes and poison gas vents. One room drops the Silph Scope.
 
-![ROCKET HIDEOUT tiles](images/hideout_tiles.png)
+![ROCKET HIDEOUT room](images/hideout_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -145,7 +145,7 @@ Spinner arrow lanes and poison gas vents. One room drops the Silph Scope.
 
 Three waves per room, no held items. Cracked rocks: a Fighting form uses Rock Smash.
 
-![FIGHTING DOJO tiles](images/dojo_tiles.png)
+![FIGHTING DOJO room](images/dojo_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -160,7 +160,7 @@ Three waves per room, no held items. Cracked rocks: a Fighting form uses Rock Sm
 
 Dark tower. Ghosts are invisible without the Silph Scope. Spirit barriers need a Ghost form.
 
-![POKEMON TOWER tiles](images/tower_tiles.png)
+![POKEMON TOWER room](images/tower_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -174,7 +174,7 @@ Dark tower. Ghosts are invisible without the Silph Scope. Spirit barriers need a
 
 Large rooms with waterfalls and whirlpools.
 
-![DRAGON'S DEN tiles](images/den_tiles.png)
+![DRAGON'S DEN room](images/den_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|
@@ -188,7 +188,7 @@ Large rooms with waterfalls and whirlpools.
 
 Warp pads send Ditto to their partner. Abra and Kadabra teleport.
 
-![CERULEAN CAVE tiles](images/peak_tiles.png)
+![CERULEAN CAVE room](images/peak_room.png)
 
 | Sprite | Pokémon | Type | Move A | Move B | Role |
 |---|---|---|---|---|---|

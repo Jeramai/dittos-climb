@@ -15,29 +15,30 @@ namespace
     {
         constexpr int empty = 0;
         constexpr int floor = 1;
-        constexpr int floor_light = 2;
-        constexpr int floor_shadow = 3;
-        constexpr int wall_top = 4;
-        constexpr int wall_face = 5;
-        constexpr int door = 6;
-        constexpr int stairs = 7;
-        constexpr int floor_crack = 11;
-        constexpr int tall_grass = 12;
-        constexpr int ice = 12;
-        constexpr int bush = 13;
-        constexpr int water = 14;
-        constexpr int flow_right = 15;
-        constexpr int flow_left = 16;
-        constexpr int flow_down = 17;
-        constexpr int flow_up = 18;
-        constexpr int plate = 19;
-        constexpr int pit = 14;
-        constexpr int wind_east = 15;
-        constexpr int wind_west = 16;
-        constexpr int wind_south = 17;
-        constexpr int wind_north = 18;
-        constexpr int waterfall = 17;
-        constexpr int special = 19;
+        constexpr int floor_detail = 5;
+        constexpr int floor_shadow = 9;
+        constexpr int wall_top = 11;
+        constexpr int wall_face_high = 15;
+        constexpr int wall_face_low = 17;
+        constexpr int door = 19;
+        constexpr int stairs = 23;
+        constexpr int tall_grass = 27;
+        constexpr int ice = 27;
+        constexpr int bush = 31;
+        constexpr int water = 35;
+        constexpr int pit = 35;
+        constexpr int flow_right = 39;
+        constexpr int flow_left = 43;
+        constexpr int flow_down = 47;
+        constexpr int flow_up = 51;
+        constexpr int wind_east = 39;
+        constexpr int wind_west = 43;
+        constexpr int wind_south = 47;
+        constexpr int wind_north = 51;
+        constexpr int waterfall = 47;
+        constexpr int special = 55;
+        constexpr int plate = 55;
+        constexpr int quad_size = 4;
     }
 
     constexpr int river_width = 3;
@@ -74,7 +75,18 @@ namespace
 
     int quad_tile(int first_tile, int column, int row)
     {
-        return first_tile + (column % 2) + (row % 2) * 2;
+        return first_tile + (column & 1) + (row & 1) * 2;
+    }
+
+    int pair_tile(int first_tile, int column)
+    {
+        return first_tile + (column & 1);
+    }
+
+    bool shows_detail(int column, int row)
+    {
+        unsigned block = unsigned(column / 2) * 73856093u ^ unsigned(row / 2) * 19349663u;
+        return (block >> 3) % 7 == 0;
     }
 }
 
@@ -782,27 +794,34 @@ void room_view::_render()
             {
 
             case room::cells::wall:
-                tile = walkable(room::get(column, row + 1)) ? tiles::wall_face : tiles::wall_top;
+                if(walkable(room::get(column, row + 1)))
+                {
+                    tile = pair_tile(tiles::wall_face_low, column);
+                }
+                else if(room::get(column, row + 1) == room::cells::wall && walkable(room::get(column, row + 2)))
+                {
+                    tile = pair_tile(tiles::wall_face_high, column);
+                }
+                else
+                {
+                    tile = quad_tile(tiles::wall_top, column, row);
+                }
                 break;
 
             case room::cells::floor:
                 if(room::get(column, row - 1) == room::cells::wall ||
                    room::get(column, row - 1) == room::cells::door || room::get(column, row - 1) == room::cells::bush)
                 {
-                    tile = tiles::floor_shadow;
-                }
-                else if((column * 7 + row * 13) % 29 == 0)
-                {
-                    tile = tiles::floor_crack;
+                    tile = pair_tile(tiles::floor_shadow, column);
                 }
                 else
                 {
-                    tile = column % 2 == 0 && row % 2 == 0 ? tiles::floor_light : tiles::floor;
+                    tile = quad_tile(shows_detail(column, row) ? tiles::floor_detail : tiles::floor, column, row);
                 }
                 break;
 
             case room::cells::door:
-                tile = tiles::door;
+                tile = quad_tile(tiles::door, column, row);
                 break;
 
             case room::cells::stairs:
@@ -810,72 +829,72 @@ void room_view::_render()
                 break;
 
             case room::cells::grass:
-                tile = tiles::tall_grass;
+                tile = quad_tile(tiles::tall_grass, column, row);
                 break;
 
             case room::cells::bush:
-                tile = tiles::bush;
+                tile = quad_tile(tiles::bush, column, row);
                 break;
 
             case room::cells::water:
-                tile = tiles::water;
+                tile = quad_tile(tiles::water, column, row);
                 break;
 
             case room::cells::ice:
-                tile = tiles::ice;
+                tile = quad_tile(tiles::ice, column, row);
                 break;
 
             case room::cells::pit:
-                tile = tiles::pit;
+                tile = quad_tile(tiles::pit, column, row);
                 break;
 
             case room::cells::waterfall:
-                tile = tiles::waterfall;
+                tile = quad_tile(tiles::waterfall, column, row);
                 break;
 
             case room::cells::whirlpool:
             case room::cells::warp:
-                tile = tiles::special;
+                tile = quad_tile(tiles::special, column, row);
                 break;
 
             case room::cells::wind_east:
             case room::cells::spin_right:
-                tile = tiles::wind_east;
+                tile = quad_tile(tiles::wind_east, column, row);
                 break;
 
             case room::cells::wind_west:
             case room::cells::spin_left:
-                tile = tiles::wind_west;
+                tile = quad_tile(tiles::wind_west, column, row);
                 break;
 
             case room::cells::wind_south:
             case room::cells::spin_down:
-                tile = tiles::wind_south;
+                tile = quad_tile(tiles::wind_south, column, row);
                 break;
 
             case room::cells::wind_north:
             case room::cells::spin_up:
-                tile = tiles::wind_north;
+                tile = quad_tile(tiles::wind_north, column, row);
                 break;
 
             case room::cells::plate:
-                tile = tiles::plate + _plate_phase;
+                tile = quad_tile(tiles::plate + _plate_phase * tiles::quad_size, column, row);
                 break;
 
             case room::cells::flow_right:
-                tile = tiles::flow_right;
+                tile = quad_tile(tiles::flow_right, column, row);
                 break;
 
             case room::cells::flow_left:
-                tile = tiles::flow_left;
+                tile = quad_tile(tiles::flow_left, column, row);
                 break;
 
             case room::cells::flow_down:
-                tile = tiles::flow_down;
+                tile = quad_tile(tiles::flow_down, column, row);
                 break;
 
             case room::cells::flow_up:
-                tile = tiles::flow_up;
+                tile = quad_tile(tiles::flow_up, column, row);
                 break;
 
             default:

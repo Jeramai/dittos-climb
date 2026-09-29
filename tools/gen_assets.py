@@ -3771,6 +3771,35 @@ OVERLAY_TILES = [
 ]
 
 
+TILESET_SIZE = 67
+
+
+def room_tileset(name, old_tiles, old_palette):
+    path = ROOT / "tools" / "tilesets" / f"{name}.py"
+    if not path.exists():
+        return legacy_layout(old_tiles), old_palette
+    import importlib
+    import sys
+    sys.path.insert(0, str(path.parent))
+    tiles, palette = getattr(importlib.import_module(name), f"{name}_tileset")()
+    assert len(tiles) == TILESET_SIZE and len(palette) == 16, name
+    return tiles, palette
+
+
+def legacy_layout(old):
+    def at(index):
+        return old[index] if index < len(old) else old[1]
+
+    plates = [at(19 + phase) if 19 + phase < len(old) else at(19) for phase in range(3)]
+    tiles = [old[0], at(1), at(1), at(1), at(2), at(1), at(1), at(1), at(11), at(3), at(3),
+             *[at(4)] * 4, *[at(4)] * 2, *[at(5)] * 2, *[at(6)] * 4, at(7), at(8), at(9), at(10),
+             *[at(12)] * 4, *[at(13)] * 4, *[at(14)] * 4,
+             *[at(15)] * 4, *[at(16)] * 4, *[at(17)] * 4, *[at(18)] * 4,
+             *[plate for plate in plates for _ in range(4)]]
+    assert len(tiles) == TILESET_SIZE
+    return tiles
+
+
 def save_tiles(name, tiles, palette):
     pixels = [[0] * (8 * len(tiles)) for _ in range(8)]
     for index, tile in enumerate(tiles):
@@ -3876,19 +3905,19 @@ def main():
     save_wave()
     save_hp_bar()
     save_text_box()
-    save_tiles("lab", LAB_TILES, LAB_PALETTE)
-    save_tiles("forest", FOREST_TILES, FOREST_PALETTE)
-    save_tiles("cave", CAVE_TILES, CAVE_PALETTE)
-    save_tiles("lake", LAKE_TILES, LAKE_PALETTE)
-    save_tiles("plant", PLANT_TILES, PLANT_PALETTE)
-    save_tiles("volcano", VOLCANO_TILES, VOLCANO_PALETTE)
-    save_tiles("ice", ICE_TILES, ICE_PALETTE)
-    save_tiles("chasm", CHASM_TILES, CHASM_PALETTE)
-    save_tiles("hideout", HIDEOUT_TILES, HIDEOUT_PALETTE)
-    save_tiles("dojo", DOJO_TILES, DOJO_PALETTE)
-    save_tiles("tower", TOWER_TILES, TOWER_PALETTE)
-    save_tiles("den", DEN_TILES, DEN_PALETTE)
-    save_tiles("peak", PEAK_TILES, PEAK_PALETTE)
+    save_tiles("lab", *room_tileset("lab", LAB_TILES, LAB_PALETTE))
+    save_tiles("forest", *room_tileset("forest", FOREST_TILES, FOREST_PALETTE))
+    save_tiles("cave", *room_tileset("cave", CAVE_TILES, CAVE_PALETTE))
+    save_tiles("lake", *room_tileset("lake", LAKE_TILES, LAKE_PALETTE))
+    save_tiles("plant", *room_tileset("plant", PLANT_TILES, PLANT_PALETTE))
+    save_tiles("volcano", *room_tileset("volcano", VOLCANO_TILES, VOLCANO_PALETTE))
+    save_tiles("ice", *room_tileset("ice", ICE_TILES, ICE_PALETTE))
+    save_tiles("chasm", *room_tileset("chasm", CHASM_TILES, CHASM_PALETTE))
+    save_tiles("hideout", *room_tileset("hideout", HIDEOUT_TILES, HIDEOUT_PALETTE))
+    save_tiles("dojo", *room_tileset("dojo", DOJO_TILES, DOJO_PALETTE))
+    save_tiles("tower", *room_tileset("tower", TOWER_TILES, TOWER_PALETTE))
+    save_tiles("den", *room_tileset("den", DEN_TILES, DEN_PALETTE))
+    save_tiles("peak", *room_tileset("peak", PEAK_TILES, PEAK_PALETTE))
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 

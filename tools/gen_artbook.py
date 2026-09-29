@@ -2,9 +2,13 @@
 """Builds docs/artbook from the game's graphics and data tables."""
 
 import re
+import sys
 from pathlib import Path
 
 from PIL import Image
+
+sys.path.insert(0, str(Path(__file__).resolve().parent / "tilesets"))
+import room_preview  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 GRAPHICS = ROOT / "graphics"
@@ -129,10 +133,24 @@ def species_image(sprite):
     return save_strip(chosen, f"{sprite}.png")
 
 
-def tileset_image(name):
-    image = to_rgba(Image.open(GRAPHICS / f"{name}_tiles.bmp"))
+ROOM_SPOTS = [(40, 60), (150, 90), (230, 56), (100, 100), (268, 92)]
+
+
+def tileset_image(name, sprites):
+    image = Image.open(GRAPHICS / f"{name}_tiles.bmp").convert("RGB")
     tiles = [image.crop((x, 0, x + 8, 8)) for x in range(0, image.size[0], 8)]
-    return save_strip(tiles, f"{name}_tiles.png", gap=1)
+    indices = room_preview.room_indices()
+    room = Image.new("RGB", (len(indices[0]) * 8, len(indices) * 8))
+    for row, line in enumerate(indices):
+        for column, index in enumerate(line):
+            room.paste(tiles[index], (column * 8, row * 8))
+    room = room.convert("RGBA")
+    for (x, y), (sprite, frame) in zip(ROOM_SPOTS, sprites):
+        size = 32 if Image.open(GRAPHICS / f"{sprite}.bmp").size[0] == 32 else 16
+        picture = sheet_frames(sprite, size)[frame]
+        room.alpha_composite(picture, (x - size // 2, y - size // 2))
+    room.resize((room.size[0] * 2, room.size[1] * 2), Image.NEAREST).save(IMAGES / f"{name}_room.png")
+    return f"{name}_room.png"
 
 
 def move_label(moves, move_id, show_pp):
@@ -152,6 +170,11 @@ def species_row(species, moves, sprite, role):
             f"| {move_label(moves, data['move_b'], True)} | {role} |")
 
 
+def room_sprites(theme, sprite_by_id):
+    wild = [(sprite_by_id.get(spawn.replace("_", ""), spawn), 0) for spawn in theme["spawns"]]
+    return [("ditto", 3)] + wild[:4]
+
+
 def main():
     IMAGES.mkdir(parents=True, exist_ok=True)
     for old in IMAGES.glob("*.png"):
@@ -166,7 +189,7 @@ def main():
     lines = [
         "# Ditto's Climb — art book",
         "",
-        "Every sprite and tileset in the game, per floor. All art is generated placeholder art from",
+        "Every sprite and tileset in the game, per floor, with a sample room of each floor's tiles. All art is generated placeholder art from",
         "`tools/gen_assets.py`; a hand-drawn BMP of the same size and palette limit (16 colours) replaces it.",
         "",
         "Regenerate this page with `make artbook`.",
@@ -180,7 +203,7 @@ def main():
 
     for number, theme in enumerate(themes, start=1):
         lines += [f"## {number}F · {theme['name'].title()}", "", FLOOR_MECHANICS[number - 1], "",
-                  f"![{theme['name']} tiles](images/{tileset_image(theme['tiles'])})", "", header]
+                  f"![{theme['name']} room](images/{tileset_image(theme['tiles'], room_sprites(theme, sprite_by_id))})", "", header]
         for spawn in theme["spawns"]:
             lines.append(species_row(species, moves, sprite_by_id.get(spawn.replace("_", ""), spawn), "Wild"))
         lines.append(species_row(species, moves, sprite_by_id.get(theme["rare"].replace("_", ""), theme["rare"]),
