@@ -55,6 +55,7 @@ private:
         bn::sprite_ptr sprite;
         species_id species;
         int frames;
+        bool shiny;
     };
 
     bn::random& _random;
@@ -154,7 +155,7 @@ private:
 
     void _show_journal_page(int page);
 
-    void _spawn_outline(species_id id, const bn::fixed_point& position);
+    void _spawn_outline(species_id id, const bn::fixed_point& position, bool shiny = false);
 
     [[nodiscard]] int _outline_below_player() const;
 

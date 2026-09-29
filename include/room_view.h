@@ -23,6 +23,8 @@ public:
 
     void set_plate_phase(int phase);
 
+    void update();
+
     void set_camera(const bn::camera_ptr& camera);
 
     [[nodiscard]] const bn::regular_bg_ptr& bg() const
@@ -63,6 +65,8 @@ private:
     int _width = 0;
     int _height = 0;
     int _plate_phase = 0;
+    int _animation_counter = 0;
+    int _animation_frame = 0;
     bn::vector<bn::fixed_point, 4> _warps;
 
     [[nodiscard]] int _interior_left() const

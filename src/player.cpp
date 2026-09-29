@@ -10,6 +10,7 @@
 
 #include "attacks.h"
 #include "audio.h"
+#include "shiny.h"
 #include "directions.h"
 
 namespace
@@ -60,7 +61,8 @@ player::player(const bn::camera_ptr& camera, const bn::fixed_point& position) :
     _sprite.set_camera(camera);
 }
 
-bool player::update(player_projectiles& projectiles, message_box& messages, const species_id* outline_below)
+bool player::update(player_projectiles& projectiles, message_box& messages, const species_id* outline_below,
+                    bool outline_shiny)
 {
     bool used_outline = false;
 
@@ -204,7 +206,7 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
 
             if(outline_below && ! _form && bn::keypad::b_pressed())
             {
-                start_transform(*outline_below);
+                start_transform(*outline_below, outline_shiny);
                 used_outline = true;
             }
             else if(! _cooldown)
@@ -507,10 +509,11 @@ void player::_lose_hp(int amount)
     }
 }
 
-void player::start_transform(species_id target)
+void player::start_transform(species_id target, bool shiny)
 {
     audio::play(bn::sound_items::sfx_transform);
     _transform_target = target;
+    _transform_shiny = shiny;
     _transform_frames = transform_frames;
     _dash_frames = 0;
     _digging = false;
@@ -525,7 +528,7 @@ void player::evolve(species_id target)
     if(_form)
     {
         _evolving_from = _form->species;
-        start_transform(target);
+        start_transform(target, _form->shiny);
     }
 }
 
@@ -697,7 +700,7 @@ void player::_finish_transform(message_box& messages)
 {
     const species_data& target = species::get(_transform_target);
     _form = form{ _transform_target, target.hp * form_hp_scale,
-                  moves::get(target.move_b).pp };
+                  moves::get(target.move_b).pp, _transform_shiny };
     _hp = max_hp();
 
     message_box::text message;
@@ -816,6 +819,16 @@ void player::_update_wave()
 }
 
 void player::_update_sprite(bool moving)
+{
+    _update_sprite_item(moving);
+
+    if(_form && _form->shiny && ! _transform_frames)
+    {
+        _sprite.set_palette(*shiny::palette(_form->species));
+    }
+}
+
+void player::_update_sprite_item(bool moving)
 {
     _sprite.set_position(_position);
     _sprite.set_z_order(-_position.y().round_integer());

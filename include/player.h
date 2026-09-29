@@ -15,6 +15,7 @@ struct form
     species_id species;
     int hp;
     int pp_b;
+    bool shiny = false;
 };
 
 struct player_state
@@ -36,7 +37,7 @@ public:
     player(const bn::camera_ptr& camera, const bn::fixed_point& position);
 
     [[nodiscard]] bool update(player_projectiles& projectiles, message_box& messages,
-                              const species_id* outline_below);
+                              const species_id* outline_below, bool outline_shiny);
 
     [[nodiscard]] const bn::fixed_point& position() const
     {
@@ -122,7 +123,7 @@ public:
 
     void recoil(message_box& messages);
 
-    void start_transform(species_id target);
+    void start_transform(species_id target, bool shiny = false);
 
     void evolve(species_id target);
 
@@ -164,6 +165,7 @@ private:
     attack _area_attack;
     int _transform_frames = 0;
     species_id _transform_target = species_id::ditto;
+    bool _transform_shiny = false;
     bn::optional<species_id> _evolving_from;
     int _switch_flash_frames = 0;
     status_effect _status = status_effect::none;
@@ -198,6 +200,8 @@ private:
     void _faint_form(message_box& messages);
 
     void _update_sprite(bool moving);
+
+    void _update_sprite_item(bool moving);
 };
 
 #endif

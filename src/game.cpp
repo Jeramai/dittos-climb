@@ -35,6 +35,7 @@
 #include "team_rocket_boss.h"
 #include "onix_boss.h"
 #include "audio.h"
+#include "shiny.h"
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
 #include "venusaur_boss.h"
@@ -144,7 +145,7 @@ game::game(bn::random& random, const save_data* saved) :
     #ifdef DITTO_TEST_FORM
         if(! saved)
         {
-            _player.start_transform(species_id(DITTO_TEST_FORM));
+            _player.start_transform(species_id(DITTO_TEST_FORM), shiny::roll(_random));
         }
     #endif
 }
@@ -356,6 +357,7 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
 
 void game::_update_play()
 {
+    _view.update();
     int outline_index = _outline_below_player();
     const species_id* outline_species = outline_index >= 0 ? &_outlines[outline_index].species : nullptr;
 
@@ -364,7 +366,9 @@ void game::_update_play()
         _messages.show("Press B to TRANSFORM!");
     }
 
-    if(_player.update(_player_projectiles, _messages, outline_species))
+    bool outline_shiny = outline_index >= 0 && _outlines[outline_index].shiny;
+
+    if(_player.update(_player_projectiles, _messages, outline_species, outline_shiny))
     {
         _outlines.erase(_outlines.begin() + outline_index);
     }
@@ -589,12 +593,12 @@ void game::_handle_player_attacks()
         show_name_message(_messages, "Wild ", value.data().name, " fainted!");
         audio::play_quiet(bn::sound_items::sfx_faint);
         _spawn_effect(value.position());
-        _spawn_outline(value.id(), value.position());
+        _spawn_outline(value.id(), value.position(), value.shiny());
         return true;
     });
 }
 
-void game::_spawn_outline(species_id id, const bn::fixed_point& position)
+void game::_spawn_outline(species_id id, const bn::fixed_point& position, bool shiny)
 {
     if(_outlines.full())
     {
@@ -614,7 +618,7 @@ void game::_spawn_outline(species_id id, const bn::fixed_point& position)
     bn::sprite_ptr sprite = species::get(id).sprite->create_sprite(spot, species_frames::white);
     sprite.set_camera(_camera);
     sprite.set_z_order(500);
-    _outlines.push_back(outline{ bn::move(sprite), id, outline_frames });
+    _outlines.push_back(outline{ bn::move(sprite), id, outline_frames, shiny });
 }
 
 void game::_spawn_boss()
@@ -1412,6 +1416,16 @@ void game::_spawn_enemies()
     else if(! _enemies.empty())
     {
         _messages.show("Wild POKEMON appeared!");
+    }
+
+    for(const enemy& value : _enemies)
+    {
+        if(value.shiny())
+        {
+            show_name_message(_messages, "A shiny ", value.data().name, " appeared!");
+            audio::play(bn::sound_items::sfx_key_item);
+            _spawn_effect(value.position());
+        }
     }
 }
 

@@ -35,6 +35,7 @@ Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, beca
 | `-DDITTO_TEST_ENDING=<pages>` | Go straight to the ending with this many journal pages (13 shows the secret) |
 | `-DDITTO_TEST_LAYOUT=<n>` | The start combat room uses layout n (0–4; 3 has a centre block) |
 | `-DDITTO_TEST_SCOPE` | Start with the Silph Scope |
+| `-DDITTO_TEST_SHINY` | Every wild Pokémon and the test form are shiny |
 | `-DDITTO_TEST_SPECIES=<species>` | Every wild Pokémon is this species |
 
 ```

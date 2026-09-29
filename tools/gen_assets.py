@@ -2192,12 +2192,41 @@ def save_sprite_sheet(name, frames, size):
     palette = [TRANSPARENT] + [COLORS[c] for c in keys[1:]]
     pixels = [[keys.index(c) for c in row] for frame in frames for row in frame]
     save_indexed(name, pixels, palette, {"type": "sprite", "height": size})
+    return palette
+
+
+SHINY_HUE_SHIFT = {
+    "rattata": 150, "gyarados": 140, "magikarp": 40, "pikachu": -15, "zubat": 100, "golbat": 100,
+    "dragonite": 95, "dratini": 110, "dragonair": 120, "charmander": 20, "onix": 60, "gengar": -40,
+    "haunter": -40, "gastly": -40, "mewtwo": 90, "mew": -150, "snorlax": 40, "voltorb": 200, "geodude": 30,
+    "venusaur": 60, "bulbasaur": 60, "squirtle": 40, "vulpix": 30, "growlithe": 20, "lapras": 90,
+    "machop": 60, "machoke": 60, "abra": -20, "kadabra": -20, "seel": 40, "slowpoke": 60, "arbok": 60,
+}
+
+
+def shiny_color(color, degrees):
+    import colorsys
+    red, green, blue = (value / 255 for value in color)
+    hue, saturation, value = colorsys.rgb_to_hsv(red, green, blue)
+    if saturation < 0.18 or color in (COLORS["m"], TRANSPARENT):
+        return color
+    red, green, blue = colorsys.hsv_to_rgb((hue + degrees / 360) % 1, saturation, value)
+    return (round(red * 255), round(green * 255), round(blue * 255))
+
+
+def save_shiny_palette(name, palette):
+    degrees = SHINY_HUE_SHIFT.get(name, 120)
+    shiny = [shiny_color(color, degrees) for color in palette]
+    shiny += [(0, 0, 0)] * (16 - len(shiny))
+    save_indexed(f"{name}_shiny", [[0] * 8 for _ in range(8)], shiny,
+                 {"type": "sprite_palette", "bpp_mode": "bpp_4", "colors_count": 16})
 
 
 def save_species(name, walk_1, walk_2, size=16, extra_frames=()):
     own_outline = {"k": "m"}
-    save_sprite_sheet(name, [walk_1, walk_2, whiten(walk_1),
-                             recolor(walk_1, own_outline), recolor(walk_2, own_outline), *extra_frames], size)
+    palette = save_sprite_sheet(name, [walk_1, walk_2, whiten(walk_1), recolor(walk_1, own_outline),
+                                       recolor(walk_2, own_outline), *extra_frames], size)
+    save_shiny_palette(name, palette)
 
 
 def save_wave():
@@ -3800,15 +3829,78 @@ def legacy_layout(old):
     return tiles
 
 
+TILE_ANIMATIONS = {
+    "lake": {"water": "sway", "flows": True},
+    "den": {"water": "sway", "flows": True, "special": "spin"},
+    "chasm": {"flows": True},
+    "hideout": {"flows": True},
+    "volcano": {"special": "drift", "door": "drift"},
+}
+ANIMATION_FRAMES = 4
+
+
+def join_block(tiles, first):
+    return [tiles[first + (y // 8) * 2 + x // 8][y % 8][x % 8] for y in range(16) for x in range(16)]
+
+
+def split_flat_block(flat):
+    return [[[flat[(y0 + y) * 16 + x0 + x] for x in range(8)] for y in range(8)] for y0 in (0, 8) for x0 in (0, 8)]
+
+
+def shifted_block(flat, dx, dy):
+    return [flat[((y - dy) % 16) * 16 + (x - dx) % 16] for y in range(16) for x in range(16)]
+
+
+def rotated_block(flat, turns):
+    for _ in range(turns):
+        flat = [flat[(15 - x) * 16 + y] for y in range(16) for x in range(16)]
+    return flat
+
+
+def flow_step(flat, dx, dy):
+    period_8 = shifted_block(flat, 8 * (dx != 0), 8 * (dy != 0)) == flat
+    return 2 if period_8 else 4
+
+
+def animated_tiles(name, tiles, frame):
+    config = TILE_ANIMATIONS[name]
+    tiles = [tile for tile in tiles]
+    if config.get("water"):
+        flat = join_block(tiles, 35)
+        tiles[35:39] = split_flat_block(shifted_block(flat, [0, 1, 2, 1][frame], 0))
+    if config.get("flows"):
+        for first, dx, dy in ((39, 1, 0), (43, -1, 0), (47, 0, 1), (51, 0, -1)):
+            flat = join_block(tiles, first)
+            step = flow_step(flat, dx, dy) * frame
+            tiles[first:first + 4] = split_flat_block(shifted_block(flat, dx * step, dy * step))
+    firsts = []
+    if config.get("special"):
+        firsts += [(55 + phase * 4, config["special"]) for phase in range(3)]
+    if config.get("door"):
+        firsts.append((19, config["door"]))
+    for first, kind in firsts:
+        flat = join_block(tiles, first)
+        flat = rotated_block(flat, frame) if kind == "spin" else shifted_block(flat, frame, frame // 2)
+        tiles[first:first + 4] = split_flat_block(flat)
+    return tiles
+
+
 def save_tiles(name, tiles, palette):
+    if name in TILE_ANIMATIONS:
+        for frame in range(1, ANIMATION_FRAMES):
+            save_tile_strip(f"{name}_tiles_{frame}", animated_tiles(name, tiles, frame), palette)
+    save_tile_strip(f"{name}_tiles", tiles, palette)
+    save_indexed(f"{name}_palette", [[0] * 8 for _ in range(8)], palette,
+                 {"type": "bg_palette", "bpp_mode": "bpp_4", "colors_count": 16})
+
+
+def save_tile_strip(name, tiles, palette):
     pixels = [[0] * (8 * len(tiles)) for _ in range(8)]
     for index, tile in enumerate(tiles):
         for y in range(8):
             for x in range(8):
                 pixels[y][index * 8 + x] = tile[y][x]
-    save_indexed(f"{name}_tiles", pixels, palette, {"type": "regular_bg_tiles", "bpp_mode": "bpp_4"})
-    save_indexed(f"{name}_palette", [[0] * 8 for _ in range(8)], palette,
-                 {"type": "bg_palette", "bpp_mode": "bpp_4", "colors_count": 16})
+    save_indexed(name, pixels, palette, {"type": "regular_bg_tiles", "bpp_mode": "bpp_4"})
 
 
 def main():

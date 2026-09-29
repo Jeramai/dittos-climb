@@ -4,10 +4,32 @@
 #include "bn_regular_bg_item.h"
 #include "bn_regular_bg_map_cell_info.h"
 #include "bn_regular_bg_map_item.h"
+#include "bn_regular_bg_tiles_ptr.h"
 
 #include "bn_math.h"
 
 #include "room.h"
+
+#include "bn_regular_bg_tiles_items_lake_tiles.h"
+#include "bn_regular_bg_tiles_items_lake_tiles_1.h"
+#include "bn_regular_bg_tiles_items_lake_tiles_2.h"
+#include "bn_regular_bg_tiles_items_lake_tiles_3.h"
+#include "bn_regular_bg_tiles_items_volcano_tiles.h"
+#include "bn_regular_bg_tiles_items_volcano_tiles_1.h"
+#include "bn_regular_bg_tiles_items_volcano_tiles_2.h"
+#include "bn_regular_bg_tiles_items_volcano_tiles_3.h"
+#include "bn_regular_bg_tiles_items_chasm_tiles.h"
+#include "bn_regular_bg_tiles_items_chasm_tiles_1.h"
+#include "bn_regular_bg_tiles_items_chasm_tiles_2.h"
+#include "bn_regular_bg_tiles_items_chasm_tiles_3.h"
+#include "bn_regular_bg_tiles_items_hideout_tiles.h"
+#include "bn_regular_bg_tiles_items_hideout_tiles_1.h"
+#include "bn_regular_bg_tiles_items_hideout_tiles_2.h"
+#include "bn_regular_bg_tiles_items_hideout_tiles_3.h"
+#include "bn_regular_bg_tiles_items_den_tiles.h"
+#include "bn_regular_bg_tiles_items_den_tiles_1.h"
+#include "bn_regular_bg_tiles_items_den_tiles_2.h"
+#include "bn_regular_bg_tiles_items_den_tiles_3.h"
 
 namespace
 {
@@ -39,6 +61,40 @@ namespace
         constexpr int special = 55;
         constexpr int plate = 55;
         constexpr int quad_size = 4;
+    }
+
+    struct tile_animation
+    {
+        const bn::regular_bg_tiles_item* base;
+        const bn::regular_bg_tiles_item* frames[4];
+    };
+
+    constexpr tile_animation tile_animations[] = {
+        { &bn::regular_bg_tiles_items::lake_tiles, { &bn::regular_bg_tiles_items::lake_tiles, &bn::regular_bg_tiles_items::lake_tiles_1,
+            &bn::regular_bg_tiles_items::lake_tiles_2, &bn::regular_bg_tiles_items::lake_tiles_3 } },
+        { &bn::regular_bg_tiles_items::volcano_tiles, { &bn::regular_bg_tiles_items::volcano_tiles, &bn::regular_bg_tiles_items::volcano_tiles_1,
+            &bn::regular_bg_tiles_items::volcano_tiles_2, &bn::regular_bg_tiles_items::volcano_tiles_3 } },
+        { &bn::regular_bg_tiles_items::chasm_tiles, { &bn::regular_bg_tiles_items::chasm_tiles, &bn::regular_bg_tiles_items::chasm_tiles_1,
+            &bn::regular_bg_tiles_items::chasm_tiles_2, &bn::regular_bg_tiles_items::chasm_tiles_3 } },
+        { &bn::regular_bg_tiles_items::hideout_tiles, { &bn::regular_bg_tiles_items::hideout_tiles, &bn::regular_bg_tiles_items::hideout_tiles_1,
+            &bn::regular_bg_tiles_items::hideout_tiles_2, &bn::regular_bg_tiles_items::hideout_tiles_3 } },
+        { &bn::regular_bg_tiles_items::den_tiles, { &bn::regular_bg_tiles_items::den_tiles, &bn::regular_bg_tiles_items::den_tiles_1,
+            &bn::regular_bg_tiles_items::den_tiles_2, &bn::regular_bg_tiles_items::den_tiles_3 } },
+    };
+
+    constexpr int animation_step_frames = 12;
+
+    const tile_animation* find_tile_animation(const floor_theme& theme)
+    {
+        for(const tile_animation& value : tile_animations)
+        {
+            if(value.base == theme.tiles)
+            {
+                return &value;
+            }
+        }
+
+        return nullptr;
     }
 
     constexpr int river_width = 3;
@@ -191,6 +247,21 @@ void room_view::set_locked(bool locked)
 {
     _carve_doors(locked);
     _render();
+}
+
+void room_view::update()
+{
+    const tile_animation* animation = find_tile_animation(*_theme);
+
+    if(! animation || ++_animation_counter < animation_step_frames)
+    {
+        return;
+    }
+
+    _animation_counter = 0;
+    _animation_frame = (_animation_frame + 1) % 4;
+    bn::regular_bg_tiles_ptr tiles = _bg.tiles();
+    tiles.set_tiles_ref(*animation->frames[_animation_frame]);
 }
 
 void room_view::set_plate_phase(int phase)
@@ -430,6 +501,8 @@ void room_view::_set_theme(const floor_theme& theme)
     }
 
     _theme = &theme;
+    _animation_counter = 0;
+    _animation_frame = 0;
     _bg = create_bg(theme);
     _bg_map = _bg.map();
 

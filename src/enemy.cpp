@@ -1,3 +1,4 @@
+#include "shiny.h"
 #include "enemy.h"
 
 #include "attacks.h"
@@ -102,6 +103,12 @@ enemy::enemy(species_id id, const bn::fixed_point& position, const bn::camera_pt
     _dash_attack(combat::make_attack(move_id::tackle, pokemon_type::normal, pokemon_type::none))
 {
     _sprite.set_camera(camera);
+    _shiny = shiny::roll(random);
+
+    if(_shiny)
+    {
+        _sprite.set_palette(*shiny::palette(id));
+    }
 }
 
 void enemy::update(const bn::fixed_point& target, enemy_projectiles& projectiles, bn::random& random)

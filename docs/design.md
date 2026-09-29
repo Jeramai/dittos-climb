@@ -80,6 +80,13 @@ holds a reward that shows once the room is clear:
 
 The pause screen shows the held item and the journal count.
 
+### Shiny Pokémon
+
+Every wild Pokémon, including a side room's rare one, is shiny at Emerald's odds of 1 in 8192. A shiny has its
+own palette (the known shinies keep their real colours: red Gyarados, gold Magikarp, green Dragonite, gold Onix;
+the others get a hue shift) and announces itself with a sparkle, a jingle and "A shiny X appeared!". Ditto keeps
+the shiny colours when it transforms into a defeated shiny, and through an evolution.
+
 ### Save and quit
 
 No save slots: a run is meant to be short. Select on the pause screen, then A, stores the run in SRAM and returns
@@ -161,6 +168,8 @@ Bonus floors after the end: Steel, Dark and Fairy.
   seamless 16×16 blocks (floor, floor detail, grass, water, gates, flows, the three special phases) and a wall
   with a top, an upper face and a lower face. The renderer picks each 8×8 tile from the world position, so a
   block repeats every 16 px. The sets live in `tools/tilesets/<floor>.py`; the art book shows a sample room of each.
+- Water, currents, waterfalls, winds, spinners, lava and whirlpools animate, as in Emerald: those floors have four
+  versions of their tile set, and the room swaps the tile graphics every 12 frames.
 - The music and sound effects come from `tools/gen_audio.py` and play through Maxmod. Every floor has its own
   theme; bosses switch to a boss theme (Mewtwo has its own) and the floor theme returns when the boss faints.
   A hand-made MOD or WAV with the same name replaces a generated one.
@@ -239,4 +248,5 @@ Bonus floors after the end: Steel, Dark and Fairy.
     pages, a secret scene follows and Ditto transforms into Mew. The run ends and the title screen returns.
 17. Music and sound effects: 17 original tracks and 20 effects.
 18. Save and quit.
-19. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, real art.
+19. Emerald-style tilesets, animated tiles and shiny Pokémon.
+20. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, real art.

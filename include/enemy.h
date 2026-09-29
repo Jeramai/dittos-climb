@@ -21,6 +21,11 @@ public:
         return _id;
     }
 
+    [[nodiscard]] bool shiny() const
+    {
+        return _shiny;
+    }
+
     [[nodiscard]] const species_data& data() const
     {
         return species::get(_id);
@@ -96,6 +101,7 @@ private:
     };
 
     bn::sprite_ptr _sprite;
+    bool _shiny = false;
     bn::fixed_point _position;
     bn::fixed_point _attack_direction;
     species_id _id;
