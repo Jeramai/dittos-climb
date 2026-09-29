@@ -131,6 +131,7 @@ game::game(bn::random& random, const save_data* saved) :
 
     #ifdef DITTO_TEST_PAGES
         _journal_pages = DITTO_TEST_PAGES;
+        _journal_mask = (1 << DITTO_TEST_PAGES) - 1;
     #endif
 
     #ifdef DITTO_TEST_ENDING
@@ -142,6 +143,7 @@ game::game(bn::random& random, const save_data* saved) :
     {
         _floor_number = saved->floor_number;
         _journal_pages = saved->journal_pages;
+        _journal_mask = saved->journal_mask;
         _has_silph_scope = saved->has_silph_scope;
         _player.restore(saved->player);
     }
@@ -1235,6 +1237,7 @@ void game::_collect_reward()
         _reward_pickup.reset();
         value.reward_taken = true;
         ++_journal_pages;
+        _journal_mask |= 1 << (_floor_number - 1);
         audio::play(bn::sound_items::sfx_key_item);
         _show_journal_page(_floor_number - 1);
         return;
@@ -1248,11 +1251,8 @@ void game::_collect_reward()
     }
 }
 
-void game::_show_journal_page(int page)
+void game::_generate_journal_page(int page, bn::ivector<bn::sprite_ptr>& text)
 {
-    _set_world_visible(false);
-    _overlay.show_black();
-
     bn::sprite_text_generator big(common::variable_8x16_sprite_font);
     big.set_center_alignment();
     big.set_bg_priority(0);
@@ -1263,15 +1263,25 @@ void game::_show_journal_page(int page)
 
     bn::string<32> title("LAB JOURNAL  PAGE ");
     title.append(bn::to_string<4>(page + 1));
-
-    bn::vector<bn::sprite_ptr, 40> text;
     small.generate(0, -56, title, text);
 
     for(int line = 0; line < journal::lines_per_page; ++line)
     {
         big.generate(0, -20 + line * 18, journal::line(page, line), text);
     }
+}
 
+void game::_show_journal_page(int page)
+{
+    _set_world_visible(false);
+    _overlay.show_black();
+
+    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    small.set_center_alignment();
+    small.set_bg_priority(0);
+
+    bn::vector<bn::sprite_ptr, 40> text;
+    _generate_journal_page(page, text);
     small.generate(0, 70, "A: CLOSE", text);
     bn::core::update();
 
@@ -1284,6 +1294,64 @@ void game::_show_journal_page(int page)
     _overlay.hide();
     _set_world_visible(true);
     bn::core::update();
+}
+
+void game::_read_journal()
+{
+    bn::vector<int, journal::page_count> collected;
+
+    for(int page = 0; page < journal::page_count; ++page)
+    {
+        if(_journal_mask & (1 << page))
+        {
+            collected.push_back(page);
+        }
+    }
+
+    _overlay.show_black();
+
+    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    small.set_center_alignment();
+    small.set_bg_priority(0);
+
+    bn::vector<bn::sprite_ptr, 48> text;
+    int index = 0;
+    auto draw = [&]()
+    {
+        text.clear();
+        _generate_journal_page(collected[index], text);
+
+        bn::string<32> position(index > 0 ? "<  " : "   ");
+        position.append(bn::to_string<4>(index + 1));
+        position.append("/");
+        position.append(bn::to_string<4>(collected.size()));
+        position.append(index < collected.size() - 1 ? "  >" : "   ");
+        small.generate(0, 58, position, text);
+        small.generate(0, 70, "B: BACK", text);
+    };
+
+    draw();
+    bn::core::update();
+
+    while(! bn::keypad::b_pressed())
+    {
+        if(bn::keypad::left_pressed() && index > 0)
+        {
+            --index;
+            audio::play(bn::sound_items::sfx_menu);
+            draw();
+        }
+        else if(bn::keypad::right_pressed() && index < collected.size() - 1)
+        {
+            ++index;
+            audio::play(bn::sound_items::sfx_menu);
+            draw();
+        }
+
+        bn::core::update();
+    }
+
+    text.clear();
 }
 
 void game::_handle_enemy_attacks()
@@ -1594,10 +1662,21 @@ void game::_pause_map()
     pages.append("/");
     pages.append(bn::to_string<4>(journal::page_count));
 
-    bn::vector<bn::sprite_ptr, 32> text;
-    big.generate(0, -66, floor_label(_floor_number), text);
-    small.generate(0, -48, held, text);
-    small.generate(0, -38, pages, text);
+    bn::vector<bn::sprite_ptr, 40> text;
+    auto show_header = [&]()
+    {
+        text.clear();
+        big.generate(0, -66, floor_label(_floor_number), text);
+        small.generate(0, -48, held, text);
+        small.generate(0, -38, pages, text);
+
+        if(_journal_mask)
+        {
+            small.generate(0, -28, "A: READ JOURNAL", text);
+        }
+    };
+
+    show_header();
     bn::vector<bn::sprite_ptr, 32> prompt;
     bool confirming = false;
     auto show_prompt = [&]()
@@ -1629,6 +1708,16 @@ void game::_pause_map()
         else if(bn::keypad::start_pressed())
         {
             break;
+        }
+        else if(bn::keypad::a_pressed() && _journal_mask)
+        {
+            audio::play(bn::sound_items::sfx_menu);
+            text.clear();
+            prompt.clear();
+            _read_journal();
+            _overlay.show_map(_floor, _room);
+            show_header();
+            show_prompt();
         }
         else if(bn::keypad::select_pressed())
         {
@@ -1670,6 +1759,7 @@ void game::_save_and_quit()
     data.floor_number = _floor_number;
     data.room = _room;
     data.journal_pages = _journal_pages;
+    data.journal_mask = _journal_mask;
     data.flute_room = _flute_room;
     data.has_flute = _has_flute;
     data.has_silph_scope = _has_silph_scope;

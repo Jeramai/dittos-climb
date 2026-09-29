@@ -4,7 +4,7 @@
 
 namespace
 {
-    constexpr unsigned save_magic = 0x44434c33;
+    constexpr unsigned save_magic = 0x44434c34;
 }
 
 namespace save

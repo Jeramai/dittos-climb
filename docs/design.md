@@ -78,7 +78,8 @@ holds a reward that shows once the room is clear:
   +20% to that type), Leftovers (slow healing), Quick Claw (shorter cooldowns). Instant items: Ether (refills move
   B's PP; it stays on the floor for base Ditto) and Rare Candy (+5 max HP for base Ditto).
 
-The pause screen shows the held item and the journal count.
+The pause screen shows the held item and the journal count. A opens the journal: the pages found so far, in
+floor order, turned with Left and Right.
 
 ### Shiny Pokémon
 

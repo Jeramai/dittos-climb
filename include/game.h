@@ -89,6 +89,7 @@ private:
     int _flicker_timer = 400;
     int _flicker_frames = 0;
     int _journal_pages = 0;
+    int _journal_mask = 0;
     int _ember_timer = 60;
     int _flute_room = -1;
     bool _locked = false;
@@ -154,6 +155,10 @@ private:
     void _collect_reward();
 
     void _show_journal_page(int page);
+
+    void _generate_journal_page(int page, bn::ivector<bn::sprite_ptr>& text);
+
+    void _read_journal();
 
     void _spawn_outline(species_id id, const bn::fixed_point& position, bool shiny = false);
 

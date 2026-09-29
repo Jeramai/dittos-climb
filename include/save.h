@@ -12,6 +12,7 @@ struct save_data
     int floor_number;
     int room;
     int journal_pages;
+    int journal_mask;
     int flute_room;
     bool has_flute;
     bool has_silph_scope;
