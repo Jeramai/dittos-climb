@@ -42,10 +42,12 @@ void floor_map::generate(int floor_number, int overgrown_percent, bn::random& ra
     }
 
     int distances[max_rooms];
+    int parents[max_rooms];
 
-    for(int& value : distances)
+    for(int index = 0; index < max_rooms; ++index)
     {
-        value = -1;
+        distances[index] = -1;
+        parents[index] = -1;
     }
 
     int queue[max_rooms];
@@ -65,6 +67,7 @@ void floor_map::generate(int floor_number, int overgrown_percent, bn::random& ra
             if(next >= 0 && distances[next] < 0)
             {
                 distances[next] = distances[current] + 1;
+                parents[next] = current;
                 queue[tail++] = next;
             }
         }
@@ -83,13 +86,21 @@ void floor_map::generate(int floor_number, int overgrown_percent, bn::random& ra
     _rooms[stairs].kind = room_kind::stairs;
     _rooms[stairs].cleared = true;
 
+    bool on_path[max_rooms] = {};
+
+    for(int index = stairs; index >= 0; index = parents[index])
+    {
+        on_path[index] = true;
+    }
+
     for(int index = 1; index < _rooms.size(); ++index)
     {
         for(direction side : { direction::east, direction::south })
         {
             int other = neighbor(index, side);
+            bool path_door = other >= 0 && on_path[index] && on_path[other];
 
-            if(other > 0 && random.get_int(100) < overgrown_percent)
+            if(other > 0 && ! path_door && random.get_int(100) < overgrown_percent)
             {
                 _rooms[index].overgrown[int(side)] = true;
                 _rooms[other].overgrown[int(opposite(side))] = true;

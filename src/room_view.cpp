@@ -33,6 +33,7 @@ namespace
     }
 
     constexpr int river_width = 3;
+    constexpr int bridge_width = 3;
 
     constexpr int grass_patches = 3;
 
@@ -425,12 +426,13 @@ void room_view::_plant_water(int initial_seed)
         }
 
         char flow = forward ? room::cells::flow_right : room::cells::flow_left;
+        int bridge = _interior_left() + 2 + next_seed(seed) % bn::max(_layout.width - bridge_width - 4, 1);
 
         for(int y = row; y < row + river_width; ++y)
         {
             for(int x = _interior_left(); x < _interior_left() + _layout.width; ++x)
             {
-                if(room::get(x, y) == room::cells::floor)
+                if(room::get(x, y) == room::cells::floor && (x < bridge || x >= bridge + bridge_width))
                 {
                     room::set(x, y, flow);
                 }
@@ -449,12 +451,13 @@ void room_view::_plant_water(int initial_seed)
         }
 
         char flow = forward ? room::cells::flow_down : room::cells::flow_up;
+        int bridge = _interior_top() + 2 + next_seed(seed) % bn::max(_layout.height - bridge_width - 4, 1);
 
         for(int x = column; x < column + river_width; ++x)
         {
             for(int y = _interior_top(); y < _interior_top() + _layout.height; ++y)
             {
-                if(room::get(x, y) == room::cells::floor)
+                if(room::get(x, y) == room::cells::floor && (y < bridge || y >= bridge + bridge_width))
                 {
                     room::set(x, y, flow);
                 }

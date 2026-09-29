@@ -32,6 +32,8 @@ the Unknown Dungeon.
   two moves.
 - A transformed Ditto keeps its pink outline, so it never looks like an enemy.
 - The first Transform into a species registers it in the Pokédex.
+- Field gates never block the way to the stairs: bushes only grow on doors off the start-to-stairs path, and
+  every river has a land bridge. Gated rooms are optional.
 
 ### Forms and HP
 
