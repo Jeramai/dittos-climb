@@ -106,7 +106,7 @@ protected:
 
     [[nodiscard]] attack wild_attack(move_id move) const;
 
-    [[nodiscard]] bool walk(const bn::fixed_point& step);
+    [[nodiscard]] bool walk(const bn::fixed_point& step, bool can_swim = false);
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define MOVES_H
 
 #include "bn_fixed.h"
+#include "bn_sprite_item.h"
 
 #include "types.h"
 
@@ -43,6 +44,15 @@ enum class move_id
     dig,
     supersonic,
     slam,
+    splash,
+    bubble,
+    hypnosis,
+    water_gun,
+    swift,
+    bubblebeam,
+    bite,
+    hydro_pump,
+    dragon_rage,
 };
 
 enum class status_effect
@@ -71,6 +81,7 @@ struct move_data
     status_effect status = status_effect::none;
     int status_chance = 0;
     bool drain = false;
+    const bn::sprite_item* sheet = nullptr;
 };
 
 namespace moves

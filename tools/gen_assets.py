@@ -45,6 +45,7 @@ COLORS = {
     "z": (160, 120, 200),
     "Z": (96, 64, 144),
     "x": (152, 104, 64),
+    "i": (136, 184, 232),
 }
 
 DITTO = [
@@ -544,6 +545,168 @@ def onix_frame(step, charging):
         grid[23 + step][x] = "k"
     for x, y in ((8, 12), (24, 12), (13, 26), (19, 26)):
         grid[y][x] = "A"
+    return ["".join(row) for row in outline(grid)]
+
+
+MAGIKARP_1 = [
+    "",
+    "",
+    "      kkk",
+    "     kyyyk",
+    "   kkkkkkkk",
+    "  koooooooook",
+    " kowkooooooookk",
+    " kokkoooooooookw",
+    "kyooooccoooookww",
+    " kooooccooooookw",
+    "  kyooooooooookk",
+    "   kkkooooookk",
+    "     kwkkkwk",
+    "      k   k",
+]
+
+MAGIKARP_2 = [
+    "",
+    "",
+    "",
+    "      kkk",
+    "     kyyyk",
+    "   kkkkkkkk  kk",
+    "  koooooooookwk",
+    " kowkoooooooookw",
+    "kyokkoooccooookw",
+    " kooooooccoooook",
+    "  kyooooooooook",
+    "   kkkooooookk",
+    "     kwkkkwk",
+    "      k   k",
+]
+
+POLIWAG_1 = [
+    "",
+    "",
+    "",
+    "      kkkk",
+    "    kkuuuukk",
+    "   kuuuuuuuuk",
+    "  kuwkuuuuwkuk",
+    "  kuwwkkkkwwuk",
+    "  kuuwwwwwwuuk",
+    "  kuuwwkkwwuuk",
+    "  kuuwwkwwwuuk",
+    "   kuuwwwwuuk",
+    "    kkuuuukkk",
+    "     kk  kiiik",
+    "          kkk",
+]
+
+POLIWAG_2 = [""] + POLIWAG_1[:-1]
+
+STARYU_1 = [
+    "",
+    "       kk",
+    "      kxxk",
+    "      kxxk",
+    "     kxxxxk",
+    "kkkkkkxxxxkkkkkk",
+    "kxxxxxxnnxxxxxxk",
+    " kxxxxnwnnxxxxk",
+    "  kxxxxnnxxxxk",
+    "   kxxxxxxxxk",
+    "  kxxxxkkxxxxk",
+    "  kxxxk  kxxxk",
+    " kxxxk    kxxxk",
+    " kxxk      kxxk",
+    " kkk        kkk",
+]
+
+STARYU_2 = [""] + STARYU_1[:-1]
+
+HORSEA_1 = [
+    "",
+    "      kkk",
+    "     kBBBk",
+    "  kkkBBwkBk",
+    " kBBBBBBBBk",
+    "  kkkkBBBBk",
+    "      kBBBk",
+    "     kBByBkk",
+    "    kBByyBkwk",
+    "    kBByyBkwk",
+    "     kBByBkk",
+    "      kBBBk",
+    "       kBBk",
+    "    kk kBk",
+    "     kkBk",
+    "       k",
+]
+
+HORSEA_2 = [""] + HORSEA_1[:-1]
+
+BUBBLE = [
+    "",
+    "  kkkk",
+    " kiiiik",
+    "kiwwiiik",
+    "kiwiiiik",
+    "kiiiiiik",
+    " kiiiik",
+    "  kkkk",
+]
+
+WATER_DROP = [
+    "",
+    "   kk",
+    "  kBBk",
+    " kBwBBk",
+    " kBwBBk",
+    " kBBBBk",
+    "  kBBk",
+    "   kk",
+]
+
+STAR = [
+    "",
+    "   kk",
+    "   ky",
+    "kkkyykkk",
+    " kyywyk",
+    "  kyyk",
+    " ky  yk",
+    " k    k",
+]
+
+DRAGON_FIRE = [
+    "",
+    "  kkk",
+    " kqqqk",
+    "kqpwpqk",
+    "kqppmqk",
+    " kqmmqk",
+    "  kkkk",
+]
+
+
+def gyarados_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    ellipse(grid, 16, 24 + step, 13, 6, "u")
+    ellipse(grid, 16, 25 + step, 9, 3, "c")
+    ellipse(grid, 4, 20, 3, 2, "w")
+    ellipse(grid, 28, 20, 3, 2, "w")
+    ellipse(grid, 16, 11, 10, 7.5, "u")
+    for x in range(10, 23, 3):
+        for y in range(1, 5):
+            if abs(x - 16) // 2 + y > 1:
+                grid[y][x] = "w"
+    ellipse(grid, 16, 15, 5.5, 2.5, "B" if charging else "k")
+    for x in (12, 14, 18, 20):
+        grid[13][x] = "w"
+    grid[8][11] = grid[8][12] = "e"
+    grid[8][20] = grid[8][21] = "e"
+    for x in (10, 11, 12, 13):
+        grid[6][x] = "w"
+    for x in (19, 20, 21, 22):
+        grid[6][x] = "w"
     return ["".join(row) for row in outline(grid)]
 
 
@@ -1055,6 +1218,125 @@ def boulder_tile():
     return tile
 
 
+LAKE_PALETTE = [
+    (8, 8, 16),
+    (72, 84, 104),
+    (60, 72, 92),
+    (96, 112, 136),
+    (44, 52, 68),
+    (28, 32, 48),
+    (48, 56, 80),
+    (64, 80, 112),
+    (44, 56, 84),
+    (96, 120, 160),
+    (36, 44, 60),
+    (56, 96, 160),
+    (40, 72, 152),
+    (88, 136, 208),
+    (200, 224, 248),
+    (24, 28, 40),
+]
+
+
+def lake_floor_tile(variant):
+    tile = blank(1)
+    for x, y in ((1, 1), (5, 3), (2, 6)):
+        tile[y][x] = 2
+    if variant:
+        tile[4][5] = tile[4][6] = 3
+    return tile
+
+
+def lake_shadow_tile():
+    tile = blank(4)
+    tile[2][2] = tile[5][6] = 10
+    return tile
+
+
+def lake_wall_top_tile():
+    tile = blank(5)
+    for x, y in ((2, 2), (6, 1), (1, 6), (5, 5)):
+        tile[y][x] = 6
+    return tile
+
+
+def lake_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [9] * 8
+    tile[7] = [8] * 8
+    for y in range(1, 7):
+        tile[y][(y * 3) % 8] = 8
+    tile[2][5] = 11
+    return tile
+
+
+def lake_door_tile():
+    tile = blank(5)
+    for x in (1, 4, 6):
+        for y in range(8):
+            if y >= abs(x - 4):
+                tile[y][x] = 9 if y < 4 else 7
+    return tile
+
+
+def lake_stairs_tiles():
+    big = [[15] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 14
+            big[top + 1][x] = 3
+            big[top + 2][x] = 7
+    return split_quad(big)
+
+
+def puddle_tile():
+    tile = lake_floor_tile(0)
+    for y in range(3, 6):
+        for x in range(1, 7):
+            tile[y][x] = 11
+    tile[3][2] = 13
+    return tile
+
+
+def water_tile():
+    tile = blank(12)
+    tile[2][1] = tile[2][2] = tile[1][3] = 13
+    tile[6][5] = tile[6][6] = tile[5][7] = 13
+    return tile
+
+
+def flow_tile(dx, dy):
+    tile = blank(12)
+    for i in range(-2, 3):
+        cx, cy = 3 - dx, 3 - dy
+        if dx:
+            tile[3 + i][cx + dx * (2 - abs(i))] = 14
+        else:
+            tile[cy + dy * (2 - abs(i))][3 + i] = 14
+    tile[7][1] = tile[0][6] = 13
+    return tile
+
+
+LAKE_TILES = [
+    blank(0),
+    lake_floor_tile(0),
+    lake_floor_tile(1),
+    lake_shadow_tile(),
+    lake_wall_top_tile(),
+    lake_wall_face_tile(),
+    lake_door_tile(),
+    *lake_stairs_tiles(),
+    puddle_tile(),
+    lake_floor_tile(0),
+    lake_wall_top_tile(),
+    water_tile(),
+    flow_tile(1, 0),
+    flow_tile(-1, 0),
+    flow_tile(0, 1),
+    flow_tile(0, -1),
+]
+
 CAVE_TILES = [
     blank(0),
     cave_floor_tile(0),
@@ -1168,6 +1450,12 @@ def main():
     save_species("onix", onix_frame(0, False), onix_frame(1, False), 32, [onix_frame(0, True)])
     save_sprite_sheet("onix_segment", [ONIX_SEGMENT, whiten(ONIX_SEGMENT)], 16)
     save_sprite_sheet("light", [light_circle()], 64)
+    save_species("magikarp", MAGIKARP_1, MAGIKARP_2)
+    save_species("poliwag", POLIWAG_1, POLIWAG_2)
+    save_species("staryu", STARYU_1, STARYU_2)
+    save_species("horsea", HORSEA_1, HORSEA_2)
+    save_species("gyarados", gyarados_frame(0, False), gyarados_frame(1, False), 32, [gyarados_frame(0, True)])
+    save_sprite_sheet("water_projectiles", [BUBBLE, WATER_DROP, STAR, DRAGON_FIRE], 8)
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
@@ -1177,6 +1465,7 @@ def main():
     save_tiles("lab", LAB_TILES, LAB_PALETTE)
     save_tiles("forest", FOREST_TILES, FOREST_PALETTE)
     save_tiles("cave", CAVE_TILES, CAVE_PALETTE)
+    save_tiles("lake", LAKE_TILES, LAKE_PALETTE)
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 

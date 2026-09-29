@@ -4,9 +4,11 @@
 
 #include "bn_bg_palette_items_cave_palette.h"
 #include "bn_bg_palette_items_forest_palette.h"
+#include "bn_bg_palette_items_lake_palette.h"
 #include "bn_bg_palette_items_lab_palette.h"
 #include "bn_regular_bg_tiles_items_cave_tiles.h"
 #include "bn_regular_bg_tiles_items_forest_tiles.h"
+#include "bn_regular_bg_tiles_items_lake_tiles.h"
 #include "bn_regular_bg_tiles_items_lab_tiles.h"
 
 namespace
@@ -15,16 +17,21 @@ namespace
         { "CINNABAR LAB", &bn::regular_bg_tiles_items::lab_tiles, &bn::bg_palette_items::lab_palette,
           "The lab doors locked!", "The doors opened!",
           { { species_id::rattata, 45 }, { species_id::meowth, 35 }, { species_id::porygon, 20 } }, 3,
-          false, false, 0, boss_kind::snorlax },
+          false, false, false, 0, boss_kind::snorlax },
         { "VIRIDIAN FOREST", &bn::regular_bg_tiles_items::forest_tiles, &bn::bg_palette_items::forest_palette,
           "Vines covered the exits!", "The vines withered away!",
           { { species_id::oddish, 30 }, { species_id::caterpie, 30 }, { species_id::paras, 20 },
             { species_id::beedrill, 20 } }, 4,
-          true, false, 35, boss_kind::venusaur },
+          true, false, false, 35, boss_kind::venusaur },
         { "ROCK TUNNEL", &bn::regular_bg_tiles_items::cave_tiles, &bn::bg_palette_items::cave_palette,
           "Rocks blocked the exits!", "The rocks crumbled away!",
           { { species_id::geodude, 35 }, { species_id::zubat, 35 }, { species_id::diglett, 30 } }, 3,
-          false, true, 0, boss_kind::onix },
+          false, true, false, 0, boss_kind::onix },
+        { "UNDERGROUND LAKE", &bn::regular_bg_tiles_items::lake_tiles, &bn::bg_palette_items::lake_palette,
+          "The water rose over the exits!", "The water drained away!",
+          { { species_id::magikarp, 30 }, { species_id::poliwag, 25 }, { species_id::staryu, 25 },
+            { species_id::horsea, 20 } }, 4,
+          false, false, true, 0, boss_kind::gyarados },
     };
 
     constexpr int theme_count = sizeof(themes) / sizeof(themes[0]);

@@ -29,6 +29,7 @@ namespace
     constexpr int poison_tick_frames = 45;
     constexpr int sleep_frames = 60;
     constexpr int confusion_frames = 150;
+    constexpr bn::fixed current_speed = 0.6;
 
     const species_data& ditto()
     {
@@ -80,6 +81,7 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
     }
 
     ++_frame_counter;
+    _update_water(messages);
 
     if(! _update_status(messages))
     {
@@ -358,6 +360,15 @@ void player::start_transform(species_id target)
     _dodge_frames = 0;
 }
 
+void player::evolve(species_id target)
+{
+    if(_form)
+    {
+        _evolving_from = _form->species;
+        start_transform(target);
+    }
+}
+
 void player::set_position(const bn::fixed_point& position)
 {
     _position = position;
@@ -443,8 +454,16 @@ void player::_use_move(bool move_a, player_projectiles& projectiles, message_box
         break;
 
     default:
-        messages.show("DITTO used TRANSFORM!");
-        messages.show("But it failed!");
+        if(move == move_id::splash)
+        {
+            messages.show("DITTO used SPLASH!");
+            messages.show("But nothing happened!");
+        }
+        else
+        {
+            messages.show("DITTO used TRANSFORM!");
+            messages.show("But it failed!");
+        }
         break;
     }
 }
@@ -456,7 +475,19 @@ void player::_finish_transform(message_box& messages)
                   moves::get(target.move_b).pp };
     _hp = ditto().hp;
 
-    message_box::text message("DITTO transformed into ");
+    message_box::text message;
+
+    if(_evolving_from)
+    {
+        message.append(species::get(*_evolving_from).name);
+        message.append(" evolved into ");
+        _evolving_from.reset();
+    }
+    else
+    {
+        message.append("DITTO transformed into ");
+    }
+
     message.append(target.name);
     message.append("!");
     messages.show(message);
@@ -464,18 +495,42 @@ void player::_finish_transform(message_box& messages)
 
 void player::_move(const bn::fixed_point& delta)
 {
+    bool can_swim = species::can_swim(body());
     bn::fixed_point next(_position.x() + delta.x(), _position.y());
 
-    if(! room::feet_are_blocked(next))
+    if(! room::feet_are_blocked(next, can_swim))
     {
         _position = next;
     }
 
     next = bn::fixed_point(_position.x(), _position.y() + delta.y());
 
-    if(! room::feet_are_blocked(next))
+    if(! room::feet_are_blocked(next, can_swim))
     {
         _position = next;
+    }
+}
+
+void player::_update_water(message_box& messages)
+{
+    bool can_swim = species::can_swim(body());
+
+    if(room::feet_are_blocked(_position, can_swim))
+    {
+        if(bn::optional<bn::fixed_point> shore = room::nearest_standable(_position, can_swim))
+        {
+            _position = *shore;
+            messages.show("DITTO washed ashore!");
+        }
+
+        return;
+    }
+
+    bn::fixed_point flow = room::flow_at(_position);
+
+    if(flow != bn::fixed_point())
+    {
+        _move(flow * current_speed);
     }
 }
 

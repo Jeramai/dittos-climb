@@ -1,10 +1,15 @@
 #include "moves.h"
 
+#include "bn_sprite_items_water_projectiles.h"
+
 #include "projectile_frames.h"
 
 namespace
 {
     using enum move_pattern;
+
+    constexpr const bn::sprite_item* water = &bn::sprite_items::water_projectiles;
+    constexpr status_effect no_status = status_effect::none;
 
     constexpr move_data table[] = {
         { "STRUGGLE", "STRUGGLE", pokemon_type::none, 40, 0, wave, 24, 0, 0, 0, 10, 0 },
@@ -37,6 +42,22 @@ namespace
         { "SUPERSONIC", "SUPERSON", pokemon_type::normal, 0, 15, shot, 45, 1, 0, 2, 50, projectile_frames::supersonic,
           status_effect::confusion, 100 },
         { "SLAM", "SLAM", pokemon_type::normal, 80, 10, dash, 45, 0, 0, 3, 14, 0 },
+        { "SPLASH", "SPLASH", pokemon_type::water, 0, 0, fail, 40, 0, 0, 0, 0, 0 },
+        { "BUBBLE", "BUBBLE", pokemon_type::water, 25, 0, shot, 24, 2, 20, 1.5, 60, water_frames::bubble,
+          no_status, 0, false, water },
+        { "HYPNOSIS", "HYPNOSIS", pokemon_type::psychic, 0, 15, shot, 50, 1, 0, 1.8, 50, projectile_frames::psybeam,
+          status_effect::sleep, 100 },
+        { "WATER GUN", "W.GUN", pokemon_type::water, 40, 0, shot, 22, 1, 0, 3, 40, water_frames::drop,
+          no_status, 0, false, water },
+        { "SWIFT", "SWIFT", pokemon_type::normal, 25, 15, shot, 40, 5, 15, 2.5, 45, water_frames::star,
+          no_status, 0, false, water },
+        { "BUBBLEBEAM", "B.BEAM", pokemon_type::water, 45, 15, shot, 36, 3, 12, 2.5, 45, water_frames::bubble,
+          status_effect::paralysis, 30, false, water },
+        { "BITE", "BITE", pokemon_type::normal, 60, 0, melee, 26, 0, 0, 0, 8, 0 },
+        { "HYDRO PUMP", "H.PUMP", pokemon_type::water, 110, 5, beam, 80, 7, 0, 5, 24, water_frames::drop,
+          no_status, 0, false, water },
+        { "DRAGON RAGE", "D.RAGE", pokemon_type::dragon, 40, 10, shot, 40, 3, 20, 2, 60, water_frames::dragon,
+          no_status, 0, false, water },
     };
 }
 

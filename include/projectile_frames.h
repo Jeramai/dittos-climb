@@ -17,6 +17,14 @@ namespace projectile_frames
     constexpr int supersonic = 11;
 }
 
+namespace water_frames
+{
+    constexpr int bubble = 0;
+    constexpr int drop = 1;
+    constexpr int star = 2;
+    constexpr int dragon = 3;
+}
+
 namespace cloud_frames
 {
     constexpr int stun = 0;

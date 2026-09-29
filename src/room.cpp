@@ -14,8 +14,13 @@ namespace
     bn::fixed camera_min_y;
     bn::fixed camera_max_y;
 
-    [[nodiscard]] bool solid_cell(char value)
+    [[nodiscard]] bool solid_cell(char value, bool can_swim)
     {
+        if(is_water(value))
+        {
+            return ! can_swim;
+        }
+
         return value != cells::floor && value != cells::stairs && value != cells::grass;
     }
 
@@ -68,21 +73,89 @@ char at(bn::fixed x, bn::fixed y)
     return get(column, row);
 }
 
-bool is_solid(bn::fixed x, bn::fixed y)
+bool is_water(char value)
 {
-    return solid_cell(at(x, y));
+    return value == cells::water || value == cells::flow_right || value == cells::flow_left ||
+           value == cells::flow_down || value == cells::flow_up;
 }
 
-bool area_is_blocked(bn::fixed left, bn::fixed top, bn::fixed right, bn::fixed bottom)
+bool is_solid(bn::fixed x, bn::fixed y, bool can_swim)
 {
-    return is_solid(left, top) || is_solid(right, top) || is_solid(left, bottom) || is_solid(right, bottom);
+    return solid_cell(at(x, y), can_swim);
 }
 
-bool feet_are_blocked(const bn::fixed_point& position)
+bool blocks_projectiles(bn::fixed x, bn::fixed y)
+{
+    return solid_cell(at(x, y), true);
+}
+
+bool area_is_blocked(bn::fixed left, bn::fixed top, bn::fixed right, bn::fixed bottom, bool can_swim)
+{
+    return is_solid(left, top, can_swim) || is_solid(right, top, can_swim) || is_solid(left, bottom, can_swim) ||
+           is_solid(right, bottom, can_swim);
+}
+
+bool feet_are_blocked(const bn::fixed_point& position, bool can_swim)
 {
     bn::fixed x = position.x();
     bn::fixed y = position.y();
-    return area_is_blocked(x - 5, y + 2, x + 4, y + 7);
+    return area_is_blocked(x - 5, y + 2, x + 4, y + 7, can_swim);
+}
+
+bool feet_in_water(const bn::fixed_point& position)
+{
+    return is_water(at(position.x(), position.y() + 4));
+}
+
+bn::fixed_point flow_at(const bn::fixed_point& position)
+{
+    switch(at(position.x(), position.y() + 4))
+    {
+
+    case cells::flow_right:
+        return bn::fixed_point(1, 0);
+
+    case cells::flow_left:
+        return bn::fixed_point(-1, 0);
+
+    case cells::flow_down:
+        return bn::fixed_point(0, 1);
+
+    case cells::flow_up:
+        return bn::fixed_point(0, -1);
+
+    default:
+        return bn::fixed_point();
+    }
+}
+
+bn::optional<bn::fixed_point> nearest_standable(const bn::fixed_point& position, bool can_swim)
+{
+    int origin_column = (position.x().floor_integer() + pixel_width / 2) / tile_size;
+    int origin_row = (position.y().floor_integer() + pixel_height / 2) / tile_size;
+
+    for(int radius = 1; radius <= 12; ++radius)
+    {
+        for(int dy = -radius; dy <= radius; ++dy)
+        {
+            for(int dx = -radius; dx <= radius; ++dx)
+            {
+                if(bn::abs(dx) != radius && bn::abs(dy) != radius)
+                {
+                    continue;
+                }
+
+                bn::fixed_point candidate = cell_center(origin_column + dx, origin_row + dy);
+
+                if(! feet_are_blocked(candidate, can_swim))
+                {
+                    return candidate;
+                }
+            }
+        }
+    }
+
+    return bn::nullopt;
 }
 
 bn::fixed_point cell_center(int column, int row)

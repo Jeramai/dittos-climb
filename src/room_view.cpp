@@ -24,7 +24,14 @@ namespace
         constexpr int floor_crack = 11;
         constexpr int tall_grass = 12;
         constexpr int bush = 13;
+        constexpr int water = 14;
+        constexpr int flow_right = 15;
+        constexpr int flow_left = 16;
+        constexpr int flow_down = 17;
+        constexpr int flow_up = 18;
     }
+
+    constexpr int river_width = 3;
 
     constexpr int grass_patches = 3;
 
@@ -43,7 +50,8 @@ namespace
 
     bool walkable(char value)
     {
-        return value == room::cells::floor || value == room::cells::stairs || value == room::cells::grass;
+        return value == room::cells::floor || value == room::cells::stairs || value == room::cells::grass ||
+               room::is_water(value);
     }
 
     int next_seed(unsigned& seed)
@@ -114,6 +122,10 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked,
     else if(value.kind == room_kind::combat && theme.tall_grass)
     {
         _plant_grass(seed);
+    }
+    else if(value.kind == room_kind::combat && theme.water)
+    {
+        _plant_water(seed);
     }
 
     _plant_bushes(value);
@@ -218,6 +230,22 @@ bn::optional<bn::fixed_point> room_view::random_grass_position(bn::random& rando
             {
                 return position;
             }
+        }
+    }
+
+    return bn::nullopt;
+}
+
+bn::optional<bn::fixed_point> room_view::random_water_position(bn::random& random) const
+{
+    for(int attempt = 0; attempt < 60; ++attempt)
+    {
+        int column = _interior_left() + 1 + random.get_int(_layout.width - 2);
+        int row = _interior_top() + 1 + random.get_int(_layout.height - 2);
+
+        if(room::is_water(room::get(column, row)) && room::is_water(room::get(column, row + 1)))
+        {
+            return room::cell_center(column, row) - bn::fixed_point(0, 4);
         }
     }
 
@@ -362,6 +390,78 @@ void room_view::_plant_grass(int initial_seed)
     }
 }
 
+void room_view::_plant_water(int initial_seed)
+{
+    unsigned seed = unsigned(initial_seed);
+    bool horizontal = next_seed(seed) % 2;
+    bool forward = next_seed(seed) % 2;
+
+    if(horizontal && _layout.height >= 12)
+    {
+        int first = _interior_top() + 3;
+        int last = _interior_top() + _layout.height - 4 - river_width;
+        int row = first + next_seed(seed) % bn::max(last - first + 1, 1);
+
+        if(row <= _door_row() + 1 && row + river_width > _door_row() - 2)
+        {
+            row = _door_row() + 2 <= last ? _door_row() + 2 : _door_row() - 2 - river_width;
+        }
+
+        char flow = forward ? room::cells::flow_right : room::cells::flow_left;
+
+        for(int y = row; y < row + river_width; ++y)
+        {
+            for(int x = _interior_left(); x < _interior_left() + _layout.width; ++x)
+            {
+                if(room::get(x, y) == room::cells::floor)
+                {
+                    room::set(x, y, flow);
+                }
+            }
+        }
+    }
+    else if(_layout.width >= 14)
+    {
+        int first = _interior_left() + 3;
+        int last = _interior_left() + _layout.width - 4 - river_width;
+        int column = first + next_seed(seed) % bn::max(last - first + 1, 1);
+
+        if(column <= _door_column() + 1 && column + river_width > _door_column() - 2)
+        {
+            column = _door_column() + 2 <= last ? _door_column() + 2 : _door_column() - 2 - river_width;
+        }
+
+        char flow = forward ? room::cells::flow_down : room::cells::flow_up;
+
+        for(int x = column; x < column + river_width; ++x)
+        {
+            for(int y = _interior_top(); y < _interior_top() + _layout.height; ++y)
+            {
+                if(room::get(x, y) == room::cells::floor)
+                {
+                    room::set(x, y, flow);
+                }
+            }
+        }
+    }
+
+    int width = 4 + next_seed(seed) % 3;
+    int height = 3 + next_seed(seed) % 2;
+    int column = _interior_left() + 2 + next_seed(seed) % bn::max(_layout.width - width - 4, 1);
+    int row = _interior_top() + 2 + next_seed(seed) % bn::max(_layout.height - height - 4, 1);
+
+    for(int y = row; y < row + height; ++y)
+    {
+        for(int x = column; x < column + width; ++x)
+        {
+            if(room::get(x, y) == room::cells::floor)
+            {
+                room::set(x, y, room::cells::water);
+            }
+        }
+    }
+}
+
 void room_view::_plant_bushes(const floor_room& value)
 {
     for(int side = 0; side < 4; ++side)
@@ -461,6 +561,26 @@ void room_view::_render()
 
             case room::cells::bush:
                 tile = tiles::bush;
+                break;
+
+            case room::cells::water:
+                tile = tiles::water;
+                break;
+
+            case room::cells::flow_right:
+                tile = tiles::flow_right;
+                break;
+
+            case room::cells::flow_left:
+                tile = tiles::flow_left;
+                break;
+
+            case room::cells::flow_down:
+                tile = tiles::flow_down;
+                break;
+
+            case room::cells::flow_up:
+                tile = tiles::flow_up;
                 break;
 
             default:

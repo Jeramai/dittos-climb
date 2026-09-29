@@ -5,13 +5,18 @@
 #include "bn_sprite_items_diglett.h"
 #include "bn_sprite_items_ditto.h"
 #include "bn_sprite_items_geodude.h"
+#include "bn_sprite_items_gyarados.h"
+#include "bn_sprite_items_horsea.h"
+#include "bn_sprite_items_magikarp.h"
 #include "bn_sprite_items_meowth.h"
 #include "bn_sprite_items_oddish.h"
 #include "bn_sprite_items_onix.h"
 #include "bn_sprite_items_paras.h"
+#include "bn_sprite_items_poliwag.h"
 #include "bn_sprite_items_porygon.h"
 #include "bn_sprite_items_rattata.h"
 #include "bn_sprite_items_snorlax.h"
+#include "bn_sprite_items_staryu.h"
 #include "bn_sprite_items_venusaur.h"
 #include "bn_sprite_items_zubat.h"
 
@@ -46,6 +51,16 @@ namespace
           &bn::sprite_items::zubat, species_behavior::flyer },
         { "ONIX", pokemon_type::rock, pokemon_type::ground, 70, 0.9, move_id::rock_throw, move_id::slam,
           &bn::sprite_items::onix },
+        { "MAGIKARP", pokemon_type::water, pokemon_type::none, 10, 0.8, move_id::splash, move_id::tackle,
+          &bn::sprite_items::magikarp, species_behavior::aquatic },
+        { "POLIWAG", pokemon_type::water, pokemon_type::none, 16, 1, move_id::bubble, move_id::hypnosis,
+          &bn::sprite_items::poliwag },
+        { "STARYU", pokemon_type::water, pokemon_type::none, 16, 1.3, move_id::water_gun, move_id::swift,
+          &bn::sprite_items::staryu },
+        { "HORSEA", pokemon_type::water, pokemon_type::none, 14, 1.1, move_id::water_gun, move_id::bubblebeam,
+          &bn::sprite_items::horsea, species_behavior::aquatic },
+        { "GYARADOS", pokemon_type::water, pokemon_type::flying, 70, 1.1, move_id::bite, move_id::hydro_pump,
+          &bn::sprite_items::gyarados },
     };
 }
 
@@ -55,6 +70,12 @@ namespace species
 const species_data& get(species_id id)
 {
     return table[int(id)];
+}
+
+bool can_swim(const species_data& data)
+{
+    return data.type_1 == pokemon_type::water || data.type_2 == pokemon_type::water ||
+           data.type_1 == pokemon_type::flying || data.type_2 == pokemon_type::flying;
 }
 
 }

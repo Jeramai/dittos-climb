@@ -146,4 +146,10 @@ Bonus floors after the end: Steel, Dark and Fairy.
    up next to Ditto; Dig), Zubat (zigzag flight, Supersonic confuses: reversed controls). Onix is a head with six
    trailing segments: only the head takes damage, the body blocks shots and hurts on contact; it Slams in a
    straight line (crashing into walls stuns it) and drops Rock Slide on marked spots.
-6. Then one floor per milestone.
+6. **Floor 4.** (done) Underground Lake: combat rooms get a river with a current and a pond. Only Water or Flying
+   forms cross water; shots fly over it; outlines of Pokémon that faint in water move to the shore; Ditto washes
+   ashore when its form faints in water. Magikarp (Splash: "But nothing happened!"; a Magikarp form evolves into
+   Gyarados when a room is cleared), Poliwag (Bubble, Hypnosis), Staryu (Water Gun, Swift), Horsea (Water Gun,
+   Bubblebeam). The boss starts as a splashing Magikarp and evolves into Gyarados: Bite lunges, Dragon Rage and a
+   telegraphed Hydro Pump; it thrashes (faster bites) below 40% HP.
+7. Then one floor per milestone.

@@ -35,6 +35,8 @@ public:
 
     [[nodiscard]] bn::optional<bn::fixed_point> random_grass_position(bn::random& random) const;
 
+    [[nodiscard]] bn::optional<bn::fixed_point> random_water_position(bn::random& random) const;
+
     [[nodiscard]] bool cut_bushes(const bn::fixed_point& center, int half_size);
 
     [[nodiscard]] bool bushes_remaining(direction side) const;
@@ -81,6 +83,8 @@ private:
     void _set_theme(const floor_theme& theme);
 
     void _plant_grass(int seed);
+
+    void _plant_water(int seed);
 
     void _plant_bushes(const floor_room& value);
 

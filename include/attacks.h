@@ -43,7 +43,8 @@ namespace attacks
         for(int index = 0; index < data.shots; ++index)
         {
             bn::fixed_point shot_direction = rotate(direction, first_degrees + index * data.spread_degrees);
-            pool.spawn(bn::sprite_items::projectiles.create_sprite(origin, data.projectile_frame), origin,
+            const bn::sprite_item& sheet = data.sheet ? *data.sheet : bn::sprite_items::projectiles;
+            pool.spawn(sheet.create_sprite(origin, data.projectile_frame), origin,
                        shot_direction * data.speed * speed_scale, hit, data.life, shot_half_size, true);
         }
     }
@@ -66,7 +67,8 @@ namespace attacks
         for(int index = 0; index < data.shots; ++index)
         {
             bn::fixed_point position = origin + direction * (index * beam_spacing);
-            pool.spawn(bn::sprite_items::projectiles.create_sprite(position, data.projectile_frame), position,
+            const bn::sprite_item& sheet = data.sheet ? *data.sheet : bn::sprite_items::projectiles;
+            pool.spawn(sheet.create_sprite(position, data.projectile_frame), position,
                        direction * data.speed, hit, data.life, beam_half_size, true);
         }
     }

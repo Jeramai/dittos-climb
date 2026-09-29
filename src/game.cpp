@@ -16,6 +16,7 @@
 #include "common_fixed_8x8_sprite_font.h"
 #include "common_variable_8x16_sprite_font.h"
 
+#include "gyarados_boss.h"
 #include "onix_boss.h"
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
@@ -268,6 +269,14 @@ void game::_update_room_state()
         _view.set_locked(false);
         _messages.show(_theme().unlock_message);
         _update_flute();
+
+        const form* current = _player.active_form();
+
+        if(current && current->species == species_id::magikarp)
+        {
+            _messages.show("What? MAGIKARP is evolving!");
+            _player.evolve(species_id::gyarados);
+        }
     }
 
     if(_flute_pickup && within(_flute_pickup->position(), _player.position(), 12, 12))
@@ -401,7 +410,17 @@ void game::_spawn_outline(species_id id, const bn::fixed_point& position)
         return;
     }
 
-    bn::sprite_ptr sprite = species::get(id).sprite->create_sprite(position, species_frames::white);
+    bn::fixed_point spot = position;
+
+    if(room::feet_are_blocked(spot))
+    {
+        if(bn::optional<bn::fixed_point> shore = room::nearest_standable(spot, false))
+        {
+            spot = *shore;
+        }
+    }
+
+    bn::sprite_ptr sprite = species::get(id).sprite->create_sprite(spot, species_frames::white);
     sprite.set_camera(_camera);
     sprite.set_z_order(500);
     _outlines.push_back(outline{ bn::move(sprite), id, outline_frames });
@@ -421,11 +440,16 @@ void game::_spawn_boss()
         _boss.reset(new venusaur_boss(position, _camera));
         _messages.show("A wild VENUSAUR blocks the stairs!");
     }
-    else
+    else if(_theme().boss == boss_kind::onix)
     {
         _boss.reset(new onix_boss(position, _camera));
         _messages.show("The ground is shaking...");
         _messages.show("A wild ONIX burst out!");
+    }
+    else
+    {
+        _boss.reset(new gyarados_boss(position, _camera));
+        _messages.show("A MAGIKARP is splashing around...");
     }
 }
 
@@ -462,7 +486,10 @@ void game::_update_boss()
         return;
     }
 
-    _hud.show_boss(_boss->name(), _boss->hp(), _boss->max_hp());
+    if(_boss->vulnerable())
+    {
+        _hud.show_boss(_boss->name(), _boss->hp(), _boss->max_hp());
+    }
 
     if(bn::optional<boss_area_hit> area = _boss->area_hit())
     {
@@ -698,7 +725,22 @@ void game::_spawn_enemies()
     {
         for(int attempt = 0; attempt < 20; ++attempt)
         {
+            species_id id = floor_themes::pick_species(_theme(), _random.get_int(100));
+            const species_data& data = species::get(id);
             bn::fixed_point position = _view.random_floor_position(_random);
+            bool aquatic = data.behavior == species_behavior::aquatic;
+
+            if(aquatic || (_theme().water && species::can_swim(data) && _random.get_int(100) < 40))
+            {
+                if(bn::optional<bn::fixed_point> water = _view.random_water_position(_random))
+                {
+                    position = *water;
+                }
+                else if(aquatic)
+                {
+                    id = species_id::poliwag;
+                }
+            }
 
             if(_theme().tall_grass && _random.get_int(100) < 60)
             {
@@ -715,7 +757,6 @@ void game::_spawn_enemies()
                 continue;
             }
 
-            species_id id = floor_themes::pick_species(_theme(), _random.get_int(100));
             _enemies.emplace_back(id, position, _camera, _random);
             break;
         }

@@ -12,6 +12,7 @@ enum class boss_kind
     snorlax,
     venusaur,
     onix,
+    gyarados,
 };
 
 struct spawn_weight
@@ -31,6 +32,7 @@ struct floor_theme
     int spawn_count;
     bool tall_grass;
     bool dark;
+    bool water;
     int overgrown_percent;
     boss_kind boss;
 };

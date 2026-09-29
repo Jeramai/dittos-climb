@@ -2,6 +2,7 @@
 #define ROOM_H
 
 #include "bn_fixed_point.h"
+#include "bn_optional.h"
 
 namespace room
 {
@@ -20,6 +21,11 @@ namespace room
         constexpr char stairs = 'S';
         constexpr char grass = '"';
         constexpr char bush = 'B';
+        constexpr char water = '~';
+        constexpr char flow_right = '>';
+        constexpr char flow_left = '<';
+        constexpr char flow_down = 'v';
+        constexpr char flow_up = '^';
     }
 
     void clear();
@@ -30,11 +36,22 @@ namespace room
 
     [[nodiscard]] char at(bn::fixed x, bn::fixed y);
 
-    [[nodiscard]] bool is_solid(bn::fixed x, bn::fixed y);
+    [[nodiscard]] bool is_water(char value);
 
-    [[nodiscard]] bool area_is_blocked(bn::fixed left, bn::fixed top, bn::fixed right, bn::fixed bottom);
+    [[nodiscard]] bool is_solid(bn::fixed x, bn::fixed y, bool can_swim = false);
 
-    [[nodiscard]] bool feet_are_blocked(const bn::fixed_point& position);
+    [[nodiscard]] bool blocks_projectiles(bn::fixed x, bn::fixed y);
+
+    [[nodiscard]] bool area_is_blocked(bn::fixed left, bn::fixed top, bn::fixed right, bn::fixed bottom,
+                                       bool can_swim = false);
+
+    [[nodiscard]] bool feet_are_blocked(const bn::fixed_point& position, bool can_swim = false);
+
+    [[nodiscard]] bool feet_in_water(const bn::fixed_point& position);
+
+    [[nodiscard]] bn::fixed_point flow_at(const bn::fixed_point& position);
+
+    [[nodiscard]] bn::optional<bn::fixed_point> nearest_standable(const bn::fixed_point& position, bool can_swim);
 
     [[nodiscard]] bn::fixed_point cell_center(int column, int row);
 

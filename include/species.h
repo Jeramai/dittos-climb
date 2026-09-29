@@ -22,6 +22,11 @@ enum class species_id
     diglett,
     zubat,
     onix,
+    magikarp,
+    poliwag,
+    staryu,
+    horsea,
+    gyarados,
 };
 
 namespace species_frames
@@ -40,6 +45,7 @@ enum class species_behavior
     normal,
     burrower,
     flyer,
+    aquatic,
 };
 
 struct species_data
@@ -58,6 +64,8 @@ struct species_data
 namespace species
 {
     [[nodiscard]] const species_data& get(species_id id);
+
+    [[nodiscard]] bool can_swim(const species_data& data);
 }
 
 #endif

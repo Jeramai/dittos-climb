@@ -88,6 +88,8 @@ public:
 
     void start_transform(species_id target);
 
+    void evolve(species_id target);
+
     void set_position(const bn::fixed_point& position);
 
 
@@ -116,6 +118,7 @@ private:
     attack _area_attack;
     int _transform_frames = 0;
     species_id _transform_target = species_id::ditto;
+    bn::optional<species_id> _evolving_from;
     int _switch_flash_frames = 0;
     status_effect _status = status_effect::none;
     int _status_frames = 0;
@@ -129,6 +132,8 @@ private:
     void _finish_transform(message_box& messages);
 
     void _move(const bn::fixed_point& delta);
+
+    void _update_water(message_box& messages);
 
     void _start_area(const attack& hit, int frames, int half_size);
 

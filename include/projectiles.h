@@ -61,7 +61,7 @@ public:
                 return true;
             }
 
-            if(value.stops_at_walls && room::is_solid(value.position.x(), value.position.y()))
+            if(value.stops_at_walls && room::blocks_projectiles(value.position.x(), value.position.y()))
             {
                 on_wall_hit(value.position);
                 return true;
