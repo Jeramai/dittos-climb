@@ -68,9 +68,16 @@ public:
         return _species;
     }
 
-    [[nodiscard]] const char* name() const
+    [[nodiscard]] virtual const char* name() const
     {
         return species::get(_species).name;
+    }
+
+    virtual void announce_defeat(message_box& messages) const;
+
+    [[nodiscard]] virtual bn::optional<species_id> extra_outline() const
+    {
+        return bn::nullopt;
     }
 
     [[nodiscard]] int hp() const
@@ -93,7 +100,7 @@ public:
         return _position;
     }
 
-    [[nodiscard]] bool contains(const bn::fixed_point& point, int half_size) const;
+    [[nodiscard]] virtual bool contains(const bn::fixed_point& point, int half_size) const;
 
     hit_result take_hit(const attack& hit);
 

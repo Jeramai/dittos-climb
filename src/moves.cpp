@@ -106,6 +106,17 @@ namespace
         { "WING ATTACK", "WING ATK", pokemon_type::flying, 60, 15, dash, 40, 0, 0, 4, 14, 0 },
         { "WHIRLWIND", "WHIRLWND", pokemon_type::normal, 20, 10, cloud, 50, 1, 0, 1.2, 80, cloud_frames::tornado,
           status_effect::confusion, 30 },
+        { "POISON STING", "P.STING", pokemon_type::poison, 30, 0, shot, 20, 1, 0, 3.2, 40, projectile_frames::needle,
+          status_effect::poison, 30 },
+        { "GLARE", "GLARE", pokemon_type::normal, 0, 15, shot, 50, 1, 0, 2, 50, electric_frames::wave,
+          status_effect::paralysis, 100, false, electric },
+        { "SLUDGE", "SLUDGE", pokemon_type::poison, 45, 0, shot, 24, 1, 0, 2.4, 45, water_frames::sludge,
+          status_effect::poison, 30, false, water },
+        { "POISON GAS", "P.GAS", pokemon_type::poison, 0, 20, cloud, 50, 1, 0, 0.8, 90, cloud_frames::smog,
+          status_effect::poison, 100 },
+        { "WRAP", "WRAP", pokemon_type::normal, 60, 15, dash, 40, 0, 0, 3.5, 14, 0, status_effect::paralysis, 50 },
+        { "CONFUSION", "CONFUSE", pokemon_type::psychic, 50, 15, shot, 36, 1, 0, 2.6, 45, projectile_frames::psybeam,
+          status_effect::confusion, 30 },
     };
 }
 

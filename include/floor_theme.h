@@ -17,6 +17,14 @@ enum class boss_kind
     moltres,
     articuno,
     pidgeot,
+    team_rocket,
+};
+
+enum class key_item
+{
+    none,
+    poke_flute,
+    silph_scope,
 };
 
 enum class gate_kind
@@ -31,6 +39,7 @@ enum class hazard_kind
     none,
     electric,
     lava,
+    gas,
 };
 
 struct spawn_weight
@@ -56,6 +65,8 @@ struct floor_theme
     bool ice_floor;
     gate_kind gate;
     bool chasm;
+    bool spinners;
+    key_item key;
     int overgrown_percent;
     boss_kind boss;
     species_id rare;

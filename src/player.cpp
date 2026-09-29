@@ -34,6 +34,7 @@ namespace
     constexpr bn::fixed slide_speed = 2.2;
     constexpr bn::fixed current_speed = 0.6;
     constexpr bn::fixed wind_speed = 0.9;
+    constexpr bn::fixed spin_speed = 2.8;
     constexpr int leftovers_frames = 120;
     constexpr int rare_candy_hp = 5;
 
@@ -166,7 +167,14 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
         }
         else
         {
-            if(_slide != bn::fixed_point())
+            bn::fixed_point spin = room::spinner_at(_position);
+
+            if(spin != bn::fixed_point())
+            {
+                _slide = bn::fixed_point();
+                _move(spin * spin_speed);
+            }
+            else if(_slide != bn::fixed_point())
             {
                 if(! _on_slippery_ice() || ! _move(_slide))
                 {

@@ -33,6 +33,10 @@ namespace room
         constexpr char wind_west = '4';
         constexpr char wind_south = '2';
         constexpr char wind_north = '8';
+        constexpr char spin_right = 'R';
+        constexpr char spin_left = 'L';
+        constexpr char spin_down = 'K';
+        constexpr char spin_up = 'U';
     }
 
     void clear();
@@ -46,6 +50,10 @@ namespace room
     [[nodiscard]] bool is_water(char value);
 
     [[nodiscard]] bool is_wind(char value);
+
+    [[nodiscard]] bool is_spinner(char value);
+
+    [[nodiscard]] bn::fixed_point spinner_at(const bn::fixed_point& position);
 
     [[nodiscard]] bool is_solid(bn::fixed x, bn::fixed y, bool can_swim = false, bool over_pits = false);
 

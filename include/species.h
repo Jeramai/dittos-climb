@@ -51,6 +51,12 @@ enum class species_id
     aerodactyl,
     kabuto,
     pidgeot,
+    koffing,
+    ekans,
+    grimer,
+    slowpoke,
+    arbok,
+    weezing,
 };
 
 namespace species_frames

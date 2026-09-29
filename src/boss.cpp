@@ -12,6 +12,13 @@ boss::boss(species_id id, int max_hp, const bn::fixed_point& position) :
 {
 }
 
+void boss::announce_defeat(message_box& messages) const
+{
+    message_box::text message(name());
+    message.append(" fainted!");
+    messages.show(message);
+}
+
 bool boss::contains(const bn::fixed_point& point, int half_size) const
 {
     bn::fixed_point delta = point - _position;

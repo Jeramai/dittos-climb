@@ -84,6 +84,12 @@ enum class move_id
     peck,
     wing_attack,
     whirlwind,
+    poison_sting,
+    glare,
+    sludge,
+    poison_gas,
+    wrap,
+    confusion,
 };
 
 enum class status_effect

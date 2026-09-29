@@ -1199,6 +1199,159 @@ FEATHER = [
 ]
 
 
+KOFFING_1 = [
+    "",
+    "   k  kk  k",
+    "  kzk kzk kzk",
+    "   kkzzzzkkk",
+    "  kzzzzzzzzk",
+    " kzzwkzzzwkzk",
+    " kzzkkzzzkkzzk",
+    "kzzzzzzzzzzzzk",
+    "kzzzzwwwwzzzzk",
+    "kzzzzwkkwzzzzk",
+    " kzzzzwwzzzzk",
+    " kzzzzzzzzzzk",
+    "  kkzzzzzzkk",
+    "    kkkkkk",
+]
+
+KOFFING_2 = [""] + KOFFING_1[:-1]
+
+EKANS_TOP = [
+    "",
+    "",
+    "     kkkk",
+    "    kzzzzk",
+    "   kzzwkzzk",
+    "   kzzzzzzk",
+    "    kkyzzkk",
+    "      kzzk",
+    "     kzzk   kkk",
+    "    kzzk   kzzzk",
+    "   kzyzk  kzzyzk",
+    "   kzzzzkkzzzzk",
+]
+
+EKANS_1 = EKANS_TOP + ["    kzzzzzzzzk", "     kkkkkkkk"]
+EKANS_2 = EKANS_TOP + ["   kzzzzzzzzzk", "    kkkkkkkkk"]
+
+GRIMER_TOP = [
+    "",
+    "",
+    "",
+    "      kkkk",
+    "     kmmmmk",
+    "    kmmmmmmk",
+    "   kmwkmmwkmk",
+    "   kmkkmmkkmk",
+    "  kmmmmmmmmmmk",
+    "  kmmmkkkkmmmk",
+    " kmmmmmmmmmmmmk",
+]
+
+GRIMER_1 = GRIMER_TOP + [" kmmpmmmmmmpmmk", "kmmmmmmmmmmmmmmk", " kkkkkkkkkkkkkk"]
+GRIMER_2 = GRIMER_TOP + ["kmmpmmmmmmmmpmmk", "kmmmmmmmmmmmmmmk", "kkkkkkkkkkkkkkkk"]
+
+SLOWPOKE_TOP = [
+    "",
+    "",
+    "   kkk",
+    "  kqqqk",
+    " kqqqqqk",
+    " kqwkqqk",
+    " kqqqqqqkkkkk",
+    "  kcckqqqqqqqqk",
+    "   kkqqqqqqqqqk",
+    "     kqqqqqqqqk  k",
+    "     kqqqqqqqqkkwk",
+    "     kqqqqqqqqqqqk",
+]
+
+SLOWPOKE_1 = [row[:16] for row in SLOWPOKE_TOP + ["      kqk  kqk", "      kkk  kkk"]]
+SLOWPOKE_2 = [row[:16] for row in SLOWPOKE_TOP + ["     kqk    kqk", "     kkk    kkk"]]
+
+BALLOON = [
+    "     kkkkkk",
+    "   kkzzzzzzkk",
+    "  kzzwzzzzzzzk",
+    " kzzwzzzzzzzzzk",
+    " kzzzzzkkzzzzzk",
+    " kzzzzkwwkzzzzk",
+    " kzzzzkwwkzzzzk",
+    "  kzzzzkkzzzzk",
+    "   kkzzzzzzkk",
+    "     kkzzkk",
+    "   kk  kk  kk",
+    "  kbck kk kcbk",
+    "  kcckkkkkkcck",
+    "   kckekkekck",
+    "   kccccccccck",
+    "    kkkkkkkkk",
+]
+
+SILPH_SCOPE = [
+    "",
+    "",
+    "",
+    "  kkkkkkkkkkkk",
+    " kssssssssssssk",
+    " kskkkssssskkksk",
+    " kskBBksssskBBksk",
+    " kskBwksssskBwksk",
+    " kskkkssssskkksk",
+    " kssssssssssssk",
+    "  kkkkkkkkkkkk",
+]
+
+SILPH_SCOPE = [row[:16] for row in SILPH_SCOPE]
+
+SLUDGE = [
+    "",
+    "  kkkk",
+    " kmmmmk",
+    "kmpmmmmk",
+    "kmmmmqmk",
+    "kmmmmmmk",
+    " kmmmmk",
+    "  kkkk",
+]
+
+
+def arbok_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    for i in range(10):
+        cx = 16 + (6 if (i // 2 + step) % 2 else -6) * (1 if i > 4 else 0)
+        ellipse(grid, cx, 30 - i * 1.2, 5, 2.5, "z")
+    ellipse(grid, 16, 14, 11, 9, "z")
+    ellipse(grid, 16, 15, 7, 6, "y")
+    ellipse(grid, 16, 15, 4.5, 4, "n")
+    grid[13][14] = grid[13][18] = "k"
+    grid[16][16] = "k"
+    ellipse(grid, 16, 5, 5, 3.5, "z")
+    grid[4][14] = grid[4][18] = "w" if charging else "e"
+    for x in range(14, 19):
+        grid[7][x] = "k"
+    grid[8][16] = "n"
+    return ["".join(row) for row in outline(grid)]
+
+
+def weezing_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    ellipse(grid, 11, 12 + step, 9, 8.5, "z")
+    ellipse(grid, 22, 20 - step, 7, 6.5, "z")
+    ellipse(grid, 22, 8, 3.5, 3, "z")
+    for cx, cy, r in ((11, 12 + step, 9), (22, 20 - step, 7)):
+        grid[cy - 2][cx - 3] = grid[cy - 2][cx + 2] = "w" if charging else "k"
+        for x in range(cx - 3, cx + 3):
+            grid[cy + 3][x] = "k"
+        for dx in (-r // 2, r // 2):
+            grid[cy - r + 1][cx + dx] = "y"
+    ellipse(grid, 11, 15 + step, 3, 1.5, "w")
+    ellipse(grid, 22, 22 - step, 2.5, 1.2, "w")
+    return ["".join(row) for row in outline(grid)]
+
+
 def pidgeot_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
     wing = 2 * step
@@ -2315,6 +2468,138 @@ def wind_tile(dx, dy):
     return tile
 
 
+HIDEOUT_PALETTE = [
+    (10, 8, 12),
+    (104, 104, 112),
+    (88, 88, 96),
+    (132, 132, 140),
+    (64, 64, 72),
+    (40, 32, 40),
+    (80, 40, 48),
+    (112, 56, 64),
+    (80, 40, 48),
+    (152, 80, 88),
+    (56, 56, 64),
+    (208, 48, 48),
+    (240, 240, 232),
+    (152, 88, 184),
+    (200, 144, 224),
+    (24, 20, 28),
+]
+
+
+def hideout_floor_tile(variant):
+    tile = blank(1)
+    for i in range(8):
+        tile[7][i] = 2
+        tile[i][7] = 2
+    if variant:
+        tile[0][0] = tile[0][1] = tile[1][0] = 3
+    return tile
+
+
+def hideout_shadow_tile():
+    tile = blank(4)
+    for i in range(8):
+        tile[7][i] = 10
+    return tile
+
+
+def hideout_wall_top_tile():
+    tile = blank(5)
+    tile[0] = [6] * 8
+    tile[4][1] = tile[4][6] = 6
+    return tile
+
+
+def hideout_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [9] * 8
+    tile[7] = [8] * 8
+    for y in range(2, 6):
+        tile[y][1] = tile[y][6] = 8
+    return tile
+
+
+def hideout_door_tile():
+    tile = blank(10)
+    for y in range(8):
+        tile[y][0] = tile[y][7] = 4
+        if y % 2:
+            for x in range(1, 7):
+                tile[y][x] = 2
+    tile[3][3] = tile[3][4] = 11
+    return tile
+
+
+def hideout_stairs_tiles():
+    big = [[15] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 12
+            big[top + 1][x] = 3
+            big[top + 2][x] = 1
+    return split_quad(big)
+
+
+def rocket_logo_tile():
+    tile = hideout_floor_tile(0)
+    for y in range(1, 7):
+        tile[y][2] = 11
+    tile[1][3] = tile[1][4] = tile[2][5] = tile[3][4] = tile[3][3] = 11
+    tile[4][4] = tile[5][5] = tile[6][5] = 11
+    return tile
+
+
+def arrow_tile(dx, dy):
+    tile = blank(4)
+    for i in range(8):
+        tile[0][i] = tile[7][i] = tile[i][0] = tile[i][7] = 10
+    for i in range(-2, 3):
+        if dx:
+            tile[3 + i][3 - dx + dx * (2 - abs(i))] = 12
+            tile[3 + i][4 - dx + dx * (2 - abs(i))] = 12
+        else:
+            tile[3 - dy + dy * (2 - abs(i))][3 + i] = 12
+            tile[4 - dy + dy * (2 - abs(i))][3 + i] = 12
+    return tile
+
+
+def vent_tile(state):
+    tile = blank({0: 4, 1: 13, 2: 14}[state])
+    for i in range(8):
+        tile[0][i] = tile[7][i] = tile[i][0] = tile[i][7] = 10
+    for x in (2, 4, 6):
+        for y in range(2, 6):
+            tile[y][x] = 5 if state == 0 else 13
+    if state == 2:
+        tile[1][3] = tile[2][5] = tile[6][2] = 12
+    return tile
+
+
+HIDEOUT_TILES = [
+    blank(0),
+    hideout_floor_tile(0),
+    hideout_floor_tile(1),
+    hideout_shadow_tile(),
+    hideout_wall_top_tile(),
+    hideout_wall_face_tile(),
+    hideout_door_tile(),
+    *hideout_stairs_tiles(),
+    rocket_logo_tile(),
+    hideout_floor_tile(0),
+    hideout_wall_top_tile(),
+    hideout_floor_tile(0),
+    arrow_tile(1, 0),
+    arrow_tile(-1, 0),
+    arrow_tile(0, 1),
+    arrow_tile(0, -1),
+    vent_tile(0),
+    vent_tile(1),
+    vent_tile(2),
+]
+
 CHASM_TILES = [
     blank(0),
     chasm_floor_tile(0),
@@ -2522,7 +2807,7 @@ def main():
     save_species("staryu", STARYU_1, STARYU_2)
     save_species("horsea", HORSEA_1, HORSEA_2)
     save_species("gyarados", gyarados_frame(0, False), gyarados_frame(1, False), 32, [gyarados_frame(0, True)])
-    save_sprite_sheet("water_projectiles", [BUBBLE, WATER_DROP, STAR, DRAGON_FIRE, ICE_SHARD, HEART], 8)
+    save_sprite_sheet("water_projectiles", [BUBBLE, WATER_DROP, STAR, DRAGON_FIRE, ICE_SHARD, HEART, SLUDGE], 8)
     save_species("pikachu", PIKACHU_1, PIKACHU_2)
     save_species("voltorb", VOLTORB_1, VOLTORB_2)
     save_species("magnemite", MAGNEMITE_1, MAGNEMITE_2)
@@ -2532,7 +2817,7 @@ def main():
     save_species("charmander", CHARMANDER_1, CHARMANDER_2)
     save_species("bulbasaur", BULBASAUR_1, BULBASAUR_2)
     save_species("sandshrew", SANDSHREW_1, SANDSHREW_2)
-    save_sprite_sheet("pickups", [ITEM_BALL, JOURNAL_PAGE], 16)
+    save_sprite_sheet("pickups", [ITEM_BALL, JOURNAL_PAGE, SILPH_SCOPE], 16)
     save_species("vulpix", VULPIX_1, VULPIX_2)
     save_species("ponyta", PONYTA_1, PONYTA_2)
     save_species("growlithe", GROWLITHE_1, GROWLITHE_2)
@@ -2549,6 +2834,13 @@ def main():
     save_species("aerodactyl", AERODACTYL_1, AERODACTYL_2)
     save_species("kabuto", KABUTO_1, KABUTO_2)
     save_species("pidgeot", pidgeot_frame(0, False), pidgeot_frame(1, False), 32, [pidgeot_frame(0, True)])
+    save_species("koffing", KOFFING_1, KOFFING_2)
+    save_species("ekans", EKANS_1, EKANS_2)
+    save_species("grimer", GRIMER_1, GRIMER_2)
+    save_species("slowpoke", SLOWPOKE_1, SLOWPOKE_2)
+    save_species("arbok", arbok_frame(0, False), arbok_frame(1, False), 32, [arbok_frame(0, True)])
+    save_species("weezing", weezing_frame(0, False), weezing_frame(1, False), 32, [weezing_frame(0, True)])
+    save_sprite_sheet("balloon", [BALLOON], 16)
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
@@ -2563,6 +2855,7 @@ def main():
     save_tiles("volcano", VOLCANO_TILES, VOLCANO_PALETTE)
     save_tiles("ice", ICE_TILES, ICE_PALETTE)
     save_tiles("chasm", CHASM_TILES, CHASM_PALETTE)
+    save_tiles("hideout", HIDEOUT_TILES, HIDEOUT_PALETTE)
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 

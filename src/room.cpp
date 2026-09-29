@@ -27,7 +27,7 @@ namespace
         }
 
         return value != cells::floor && value != cells::stairs && value != cells::grass && value != cells::plate &&
-               value != cells::ice && ! is_wind(value);
+               value != cells::ice && ! is_wind(value) && ! is_spinner(value);
     }
 
     void set_axis(int first, int last, int screen_size, bn::fixed& min, bn::fixed& max, int map_size)
@@ -89,6 +89,34 @@ bool is_wind(char value)
 {
     return value == cells::wind_east || value == cells::wind_west || value == cells::wind_south ||
            value == cells::wind_north;
+}
+
+bool is_spinner(char value)
+{
+    return value == cells::spin_right || value == cells::spin_left || value == cells::spin_down ||
+           value == cells::spin_up;
+}
+
+bn::fixed_point spinner_at(const bn::fixed_point& position)
+{
+    switch(at(position.x(), position.y() + 4))
+    {
+
+    case cells::spin_right:
+        return bn::fixed_point(1, 0);
+
+    case cells::spin_left:
+        return bn::fixed_point(-1, 0);
+
+    case cells::spin_down:
+        return bn::fixed_point(0, 1);
+
+    case cells::spin_up:
+        return bn::fixed_point(0, -1);
+
+    default:
+        return bn::fixed_point();
+    }
 }
 
 bool is_solid(bn::fixed x, bn::fixed y, bool can_swim, bool over_pits)

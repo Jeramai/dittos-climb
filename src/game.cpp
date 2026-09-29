@@ -23,6 +23,7 @@
 #include "articuno_boss.h"
 #include "moltres_boss.h"
 #include "pidgeot_boss.h"
+#include "team_rocket_boss.h"
 #include "onix_boss.h"
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
@@ -46,6 +47,7 @@ namespace
     constexpr int plate_warning = 40;
     constexpr int plate_shock = 30;
     constexpr int plate_power = 50;
+    constexpr int gas_power = 20;
     constexpr int plate_paralysis_chance = 25;
     constexpr int explosion_radius = 34;
     constexpr int flicker_frames = 16;
@@ -141,8 +143,10 @@ void game::_start_floor()
     _has_flute = false;
     _boss_defeated = false;
     _flute_room = -1;
+    bool key_needed = (_theme().key == key_item::poke_flute) ||
+                      (_theme().key == key_item::silph_scope && ! _has_silph_scope);
 
-    if(_theme().boss == boss_kind::snorlax)
+    if(key_needed)
     {
         bn::vector<int, floor_map::max_rooms> combat_rooms;
 
@@ -172,6 +176,7 @@ void game::_start_floor()
         else
         {
             _has_flute = true;
+            _has_silph_scope = true;
         }
     }
     #ifdef DITTO_TEST_START_KIND
@@ -180,7 +185,7 @@ void game::_start_floor()
             if(_floor[index].kind == room_kind(DITTO_TEST_START_KIND))
             {
                 _has_flute = room_kind(DITTO_TEST_START_KIND) == room_kind::stairs;
-                _flute_room = _has_flute || _theme().boss != boss_kind::snorlax ? -1 : index;
+                _flute_room = _has_flute || _theme().key == key_item::none ? -1 : index;
 
                 #ifdef DITTO_TEST_REWARD
                     _floor[index].reward = room_reward(DITTO_TEST_REWARD);
@@ -357,8 +362,18 @@ void game::_update_room_state()
     if(_flute_pickup && within(_flute_pickup->position(), _player.position(), 12, 12))
     {
         _flute_pickup.reset();
-        _has_flute = true;
-        _messages.show("DITTO found the POKE FLUTE!");
+
+        if(_theme().key == key_item::silph_scope)
+        {
+            _has_silph_scope = true;
+            _messages.show("DITTO found the SILPH SCOPE!");
+            _messages.show("It reveals what hides in the dark.");
+        }
+        else
+        {
+            _has_flute = true;
+            _messages.show("DITTO found the POKE FLUTE!");
+        }
     }
 
     if(_player.transforming())
@@ -547,10 +562,17 @@ void game::_spawn_boss()
         _boss.reset(new articuno_boss(position, _camera));
         _messages.show("A freezing wind... ARTICUNO appeared!");
     }
-    else
+    else if(_theme().boss == boss_kind::pidgeot)
     {
         _boss.reset(new pidgeot_boss(position, _camera));
         _messages.show("PIDGEOT swooped down from above!");
+    }
+    else
+    {
+        _boss.reset(new team_rocket_boss(position, _camera));
+        _messages.show("JESSIE: Prepare for trouble!");
+        _messages.show("JAMES: Make it double!");
+        _messages.show("MEOWTH: Meowth, that's right!");
     }
 }
 
@@ -616,9 +638,14 @@ void game::_update_boss()
 
     if(_boss->dead())
     {
-        show_name_message(_messages, "", _boss->name(), " fainted!");
+        _boss->announce_defeat(_messages);
         _spawn_effect(_boss->position());
         _spawn_outline(_boss->species(), _boss->position());
+
+        if(bn::optional<species_id> extra = _boss->extra_outline())
+        {
+            _spawn_outline(*extra, _boss->position() + bn::fixed_point(28, 0));
+        }
         _boss.reset();
         _boss_defeated = true;
         _hud.hide_boss();
@@ -687,22 +714,30 @@ void game::_update_plates()
     }
 
     bool lava = hazard == hazard_kind::lava;
+    bool gas = hazard == hazard_kind::gas;
     attack shock = lava ? attack{ move_id::ember, pokemon_type::fire, plate_power } :
-                          attack{ move_id::thundershock, pokemon_type::electric, plate_power };
-    auto fireproof = [lava](const species_data& data)
+                   gas ? attack{ move_id::poison_gas, pokemon_type::poison, gas_power } :
+                         attack{ move_id::thundershock, pokemon_type::electric, plate_power };
+    pokemon_type immune_type = lava ? pokemon_type::fire : pokemon_type::poison;
+    auto fireproof = [lava, gas, immune_type](const species_data& data)
     {
-        return lava && (data.type_1 == pokemon_type::fire || data.type_2 == pokemon_type::fire);
+        return (lava || gas) && (data.type_1 == immune_type || data.type_2 == immune_type);
     };
 
     bn::fixed_point feet = _player.position() + bn::fixed_point(0, 4);
 
     if(_player.vulnerable() && ! fireproof(_player.body()) && room::at(feet.x(), feet.y()) == room::cells::plate)
     {
-        _messages.show(lava ? "The lava is burning DITTO!" : "The floor is electrified!");
+        _messages.show(lava ? "The lava is burning DITTO!" : gas ? "DITTO breathed in poison gas!" :
+                       "The floor is electrified!");
         hit_result result = _player.take_hit(shock, _messages);
         _shake_frames = shake_frames;
 
-        if(! lava && result.effectiveness && _random.get_int(100) < plate_paralysis_chance)
+        if(gas && result.effectiveness)
+        {
+            _player.apply_status(status_effect::poison, _messages);
+        }
+        else if(! lava && result.effectiveness && _random.get_int(100) < plate_paralysis_chance)
         {
             _player.apply_status(status_effect::paralysis, _messages);
         }
@@ -895,12 +930,16 @@ void game::_after_player_hit(const attack& hit, const hit_result& result, enemy*
 
 void game::_update_flute()
 {
-    if(_has_flute || _flute_pickup || _room != _flute_room || ! _floor[_room].cleared)
+    bool scope = _theme().key == key_item::silph_scope;
+    bool collected = scope ? _has_silph_scope : _has_flute;
+
+    if(collected || _flute_pickup || _room != _flute_room || ! _floor[_room].cleared)
     {
         return;
     }
 
-    bn::sprite_ptr sprite = bn::sprite_items::poke_flute.create_sprite(_view.interior_center());
+    bn::sprite_ptr sprite = scope ? bn::sprite_items::pickups.create_sprite(_view.interior_center(), 2) :
+                                    bn::sprite_items::poke_flute.create_sprite(_view.interior_center());
     sprite.set_camera(_camera);
     sprite.set_z_order(600);
     _flute_pickup = bn::move(sprite);

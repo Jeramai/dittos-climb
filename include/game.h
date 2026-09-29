@@ -80,6 +80,7 @@ private:
     int _flute_room = -1;
     bool _locked = false;
     bool _has_flute = false;
+    bool _has_silph_scope = false;
     bool _boss_defeated = false;
 
     [[nodiscard]] const floor_room& _current_room() const

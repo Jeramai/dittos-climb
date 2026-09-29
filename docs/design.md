@@ -196,4 +196,11 @@ Bonus floors after the end: Steel, Dark and Fairy.
     from (a little HP, never a black-out). Flying forms fly over both; wild Pokémon walk around pits. Pidgey (Gust,
     Quick Attack), Spearow (Peck, Fury Attack), Aerodactyl (Bite, Rock Slide). Rare: Kabuto. Pidgeot fires feather
     volleys, summons Whirlwind tornadoes that confuse, dives with Wing Attack, and whips up a Gust that pushes Ditto.
-11. Then one floor per milestone.
+11. **Floor 9.** (done) Rocket Hideout: spinner arrow lanes push Ditto fast in their direction, and poison gas
+    vents cycle like the plates (the gas poisons; Poison types are immune). One room drops the Silph Scope, which
+    Ditto keeps for the rest of the run (floor 11 needs it) — key items (Poké Flute, Silph Scope) now share one
+    system. Koffing (Tackle, Self-Destruct), Ekans (Poison Sting, Glare), Grimer (Sludge, Poison Gas). Rare:
+    Slowpoke. Team Rocket: Arbok (Poison Sting fan, Wrap lunge) and Weezing (Sludge, Smog) share one HP bar, while
+    Meowth drifts overhead in the balloon throwing Pay Day coins; defeat: "TEAM ROCKET is blasting off again!" and
+    outlines of both Arbok and Weezing.
+12. Then one floor per milestone.

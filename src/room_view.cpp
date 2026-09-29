@@ -60,7 +60,7 @@ namespace
     {
         return value == room::cells::floor || value == room::cells::stairs || value == room::cells::grass ||
                value == room::cells::plate || value == room::cells::ice || value == room::cells::pit ||
-               room::is_water(value) || room::is_wind(value);
+               room::is_water(value) || room::is_wind(value) || room::is_spinner(value);
     }
 
     int next_seed(unsigned& seed)
@@ -152,6 +152,11 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked,
     if(theme.chasm && value.kind != room_kind::start)
     {
         _plant_chasm(seed);
+    }
+
+    if(theme.spinners && value.kind != room_kind::start)
+    {
+        _plant_spinners(seed);
     }
 
     _plant_bushes(value);
@@ -608,6 +613,35 @@ void room_view::_plant_chasm(int initial_seed)
     }
 }
 
+void room_view::_plant_spinners(int initial_seed)
+{
+    unsigned seed = unsigned(initial_seed) * 17 + 1;
+
+    for(int lane = 0; lane < 2; ++lane)
+    {
+        bool horizontal = next_seed(seed) % 2;
+        bool forward = next_seed(seed) % 2;
+        int length = 6 + next_seed(seed) % 6;
+        char arrow = horizontal ? (forward ? room::cells::spin_right : room::cells::spin_left) :
+                                  (forward ? room::cells::spin_down : room::cells::spin_up);
+        int width = horizontal ? length : 2;
+        int height = horizontal ? 2 : length;
+        int column = _interior_left() + 2 + next_seed(seed) % bn::max(_layout.width - width - 4, 1);
+        int row = _interior_top() + 2 + next_seed(seed) % bn::max(_layout.height - height - 4, 1);
+
+        for(int y = row; y < row + height; ++y)
+        {
+            for(int x = column; x < column + width; ++x)
+            {
+                if(room::get(x, y) == room::cells::floor)
+                {
+                    room::set(x, y, arrow);
+                }
+            }
+        }
+    }
+}
+
 void room_view::_plant_bushes(const floor_room& value)
 {
     for(int side = 0; side < 4; ++side)
@@ -722,18 +756,22 @@ void room_view::_render()
                 break;
 
             case room::cells::wind_east:
+            case room::cells::spin_right:
                 tile = tiles::wind_east;
                 break;
 
             case room::cells::wind_west:
+            case room::cells::spin_left:
                 tile = tiles::wind_west;
                 break;
 
             case room::cells::wind_south:
+            case room::cells::spin_down:
                 tile = tiles::wind_south;
                 break;
 
             case room::cells::wind_north:
+            case room::cells::spin_up:
                 tile = tiles::wind_north;
                 break;
 

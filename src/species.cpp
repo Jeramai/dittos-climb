@@ -1,6 +1,7 @@
 #include "species.h"
 
 #include "bn_sprite_items_aerodactyl.h"
+#include "bn_sprite_items_arbok.h"
 #include "bn_sprite_items_articuno.h"
 #include "bn_sprite_items_beedrill.h"
 #include "bn_sprite_items_bulbasaur.h"
@@ -8,12 +9,15 @@
 #include "bn_sprite_items_caterpie.h"
 #include "bn_sprite_items_diglett.h"
 #include "bn_sprite_items_ditto.h"
+#include "bn_sprite_items_ekans.h"
 #include "bn_sprite_items_geodude.h"
+#include "bn_sprite_items_grimer.h"
 #include "bn_sprite_items_growlithe.h"
 #include "bn_sprite_items_gyarados.h"
 #include "bn_sprite_items_horsea.h"
 #include "bn_sprite_items_jynx.h"
 #include "bn_sprite_items_kabuto.h"
+#include "bn_sprite_items_koffing.h"
 #include "bn_sprite_items_machop.h"
 #include "bn_sprite_items_magikarp.h"
 #include "bn_sprite_items_magmar.h"
@@ -34,6 +38,7 @@
 #include "bn_sprite_items_sandshrew.h"
 #include "bn_sprite_items_seel.h"
 #include "bn_sprite_items_shellder.h"
+#include "bn_sprite_items_slowpoke.h"
 #include "bn_sprite_items_snorlax.h"
 #include "bn_sprite_items_spearow.h"
 #include "bn_sprite_items_squirtle.h"
@@ -41,6 +46,7 @@
 #include "bn_sprite_items_venusaur.h"
 #include "bn_sprite_items_voltorb.h"
 #include "bn_sprite_items_vulpix.h"
+#include "bn_sprite_items_weezing.h"
 #include "bn_sprite_items_zapdos.h"
 #include "bn_sprite_items_zubat.h"
 
@@ -133,6 +139,18 @@ namespace
           &bn::sprite_items::kabuto },
         { "PIDGEOT", pokemon_type::normal, pokemon_type::flying, 70, 1.5, move_id::gust, move_id::wing_attack,
           &bn::sprite_items::pidgeot },
+        { "KOFFING", pokemon_type::poison, pokemon_type::none, 16, 0.7, move_id::tackle, move_id::selfdestruct,
+          &bn::sprite_items::koffing, species_behavior::flyer },
+        { "EKANS", pokemon_type::poison, pokemon_type::none, 16, 1.3, move_id::poison_sting, move_id::glare,
+          &bn::sprite_items::ekans },
+        { "GRIMER", pokemon_type::poison, pokemon_type::none, 20, 0.6, move_id::sludge, move_id::poison_gas,
+          &bn::sprite_items::grimer },
+        { "SLOWPOKE", pokemon_type::water, pokemon_type::psychic, 20, 0.7, move_id::water_gun, move_id::confusion,
+          &bn::sprite_items::slowpoke },
+        { "ARBOK", pokemon_type::poison, pokemon_type::none, 60, 1.2, move_id::poison_sting, move_id::wrap,
+          &bn::sprite_items::arbok },
+        { "WEEZING", pokemon_type::poison, pokemon_type::none, 60, 0.8, move_id::sludge, move_id::selfdestruct,
+          &bn::sprite_items::weezing },
     };
 }
 

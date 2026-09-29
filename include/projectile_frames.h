@@ -25,6 +25,7 @@ namespace water_frames
     constexpr int dragon = 3;
     constexpr int ice_shard = 4;
     constexpr int heart = 5;
+    constexpr int sludge = 6;
 }
 
 namespace electric_frames
