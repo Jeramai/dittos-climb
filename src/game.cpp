@@ -16,6 +16,7 @@
 #include "bn_sprite_items_light.h"
 #include "bn_sprite_items_mew.h"
 #include "bn_sprite_items_mewtwo.h"
+#include "bn_sprite_items_mart.h"
 #include "bn_sprite_items_pickups.h"
 #include "bn_sprite_items_poke_flute.h"
 #include "bn_sprite_items_projectiles.h"
@@ -46,6 +47,8 @@ namespace
 {
     constexpr int spawn_delay_frames = 30;
     constexpr int page_min_frames = 45;
+    constexpr int boss_coins = 20;
+    constexpr int mewtwo_coins = 50;
     constexpr int defeat_min_frames = 60;
     constexpr int shake_frames = 10;
     constexpr int effect_frames = 6;
@@ -148,6 +151,7 @@ game::game(bn::random& random, const save_data* saved) :
         _run_frames = saved->run_frames;
         _defeated = saved->defeated;
         _shinies = saved->shinies;
+        _coins_earned = saved->coins_earned;
 
         for(int word = 0; word < 3; ++word)
         {
@@ -336,6 +340,18 @@ void game::_start_floor(const save_data* saved)
         }
     #endif
 
+    #ifdef DITTO_TEST_MART
+        for(int index = 0; index < _floor.size(); ++index)
+        {
+            if(_floor[index].reward == room_reward::mart)
+            {
+                _enter_room(index, bn::nullopt);
+                _messages.show(floor_label(_floor_number));
+                return;
+            }
+        }
+    #endif
+
     _enter_room(0, bn::nullopt);
     _messages.show(floor_label(_floor_number));
 }
@@ -388,6 +404,17 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
 void game::_update_play()
 {
     _view.update();
+
+    if(_near_mart_counter())
+    {
+        _messages.show("Press A to shop!");
+
+        if(bn::keypad::a_pressed())
+        {
+            _open_mart();
+            return;
+        }
+    }
     int outline_index = _outline_below_player();
     const species_id* outline_species = outline_index >= 0 ? &_outlines[outline_index].species : nullptr;
 
@@ -627,6 +654,7 @@ void game::_handle_player_attacks()
 
         show_name_message(_messages, "Wild ", value.data().name, " fainted!");
         ++_defeated;
+        _add_coins(1 + _random.get_int(3));
         profile::register_seen(value.id(), value.shiny());
         audio::play_quiet(bn::sound_items::sfx_faint);
         _spawn_effect(value.position());
@@ -809,6 +837,7 @@ void game::_update_boss()
         _enemy_projectiles.clear();
         _wait_for_a(defeat_min_frames);
         ++_defeated;
+        _add_coins(mewtwo_coins);
         profile::register_seen(_boss->outline_species(), false);
         _won = true;
         return;
@@ -831,6 +860,8 @@ void game::_update_boss()
         _boss.reset();
         _boss_defeated = true;
         ++_defeated;
+        _add_coins(boss_coins);
+        _messages.show("DITTO found some coins!");
         _hud.hide_boss();
         _enemy_projectiles.clear();
     }
@@ -1235,6 +1266,16 @@ void game::_update_flute()
 void game::_update_reward()
 {
     floor_room& value = _floor[_room];
+
+    if(value.reward == room_reward::mart && ! _mart_counter)
+    {
+        bn::sprite_ptr counter = bn::sprite_items::mart.create_sprite(_view.interior_center() - bn::fixed_point(0, 28));
+        counter.set_camera(_camera);
+        counter.set_z_order(-counter.position().y().round_integer() - 8);
+        _mart_counter = bn::move(counter);
+        _messages.show("Welcome to the POKE MART!");
+        return;
+    }
     bool pickup = value.reward == room_reward::journal || value.reward == room_reward::item;
 
     if(_reward_pickup || ! pickup || value.reward_taken || ! value.cleared)
@@ -1655,6 +1696,7 @@ void game::_clear_room_objects()
     _boss.reset();
     _flute_pickup.reset();
     _reward_pickup.reset();
+    _mart_counter.reset();
     _embers.clear();
     _hud.hide_boss();
     _spawn_delay = 0;
@@ -1687,6 +1729,8 @@ void game::_pause_map()
     pages.append(bn::to_string<4>(_journal_pages));
     pages.append("/");
     pages.append(bn::to_string<4>(journal::page_count));
+    pages.append("  COINS ");
+    pages.append(bn::to_string<8>(profile::get().coins));
 
     bn::vector<bn::sprite_ptr, 40> text;
     auto show_header = [&]()
@@ -1831,7 +1875,8 @@ void game::_show_run_stats(const char* title)
     small.generate(0, 4, line("FORMS USED ", forms), text);
     small.generate(0, 16, line("SHINIES SEEN ", _shinies), text);
     small.generate(0, 28, line("JOURNAL PAGES ", _journal_pages), text);
-    small.generate(0, 44, dex, text);
+    small.generate(0, 40, line("COINS EARNED ", _coins_earned), text);
+    small.generate(0, 54, dex, text);
     small.generate(0, 70, "PRESS START", text);
     bn::core::update();
 
@@ -1842,6 +1887,131 @@ void game::_show_run_stats(const char* title)
 
     text.clear();
     _overlay.hide();
+    bn::core::update();
+}
+
+void game::_add_coins(int amount)
+{
+    _coins_earned += amount;
+    profile::add_coins(amount);
+}
+
+bool game::_near_mart_counter() const
+{
+    if(! _mart_counter)
+    {
+        return false;
+    }
+
+    bn::fixed_point delta = _player.position() - _mart_counter->position();
+    return bn::abs(delta.x()) < 20 && delta.y() > 8 && delta.y() < 32;
+}
+
+void game::_open_mart()
+{
+    audio::play(bn::sound_items::sfx_menu);
+    _set_world_visible(false);
+    _overlay.show_black();
+
+    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
+    big.set_center_alignment();
+    big.set_bg_priority(0);
+
+    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    small.set_center_alignment();
+    small.set_bg_priority(0);
+
+    bn::sprite_text_generator left(common::fixed_8x8_sprite_font);
+    left.set_left_alignment();
+    left.set_bg_priority(0);
+
+    bn::sprite_text_generator right(common::fixed_8x8_sprite_font);
+    right.set_right_alignment();
+    right.set_bg_priority(0);
+
+    floor_room& room = _floor[_room];
+    bn::vector<bn::sprite_ptr, 64> text;
+    int cursor = 0;
+    const char* notice = "";
+
+    auto draw = [&]()
+    {
+        text.clear();
+        big.generate(0, -66, "POKE MART", text);
+
+        bn::string<24> coins("COINS ");
+        coins.append(bn::to_string<8>(profile::get().coins));
+        small.generate(0, -46, coins, text);
+
+        for(int slot = 0; slot < 3; ++slot)
+        {
+            const item_data& item = items::get(room.stock[slot]);
+            int y = -24 + slot * 16;
+            bn::string<24> name(slot == cursor ? "> " : "  ");
+            name.append(item.name);
+            left.generate(-100, y, name, text);
+
+            if(room.sold[slot])
+            {
+                right.generate(100, y, "SOLD OUT", text);
+            }
+            else
+            {
+                right.generate(100, y, bn::to_string<8>(item.price), text);
+            }
+        }
+
+        small.generate(0, 30, items::get(room.stock[cursor]).description, text);
+        small.generate(0, 46, notice, text);
+        small.generate(0, 70, "A: BUY  B: LEAVE", text);
+    };
+
+    draw();
+    bn::core::update();
+
+    while(! bn::keypad::b_pressed())
+    {
+        if(bn::keypad::up_pressed() || bn::keypad::down_pressed())
+        {
+            cursor = (cursor + (bn::keypad::up_pressed() ? 2 : 1)) % 3;
+            notice = "";
+            audio::play_quiet(bn::sound_items::sfx_menu);
+            draw();
+        }
+        else if(bn::keypad::a_pressed())
+        {
+            const item_data& item = items::get(room.stock[cursor]);
+
+            if(room.sold[cursor])
+            {
+                notice = "That is sold out.";
+            }
+            else if(profile::get().coins < item.price)
+            {
+                notice = "You don't have enough coins.";
+            }
+            else if(! _player.give_item(room.stock[cursor], _messages))
+            {
+                notice = "DITTO can't use that now.";
+            }
+            else
+            {
+                static_cast<void>(profile::spend_coins(item.price));
+                room.sold[cursor] = true;
+                notice = "Thank you!";
+                audio::play(bn::sound_items::sfx_pickup);
+            }
+
+            draw();
+        }
+
+        bn::core::update();
+    }
+
+    audio::play(bn::sound_items::sfx_menu);
+    text.clear();
+    _overlay.hide();
+    _set_world_visible(true);
     bn::core::update();
 }
 
@@ -1872,6 +2042,7 @@ void game::_save_and_quit()
     data.run_frames = _run_frames;
     data.defeated = _defeated;
     data.shinies = _shinies;
+    data.coins_earned = _coins_earned;
 
     for(int word = 0; word < 3; ++word)
     {

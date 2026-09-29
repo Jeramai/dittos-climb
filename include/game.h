@@ -73,6 +73,7 @@ private:
     bn::optional<bn::sprite_ptr> _flute_pickup;
     bn::optional<bn::sprite_ptr> _light;
     bn::optional<bn::sprite_ptr> _reward_pickup;
+    bn::optional<bn::sprite_ptr> _mart_counter;
     bn::vector<falling_ember, 4> _embers;
     hud _hud;
     floor_map _floor;
@@ -93,6 +94,7 @@ private:
     int _run_frames = 0;
     int _defeated = 0;
     int _shinies = 0;
+    int _coins_earned = 0;
     unsigned _run_forms[3] = {};
     int _ember_timer = 60;
     int _flute_room = -1;
@@ -199,6 +201,12 @@ private:
     void _register_form(species_id id, bool shiny);
 
     void _show_run_stats(const char* title);
+
+    void _add_coins(int amount);
+
+    [[nodiscard]] bool _near_mart_counter() const;
+
+    void _open_mart();
 
     void _game_over();
 };

@@ -91,6 +91,14 @@ colours of its target. The Mew in the ending rolls 1 in 8192 too.
 Ditto itself is the player, so the roll happens once per new run: at 1 in 8192 the run starts as a blue shiny
 Ditto (the Gen 2-4 colours), which the save and the ending keep.
 
+### Poké Mart and coins
+
+Defeated wild Pokémon drop 1-3 coins, a boss 20 and Mewtwo 50. Coins live in the profile, so they carry over
+between runs and a failed run still pays. About one floor in three (never the Dojo) turns a side room into a Poké
+Mart: no wild Pokémon, a clerk behind a counter, and three different items for 30-150 coins (Potion, Ether, Rare
+Candy, the type boosters, Leftovers, Quick Claw). A bought held item replaces the current one. The pause screen
+shows the wallet and the run stats show the coins earned.
+
 ### Pokédex and run stats
 
 The Pokédex (Select on the title) records every form Ditto has used, and whether it was shiny, across runs,
@@ -106,10 +114,9 @@ items, the journal pages, and Ditto's HP, form, PP and held item. The title then
 resumes in the saved room; an uncleared room fills with Pokémon again and a living boss starts at full HP.
 Starting any run deletes the save, so a save cannot be loaded twice.
 
-### Poké Mart (later)
+### No Pokémon Center
 
-- No Pokémon Center: Transform already heals Ditto.
-- A Poké Mart later sells boost items. It needs a currency first, for example Pay Day coins.
+Transform already heals Ditto.
 
 ### Field abilities
 
@@ -261,4 +268,5 @@ Bonus floors after the end: Steel, Dark and Fairy.
 18. Save and quit.
 19. Emerald-style tilesets, animated tiles and shiny Pokémon.
 20. Journal reader, Pokédex across runs, run stats and a title screen.
-21. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, real art.
+21. Poké Mart rooms and a coin wallet across runs.
+22. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, real art.

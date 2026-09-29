@@ -7,6 +7,15 @@
 
 using namespace directions_of_floor;
 
+namespace
+{
+    #ifdef DITTO_TEST_MART
+        constexpr int mart_chance = 1;
+    #else
+        constexpr int mart_chance = 3;
+    #endif
+}
+
 void floor_map::generate(int floor_number, int overgrown_percent, bool items_allowed, bool large_rooms,
                          bn::random& random)
 {
@@ -130,6 +139,32 @@ void floor_map::generate(int floor_number, int overgrown_percent, bool items_all
     {
         int pick = random.get_int(side_rooms.size());
         _rooms[side_rooms[pick]].reward = room_reward::rare;
+        side_rooms.erase(side_rooms.begin() + pick);
+    }
+
+    if(items_allowed && ! side_rooms.empty() && random.get_int(mart_chance) == 0)
+    {
+        int pick = random.get_int(side_rooms.size());
+        floor_room& mart = _rooms[side_rooms[pick]];
+        mart.reward = room_reward::mart;
+        mart.cleared = true;
+
+        for(int slot = 0; slot < 3; ++slot)
+        {
+            bool repeated = true;
+
+            while(repeated)
+            {
+                mart.stock[slot] = item_id(random.get_int(items::count));
+                repeated = false;
+
+                for(int other = 0; other < slot; ++other)
+                {
+                    repeated = repeated || mart.stock[other] == mart.stock[slot];
+                }
+            }
+        }
+
         side_rooms.erase(side_rooms.begin() + pick);
     }
 

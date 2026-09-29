@@ -19,6 +19,7 @@ enum class room_reward
     journal,
     rare,
     item,
+    mart,
 };
 
 enum class direction
@@ -41,6 +42,8 @@ struct floor_room
     room_reward reward = room_reward::none;
     item_id item = item_id::ether;
     bool reward_taken = false;
+    item_id stock[3] = {};
+    bool sold[3] = {};
 };
 
 class floor_map

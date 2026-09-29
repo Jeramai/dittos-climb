@@ -17,6 +17,7 @@ enum class item_id
     quick_claw,
     ether,
     rare_candy,
+    potion,
 };
 
 enum class item_kind
@@ -26,6 +27,7 @@ enum class item_kind
     quick_claw,
     ether,
     rare_candy,
+    potion,
 };
 
 struct item_data
@@ -33,17 +35,19 @@ struct item_data
     const char* name;
     item_kind kind;
     pokemon_type boosted_type;
+    int price;
+    const char* description;
 };
 
 namespace items
 {
-    constexpr int count = 12;
+    constexpr int count = 13;
 
     [[nodiscard]] const item_data& get(item_id id);
 
     [[nodiscard]] constexpr bool held(item_kind kind)
     {
-        return kind != item_kind::ether && kind != item_kind::rare_candy;
+        return kind != item_kind::ether && kind != item_kind::rare_candy && kind != item_kind::potion;
     }
 }
 

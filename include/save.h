@@ -16,6 +16,7 @@ struct save_data
     int run_frames;
     int defeated;
     int shinies;
+    int coins_earned;
     unsigned run_forms[3];
     int flute_room;
     bool has_flute;

@@ -1996,6 +1996,36 @@ def gyarados_frame(step, charging):
     return ["".join(row) for row in outline(grid)]
 
 
+def mart_frame():
+    grid = [["."] * 32 for _ in range(32)]
+    ellipse(grid, 16, 15, 6.5, 4, "u")
+    for y in range(12, 19):
+        for x in range(10, 23):
+            if grid[y][x] == "u" and y % 2 == 0:
+                grid[y][x] = "w"
+    ellipse(grid, 16, 7.5, 4.2, 4.2, "c")
+    for x in range(12, 21):
+        for y in range(2, 6):
+            if ((x - 16) / 4.6) ** 2 + ((y - 6) / 4.2) ** 2 <= 1:
+                grid[y][x] = "u"
+    for x in range(10, 16):
+        grid[6][x] = "U"
+    grid[8][14] = grid[8][18] = "k"
+    for y in range(17, 30):
+        for x in range(1, 31):
+            grid[y][x] = "w" if y < 19 else "U" if y > 27 else "B"
+    ellipse(grid, 16, 23.5, 3.5, 3.5, "k")
+    ellipse(grid, 16, 23.5, 2.6, 2.6, "w")
+    for y in range(20, 24):
+        for x in range(13, 20):
+            if grid[y][x] == "w" and ((x - 16) / 2.6) ** 2 + ((y - 23.5) / 2.6) ** 2 <= 1:
+                grid[y][x] = "n"
+    for x in range(13, 20):
+        grid[23][x] = "k"
+    grid[23][16] = "w"
+    return ["".join(row) for row in outline(grid)]
+
+
 def light_circle():
     size = 64
     grid = [["."] * size for _ in range(size)]
@@ -3929,6 +3959,7 @@ def main():
     save_species("porygon", PORYGON_1, PORYGON_2)
     save_species("snorlax", snorlax_frame(0, False), snorlax_frame(1, False), 32, [snorlax_frame(0, True)])
     save_sprite_sheet("poke_flute", [POKE_FLUTE], 16)
+    save_sprite_sheet("mart", [mart_frame()], 32)
     save_species("oddish", ODDISH_1, ODDISH_2)
     save_species("caterpie", CATERPIE_1, CATERPIE_2)
     save_species("paras", PARAS_1, PARAS_2)

@@ -389,6 +389,21 @@ bool player::give_item(item_id id, message_box& messages)
         messages.show("The PP of move B was restored!");
         return true;
 
+    case item_kind::potion:
+    {
+        int maximum = _form ? species::get(_form->species).hp * form_hp_scale : max_hp();
+
+        if(hp() >= maximum && (! _form || _form->hp >= maximum))
+        {
+            messages.show("The HP is already full!");
+            return false;
+        }
+
+        heal(maximum / 2);
+        messages.show("DITTO used the POTION!");
+        return true;
+    }
+
     case item_kind::rare_candy:
         _bonus_hp += rare_candy_hp;
         _hp += rare_candy_hp;

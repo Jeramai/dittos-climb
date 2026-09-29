@@ -16,6 +16,7 @@ namespace profile
         int runs;
         int wins;
         int best_floor;
+        int coins;
     };
 
     [[nodiscard]] const data& get();
@@ -39,6 +40,10 @@ namespace profile
     void record_floor(int floor_number);
 
     void record_win();
+
+    void add_coins(int amount);
+
+    [[nodiscard]] bool spend_coins(int amount);
 }
 
 #endif

@@ -1,10 +1,11 @@
 #include "profile.h"
 
+#include "bn_math.h"
 #include "bn_sram.h"
 
 namespace
 {
-    constexpr unsigned profile_magic = 0x44435032;
+    constexpr unsigned profile_magic = 0x44435033;
     constexpr int sram_offset = 4096;
 
     profile::data current;
@@ -22,6 +23,10 @@ namespace
                 current.magic = profile_magic;
             }
 
+            #ifdef DITTO_TEST_MART
+                current.coins = 500;
+            #endif
+
             #ifdef DITTO_TEST_DEX
                 for(int word = 0; word < profile::form_words; ++word)
                 {
@@ -31,6 +36,7 @@ namespace
                 }
 
                 current.runs = 12;
+                current.coins = 500;
                 current.wins = 2;
                 current.best_floor = 13;
             #endif
@@ -158,6 +164,24 @@ void record_win()
 {
     ++loaded_data().wins;
     write();
+}
+
+void add_coins(int amount)
+{
+    loaded_data().coins = bn::min(loaded_data().coins + amount, 99999);
+    write();
+}
+
+bool spend_coins(int amount)
+{
+    if(loaded_data().coins < amount)
+    {
+        return false;
+    }
+
+    loaded_data().coins -= amount;
+    write();
+    return true;
 }
 
 }
