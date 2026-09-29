@@ -57,6 +57,11 @@ enum class species_id
     slowpoke,
     arbok,
     weezing,
+    mankey,
+    machoke,
+    farfetchd,
+    hitmonlee,
+    hitmonchan,
 };
 
 namespace species_frames

@@ -11,7 +11,7 @@ class message_box
 {
 
 public:
-    using text = bn::string<40>;
+    using text = bn::string<48>;
 
     message_box();
 

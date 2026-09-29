@@ -91,7 +91,8 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
     ++_frame_counter;
     _update_water(messages);
 
-    if(_held && items::get(*_held).kind == item_kind::leftovers && _frame_counter % leftovers_frames == 0)
+    if(_held && _items_allowed && items::get(*_held).kind == item_kind::leftovers &&
+       _frame_counter % leftovers_frames == 0)
     {
         heal(1);
     }
@@ -543,7 +544,7 @@ void player::_use_move(bool move_a, player_projectiles& projectiles, message_box
     const bn::fixed_point& aim = directions::vectors[_aim];
     _cooldown = data.cooldown;
 
-    if(_held)
+    if(_held && _items_allowed)
     {
         const item_data& item = items::get(*_held);
 

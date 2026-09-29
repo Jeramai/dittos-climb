@@ -1318,6 +1318,91 @@ SLUDGE = [
 ]
 
 
+MANKEY_TOP = [
+    "",
+    "",
+    "  kk  kkkk  kk",
+    " kcckkccccckcck",
+    " kccckcccccccck",
+    "  kkckwkcckwkck",
+    "   kcccqqqccck",
+    "   kccqkqkqcck",
+    "  kkcccqqqccckk",
+    " kcckcccccccckcck",
+    " kkk kccccccck kkk",
+    "     kcccccck",
+]
+
+MANKEY_1 = [row[:16] for row in MANKEY_TOP + ["    kbbk  kbbk", "    kkk   kkk"]]
+MANKEY_2 = [row[:16] for row in MANKEY_TOP + ["   kbbk    kbbk", "   kkk     kkk"]]
+
+MACHOKE_TOP = [
+    "",
+    "     kkkkk",
+    "    ksssssk",
+    "   kskssksk",
+    "   ksssssssk",
+    "  kkskkkksskk",
+    " kssksssssskssk",
+    "kssskssssssksssk",
+    "kssk kkkkkk kssk",
+    " kk  ksnnsk  kk",
+    "     kssssk",
+    "    kssksssk",
+]
+
+MACHOKE_1 = MACHOKE_TOP + ["   ksssk ksssk", "   kkkk  kkkk"]
+MACHOKE_2 = MACHOKE_TOP + ["  ksssk   ksssk", "  kkkk    kkkk"]
+
+FARFETCHD_TOP = [
+    "",
+    "        vk",
+    "   kkk  vVk",
+    "  kbbbk vVk",
+    " kbbwkbk vVk",
+    " kbbbbbbkvVk",
+    "kyykbbbbbkVk",
+    " kkkcccbbbbk",
+    "   kcccbbbbbk",
+    "   kccccbbbbk",
+    "    kcccbbkk",
+]
+
+FARFETCHD_1 = FARFETCHD_TOP + ["     kykyk", "     kk kk"]
+FARFETCHD_2 = FARFETCHD_TOP + ["    kyk kyk", "    kk   kk"]
+
+
+def hitmon_frame(step, charging, kicker):
+    grid = [["."] * 32 for _ in range(32)]
+    ellipse(grid, 16, 13, 7, 8, "b")
+    ellipse(grid, 16, 6, 5, 4.5, "b" if kicker else "x")
+    grid[5][14] = grid[5][18] = "w" if charging else "k"
+    if kicker:
+        for i in range(10):
+            left = 11 - i // 3 - (step if i > 5 else 0)
+            right = 21 + i // 3 + (0 if i > 5 else step)
+            grid[20 + i][left] = grid[20 + i][left + 1] = "b"
+            grid[20 + i][right] = grid[20 + i][right - 1] = "b"
+        for x in (8, 9, 10, 22, 23, 24):
+            grid[30][x] = "c"
+        for y in range(10, 16):
+            grid[y][7] = grid[y][25] = "b"
+    else:
+        for x in range(9, 13):
+            for y in range(20, 26):
+                grid[y][x] = "b"
+        for x in range(20, 24):
+            for y in range(20, 26):
+                grid[y][x] = "b"
+        ellipse(grid, 6 - step, 13, 3.5, 3.5, "n")
+        ellipse(grid, 26 + step, 13, 3.5, 3.5, "n")
+        for y in range(10, 20):
+            grid[y][4] = "c"
+    for x in range(12, 21):
+        grid[16][x] = "c" if kicker else "o"
+    return ["".join(row) for row in outline(grid)]
+
+
 def arbok_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
     for i in range(10):
@@ -2578,6 +2663,112 @@ def vent_tile(state):
     return tile
 
 
+DOJO_PALETTE = [
+    (16, 10, 8),
+    (184, 136, 88),
+    (160, 116, 72),
+    (208, 164, 112),
+    (136, 96, 60),
+    (72, 40, 24),
+    (104, 64, 40),
+    (200, 184, 152),
+    (152, 136, 104),
+    (232, 220, 192),
+    (120, 84, 52),
+    (168, 176, 96),
+    (120, 128, 64),
+    (240, 232, 216),
+    (112, 104, 96),
+    (40, 24, 16),
+]
+
+
+def dojo_floor_tile(variant):
+    tile = blank(1)
+    for x in range(8):
+        tile[3][x] = 2
+        tile[7][x] = 2
+    tile[1][(5 if variant else 2)] = 2
+    tile[5][(1 if variant else 6)] = 2
+    return tile
+
+
+def dojo_shadow_tile():
+    tile = blank(4)
+    for x in range(8):
+        tile[3][x] = 10
+        tile[7][x] = 10
+    return tile
+
+
+def dojo_wall_top_tile():
+    tile = blank(5)
+    tile[0] = [6] * 8
+    tile[4] = [6] * 8
+    return tile
+
+
+def dojo_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [5] * 8
+    tile[7] = [5] * 8
+    for y in range(8):
+        tile[y][0] = tile[y][4] = 5
+    tile[3] = [8] * 8
+    return tile
+
+
+def dojo_door_tile():
+    tile = blank(9)
+    for y in range(8):
+        tile[y][0] = tile[y][7] = 5
+    tile[3] = [5] * 8
+    return tile
+
+
+def dojo_stairs_tiles():
+    big = [[15] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 3
+            big[top + 1][x] = 1
+            big[top + 2][x] = 4
+    return split_quad(big)
+
+
+def tatami_tile():
+    tile = blank(11)
+    for i in range(8):
+        tile[0][i] = tile[7][i] = tile[i][0] = tile[i][7] = 12
+    tile[3][3] = tile[4][4] = 12
+    return tile
+
+
+def cracked_rock_tile():
+    tile = blank(14)
+    for i in range(8):
+        tile[7][i] = 5
+    for x, y in ((1, 1), (2, 2), (3, 2), (4, 3), (5, 5), (6, 6), (2, 5)):
+        tile[y][x] = 15
+    tile[1][5] = tile[2][6] = 13
+    return tile
+
+
+DOJO_TILES = [
+    blank(0),
+    dojo_floor_tile(0),
+    dojo_floor_tile(1),
+    dojo_shadow_tile(),
+    dojo_wall_top_tile(),
+    dojo_wall_face_tile(),
+    dojo_door_tile(),
+    *dojo_stairs_tiles(),
+    tatami_tile(),
+    dojo_floor_tile(0),
+    cracked_rock_tile(),
+]
+
 HIDEOUT_TILES = [
     blank(0),
     hideout_floor_tile(0),
@@ -2841,6 +3032,13 @@ def main():
     save_species("arbok", arbok_frame(0, False), arbok_frame(1, False), 32, [arbok_frame(0, True)])
     save_species("weezing", weezing_frame(0, False), weezing_frame(1, False), 32, [weezing_frame(0, True)])
     save_sprite_sheet("balloon", [BALLOON], 16)
+    save_species("mankey", MANKEY_1, MANKEY_2)
+    save_species("machoke", MACHOKE_1, MACHOKE_2)
+    save_species("farfetchd", FARFETCHD_1, FARFETCHD_2)
+    save_species("hitmonlee", hitmon_frame(0, False, True), hitmon_frame(1, False, True), 32,
+                 [hitmon_frame(0, True, True)])
+    save_species("hitmonchan", hitmon_frame(0, False, False), hitmon_frame(1, False, False), 32,
+                 [hitmon_frame(0, True, False)])
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
@@ -2856,6 +3054,7 @@ def main():
     save_tiles("ice", ICE_TILES, ICE_PALETTE)
     save_tiles("chasm", CHASM_TILES, CHASM_PALETTE)
     save_tiles("hideout", HIDEOUT_TILES, HIDEOUT_PALETTE)
+    save_tiles("dojo", DOJO_TILES, DOJO_PALETTE)
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 

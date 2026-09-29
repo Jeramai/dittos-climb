@@ -69,6 +69,7 @@ private:
     int _room = 0;
     int _previous_room = -1;
     int _spawn_delay = 0;
+    int _waves_left = 0;
     int _shake_frames = 0;
     int _last_recoil_serial = -1;
     int _plate_timer = 0;

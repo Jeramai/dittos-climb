@@ -10,18 +10,23 @@
 #include "bn_sprite_items_diglett.h"
 #include "bn_sprite_items_ditto.h"
 #include "bn_sprite_items_ekans.h"
+#include "bn_sprite_items_farfetchd.h"
 #include "bn_sprite_items_geodude.h"
 #include "bn_sprite_items_grimer.h"
+#include "bn_sprite_items_hitmonchan.h"
+#include "bn_sprite_items_hitmonlee.h"
 #include "bn_sprite_items_growlithe.h"
 #include "bn_sprite_items_gyarados.h"
 #include "bn_sprite_items_horsea.h"
 #include "bn_sprite_items_jynx.h"
 #include "bn_sprite_items_kabuto.h"
 #include "bn_sprite_items_koffing.h"
+#include "bn_sprite_items_machoke.h"
 #include "bn_sprite_items_machop.h"
 #include "bn_sprite_items_magikarp.h"
 #include "bn_sprite_items_magmar.h"
 #include "bn_sprite_items_magnemite.h"
+#include "bn_sprite_items_mankey.h"
 #include "bn_sprite_items_meowth.h"
 #include "bn_sprite_items_moltres.h"
 #include "bn_sprite_items_oddish.h"
@@ -151,6 +156,16 @@ namespace
           &bn::sprite_items::arbok },
         { "WEEZING", pokemon_type::poison, pokemon_type::none, 60, 0.8, move_id::sludge, move_id::selfdestruct,
           &bn::sprite_items::weezing },
+        { "MANKEY", pokemon_type::fighting, pokemon_type::none, 16, 1.6, move_id::karate_chop, move_id::thrash,
+          &bn::sprite_items::mankey },
+        { "MACHOKE", pokemon_type::fighting, pokemon_type::none, 22, 1.1, move_id::karate_chop, move_id::submission,
+          &bn::sprite_items::machoke },
+        { "FARFETCH'D", pokemon_type::normal, pokemon_type::flying, 16, 1.3, move_id::peck, move_id::wing_attack,
+          &bn::sprite_items::farfetchd, species_behavior::flyer },
+        { "HITMONLEE", pokemon_type::fighting, pokemon_type::none, 60, 1.3, move_id::rolling_kick,
+          move_id::hi_jump_kick, &bn::sprite_items::hitmonlee },
+        { "HITMONCHAN", pokemon_type::fighting, pokemon_type::none, 60, 1.2, move_id::fire_punch, move_id::mega_punch,
+          &bn::sprite_items::hitmonchan },
     };
 }
 

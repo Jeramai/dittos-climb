@@ -69,7 +69,7 @@ holds a reward that shows once the room is clear:
 - **Journal page** (one per floor): a page of the Cinnabar lab journal. Ditto was sample 132 — its Pokédex number.
   If a floor has no side room, its page goes into a room on the path. Thirteen pages; all of them unlock a secret
   ending (later).
-- **Rare Pokémon**: one extra wild Pokémon that is not in the floor's pool and counters its boss: Machop (Snorlax),
+- **Rare Pokémon** (at most one per floor): one extra wild Pokémon that is not in the floor's pool and counters its boss: Machop (Snorlax),
   Charmander (Venusaur), Bulbasaur (Onix), Pikachu (Gyarados), Sandshrew (Zapdos).
 - **Item** in a Poké Ball. Ditto has one held-item slot; a new held item replaces the old one:
   type boosters (Charcoal, Miracle Seed, Mystic Water, Magnet, Hard Stone, Soft Sand, SilverPowder, Black Belt:
@@ -203,4 +203,10 @@ Bonus floors after the end: Steel, Dark and Fairy.
     Slowpoke. Team Rocket: Arbok (Poison Sting fan, Wrap lunge) and Weezing (Sludge, Smog) share one HP bar, while
     Meowth drifts overhead in the balloon throwing Pay Day coins; defeat: "TEAM ROCKET is blasting off again!" and
     outlines of both Arbok and Weezing.
-12. Then one floor per milestone.
+12. **Floor 10.** (done) Fighting Dojo: combat rooms send three waves of three wild Pokémon; held items have no
+    effect and side rooms give no items; cracked rocks block side doors and a Fighting form uses Rock Smash.
+    Mankey (Karate Chop, Thrash), Machop, Machoke (Karate Chop, Submission). Rare: Farfetch'd. The Dojo Master sends
+    out Hitmonlee (Rolling Kick ring, Hi Jump Kick that crashes into walls and hurts itself) or Hitmonchan (Fire,
+    Ice and Thunder Punch combos, Mega Punch, a Counter stance that strikes back when hit); its outline is the
+    other one — the dojo prize.
+13. Then one floor per milestone.

@@ -23,6 +23,7 @@
 #include "articuno_boss.h"
 #include "moltres_boss.h"
 #include "pidgeot_boss.h"
+#include "hitmon_boss.h"
 #include "team_rocket_boss.h"
 #include "onix_boss.h"
 #include "projectile_frames.h"
@@ -139,7 +140,13 @@ void game::run()
 void game::_start_floor()
 {
     _previous_room = -1;
-    _floor.generate(_floor_number, _theme().overgrown_percent, _random);
+    _floor.generate(_floor_number, _theme().overgrown_percent, ! _theme().no_items, _random);
+    _player.set_items_allowed(! _theme().no_items);
+
+    if(_theme().no_items && _player.held_item())
+    {
+        _messages.show("The DOJO bans held items!");
+    }
     _has_flute = false;
     _boss_defeated = false;
     _flute_room = -1;
@@ -262,6 +269,7 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
     if(value.kind == room_kind::combat && _locked)
     {
         _spawn_delay = spawn_delay_frames;
+        _waves_left = _theme().waves - 1;
         _messages.show(_theme().lock_message);
     }
 
@@ -333,6 +341,18 @@ void game::_update_room_state()
     if(_spawn_delay && ! --_spawn_delay)
     {
         _spawn_enemies();
+    }
+
+    if(_locked && ! _spawn_delay && _enemies.empty() && ! _boss && _waves_left)
+    {
+        --_waves_left;
+        _spawn_delay = spawn_delay_frames;
+
+        bn::string<32> wave("Wave ");
+        wave.append(bn::to_string<4>(_theme().waves - _waves_left));
+        wave.append("! A new challenger!");
+        _messages.show(wave);
+        return;
     }
 
     if(_locked && ! _spawn_delay && _enemies.empty() && ! _boss)
@@ -572,6 +592,12 @@ void game::_spawn_boss()
         _boss.reset(new pidgeot_boss(position, _camera));
         _messages.show("PIDGEOT swooped down from above!");
     }
+    else if(_theme().boss == boss_kind::hitmon)
+    {
+        bool kicker = _random.get_int(2);
+        _boss.reset(new hitmon_boss(position, _camera, kicker));
+        _messages.show(kicker ? "The DOJO MASTER sent out HITMONLEE!" : "The DOJO MASTER sent out HITMONCHAN!");
+    }
     else
     {
         _boss.reset(new team_rocket_boss(position, _camera));
@@ -645,7 +671,7 @@ void game::_update_boss()
     {
         _boss->announce_defeat(_messages);
         _spawn_effect(_boss->position());
-        _spawn_outline(_boss->species(), _boss->position());
+        _spawn_outline(_boss->outline_species(), _boss->position());
 
         if(bn::optional<species_id> extra = _boss->extra_outline())
         {
@@ -862,7 +888,8 @@ void game::_handle_cut()
     }
 
     bool ice = gate == gate_kind::ice;
-    pokemon_type needed = ice ? pokemon_type::fire : pokemon_type::grass;
+    bool rock = gate == gate_kind::cracked;
+    pokemon_type needed = ice ? pokemon_type::fire : rock ? pokemon_type::fighting : pokemon_type::grass;
     const species_data& body = _player.body();
     bool can_clear = body.type_1 == needed || body.type_2 == needed;
     bn::fixed_point feet = _player.position() + bn::fixed_point(0, 4);
@@ -876,7 +903,9 @@ void game::_handle_cut()
 
             if(room::at(probe.x(), probe.y()) == room::cells::bush)
             {
-                _messages.show(ice ? "A FIRE POKEMON could melt this ice." : "A GRASS POKEMON could CUT this bush.");
+                _messages.show(ice ? "A FIRE POKEMON could melt this ice." :
+                               rock ? "A FIGHTING POKEMON can smash this." :
+                                      "A GRASS POKEMON could CUT this bush.");
                 return;
             }
         }
@@ -889,7 +918,7 @@ void game::_handle_cut()
         return;
     }
 
-    _messages.show(ice ? "DITTO melted the ice!" : "DITTO used CUT!");
+    _messages.show(ice ? "DITTO melted the ice!" : rock ? "DITTO used ROCK SMASH!" : "DITTO used CUT!");
     _spawn_effect(feet);
 
     for(int side = 0; side < 4; ++side)
@@ -1109,7 +1138,7 @@ void game::_spawn_enemies()
         return;
     #endif
 
-    int count = bn::min(2 + _floor_number / 2 + _random.get_int(2), _enemies.max_size());
+    int count = _theme().waves > 1 ? 3 : bn::min(2 + _floor_number / 2 + _random.get_int(2), _enemies.max_size());
 
     for(int index = 0; index < count; ++index)
     {

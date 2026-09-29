@@ -75,6 +75,11 @@ public:
 
     virtual void announce_defeat(message_box& messages) const;
 
+    [[nodiscard]] virtual species_id outline_species() const
+    {
+        return _species;
+    }
+
     [[nodiscard]] virtual bn::optional<species_id> extra_outline() const
     {
         return bn::nullopt;

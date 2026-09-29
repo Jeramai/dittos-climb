@@ -7,7 +7,7 @@
 
 using namespace directions_of_floor;
 
-void floor_map::generate(int floor_number, int overgrown_percent, bn::random& random)
+void floor_map::generate(int floor_number, int overgrown_percent, bool items_allowed, bn::random& random)
 {
     for(auto& row : _grid)
     {
@@ -124,16 +124,18 @@ void floor_map::generate(int floor_number, int overgrown_percent, bn::random& ra
         }
     }
 
+    if(! side_rooms.empty())
+    {
+        int pick = random.get_int(side_rooms.size());
+        _rooms[side_rooms[pick]].reward = room_reward::rare;
+        side_rooms.erase(side_rooms.begin() + pick);
+    }
+
     for(int index : side_rooms)
     {
-        floor_room& value = _rooms[index];
-
-        if(random.get_int(2))
+        if(items_allowed)
         {
-            value.reward = room_reward::rare;
-        }
-        else
-        {
+            floor_room& value = _rooms[index];
             value.reward = room_reward::item;
             value.item = item_id(random.get_int(items::count));
         }

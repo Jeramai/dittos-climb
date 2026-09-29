@@ -117,6 +117,13 @@ namespace
         { "WRAP", "WRAP", pokemon_type::normal, 60, 15, dash, 40, 0, 0, 3.5, 14, 0, status_effect::paralysis, 50 },
         { "CONFUSION", "CONFUSE", pokemon_type::psychic, 50, 15, shot, 36, 1, 0, 2.6, 45, projectile_frames::psybeam,
           status_effect::confusion, 30 },
+        { "ROLLING KICK", "R.KICK", pokemon_type::fighting, 60, 0, melee, 22, 0, 0, 0, 8, 0 },
+        { "HI JUMP KICK", "HJ KICK", pokemon_type::fighting, 110, 5, dash, 60, 0, 0, 4.5, 16, 0 },
+        { "THUNDERPUNCH", "T.PUNCH", pokemon_type::electric, 55, 0, melee, 20, 0, 0, 0, 6, 0,
+          status_effect::paralysis, 10 },
+        { "MEGA PUNCH", "M.PUNCH", pokemon_type::normal, 80, 10, dash, 45, 0, 0, 3.8, 14, 0 },
+        { "SUBMISSION", "SUBMIT", pokemon_type::fighting, 80, 15, dash, 45, 0, 0, 3.5, 14, 0 },
+        { "THRASH", "THRASH", pokemon_type::normal, 90, 10, dash, 50, 0, 0, 4, 16, 0, status_effect::confusion, 20 },
     };
 }
 

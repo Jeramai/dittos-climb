@@ -42,7 +42,7 @@ void message_box::show(const bn::string_view& message)
         _queue.erase(_queue.begin());
     }
 
-    _queue.push_back(text(message));
+    _queue.push_back(text(message.substr(0, bn::min(message.size(), text().max_size()))));
 
     if(! _frames)
     {

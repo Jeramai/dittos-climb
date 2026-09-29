@@ -21,9 +21,9 @@ Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, beca
 |---|---|
 | `-DDITTO_TEST_START_KIND=1` | Start in a combat room, which is also the key item room (Poké Flute, Silph Scope) |
 | `-DDITTO_TEST_START_KIND=2` | Start in the stairs room, with the Poké Flute |
-| `-DDITTO_TEST_FORM=<species>` | Start transformed (1 Rattata, 2 Meowth, 3 Porygon, 4 Snorlax, 5 Oddish, 6 Caterpie, 7 Paras, 8 Beedrill, 9 Venusaur, 10 Geodude, 11 Diglett, 12 Zubat, 13 Onix, 14 Magikarp, 15 Poliwag, 16 Staryu, 17 Horsea, 18 Gyarados, 19 Pikachu, 20 Voltorb, 21 Magnemite, 22 Zapdos, 23 Machop, 24 Charmander, 25 Bulbasaur, 26 Sandshrew, 27 Vulpix, 28 Ponyta, 29 Growlithe, 30 Magmar, 31 Squirtle, 32 Moltres, 33 Seel, 34 Jynx, 35 Shellder, 36 Omanyte, 37 Articuno, 38 Pidgey, 39 Spearow, 40 Aerodactyl, 41 Kabuto, 42 Pidgeot, 43 Koffing, 44 Ekans, 45 Grimer, 46 Slowpoke, 47 Arbok, 48 Weezing) |
+| `-DDITTO_TEST_FORM=<species>` | Start transformed (1 Rattata, 2 Meowth, 3 Porygon, 4 Snorlax, 5 Oddish, 6 Caterpie, 7 Paras, 8 Beedrill, 9 Venusaur, 10 Geodude, 11 Diglett, 12 Zubat, 13 Onix, 14 Magikarp, 15 Poliwag, 16 Staryu, 17 Horsea, 18 Gyarados, 19 Pikachu, 20 Voltorb, 21 Magnemite, 22 Zapdos, 23 Machop, 24 Charmander, 25 Bulbasaur, 26 Sandshrew, 27 Vulpix, 28 Ponyta, 29 Growlithe, 30 Magmar, 31 Squirtle, 32 Moltres, 33 Seel, 34 Jynx, 35 Shellder, 36 Omanyte, 37 Articuno, 38 Pidgey, 39 Spearow, 40 Aerodactyl, 41 Kabuto, 42 Pidgeot, 43 Koffing, 44 Ekans, 45 Grimer, 46 Slowpoke, 47 Arbok, 48 Weezing, 49 Mankey, 50 Machoke, 51 Farfetch'd, 52 Hitmonlee, 53 Hitmonchan) |
 | `-DDITTO_TEST_NO_ENEMIES` | Combat rooms spawn nothing |
-| `-DDITTO_TEST_FLOOR=<n>` | Start on floor n (2 Viridian Forest, 3 Rock Tunnel, 4 Underground Lake, 5 Power Plant, 6 Volcano, 7 Seafoam Cave, 8 The Chasm, 9 Rocket Hideout) |
+| `-DDITTO_TEST_FLOOR=<n>` | Start on floor n (2 Viridian Forest, 3 Rock Tunnel, 4 Underground Lake, 5 Power Plant, 6 Volcano, 7 Seafoam Cave, 8 The Chasm, 9 Rocket Hideout, 10 Fighting Dojo) |
 | `-DDITTO_TEST_OVERGROWN` | Every door of the start room is overgrown with bushes |
 | `-DDITTO_TEST_REWARD=<n>` | The start room holds a reward (1 journal page, 2 rare Pokémon, 3 item) |
 | `-DDITTO_TEST_ITEM=<n>` | The item reward (0 Charcoal … 8 Leftovers, 9 Quick Claw, 10 Ether, 11 Rare Candy) |

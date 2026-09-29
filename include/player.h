@@ -63,6 +63,11 @@ public:
 
     [[nodiscard]] bool give_item(item_id id, message_box& messages);
 
+    void set_items_allowed(bool allowed)
+    {
+        _items_allowed = allowed;
+    }
+
     [[nodiscard]] bool area_active() const
     {
         return _area_frames;
@@ -148,6 +153,7 @@ private:
     int _frame_counter = 0;
     int _bonus_hp = 0;
     bn::optional<item_id> _held;
+    bool _items_allowed = true;
 
     void _use_move(bool move_a, player_projectiles& projectiles, message_box& messages);
 

@@ -90,6 +90,12 @@ enum class move_id
     poison_gas,
     wrap,
     confusion,
+    rolling_kick,
+    hi_jump_kick,
+    thunderpunch,
+    mega_punch,
+    submission,
+    thrash,
 };
 
 enum class status_effect

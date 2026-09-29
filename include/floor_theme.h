@@ -18,6 +18,7 @@ enum class boss_kind
     articuno,
     pidgeot,
     team_rocket,
+    hitmon,
 };
 
 enum class key_item
@@ -32,6 +33,7 @@ enum class gate_kind
     none,
     bush,
     ice,
+    cracked,
 };
 
 enum class hazard_kind
@@ -67,6 +69,8 @@ struct floor_theme
     bool chasm;
     bool spinners;
     key_item key;
+    int waves;
+    bool no_items;
     int overgrown_percent;
     boss_kind boss;
     species_id rare;
