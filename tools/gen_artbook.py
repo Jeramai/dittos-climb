@@ -47,7 +47,7 @@ BOSS_SPRITES = {
 
 SHARED_SHEETS = [
     ("ditto", 16, "Ditto: walk, squish, white (Transform), own walk, own squish, flat (dodge)"),
-    ("mew", 16, "Mew (ending)"),
+    ("mew", 32, "Mew (ending)"),
     ("projectiles", 8, "Projectiles"),
     ("water_projectiles", 8, "Water, dragon, ice and ghost projectiles"),
     ("electric_projectiles", 8, "Electric, fire and flying projectiles"),
