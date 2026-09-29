@@ -85,7 +85,8 @@ The pause screen shows the held item and the journal count.
 Every wild Pokémon, including a side room's rare one, is shiny at Emerald's odds of 1 in 8192. A shiny has its
 own palette (the known shinies keep their real colours: red Gyarados, gold Magikarp, green Dragonite, gold Onix;
 the others get a hue shift) and announces itself with a sparkle, a jingle and "A shiny X appeared!". Ditto keeps
-the shiny colours when it transforms into a defeated shiny, and through an evolution.
+the shiny colours when it transforms into a defeated shiny, and through an evolution. A shiny Ditto takes the normal
+colours of its target. The Mew in the ending rolls 1 in 8192 too.
 Ditto itself is the player, so the roll happens once per new run: at 1 in 8192 the run starts as a blue shiny
 Ditto (the Gen 2-4 colours), which the save and the ending keep.
 

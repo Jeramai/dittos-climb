@@ -1727,6 +1727,11 @@ void game::_ending()
     set_ditto_item(bn::sprite_items::ditto, species_frames::own_walk);
     mew.set_bg_priority(0);
     mew.set_horizontal_flip(true);
+
+    if(shiny::roll(_random))
+    {
+        mew.set_palette(*shiny::palette(species_id::mew));
+    }
     ditto.set_bg_priority(0);
     int frame_counter = 0;
 

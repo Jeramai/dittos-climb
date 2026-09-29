@@ -2198,13 +2198,14 @@ def save_sprite_sheet(name, frames, size):
 SHINY_HUE_SHIFT = {
     "rattata": 150, "gyarados": 140, "magikarp": 40, "pikachu": -15, "golbat": 100,
     "dratini": 110, "dragonair": 120, "charmander": 20, "gengar": -40,
-    "haunter": -40, "gastly": -40, "mew": -150, "snorlax": 40, "voltorb": 200, "geodude": 30,
+    "haunter": -40, "gastly": -40, "snorlax": 40, "voltorb": 200, "geodude": 30,
     "venusaur": 60, "bulbasaur": 60, "squirtle": 40, "vulpix": 30, "growlithe": 20, "lapras": 90,
     "machop": 60, "machoke": 60, "abra": -20, "kadabra": -20, "seel": 40, "slowpoke": 60, "arbok": 60,
 }
 
 
 SHINY_COLORS = {
+    "mew": {"7": (192, 224, 248), "8": (128, 176, 232), "9": (64, 104, 176)},
     "ditto": {"m": (40, 64, 136), "d": (80, 120, 200), "p": (120, 168, 232), "h": (200, 224, 248)},
     "onix": {"a": (216, 184, 72), "A": (160, 128, 40)},
     "zubat": {"z": (128, 192, 96), "Z": (64, 128, 64)},
