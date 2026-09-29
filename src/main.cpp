@@ -3,24 +3,34 @@
 
 #include "game.h"
 #include "intro.h"
+#include "save.h"
 
 int main()
 {
     bn::core::init();
     bn::random random;
 
-    intro::title(random);
-    intro::story();
+    bool resume = intro::title(random, save::exists());
+
+    if(! resume)
+    {
+        intro::story();
+    }
 
     while(true)
     {
-        game current(random);
-        current.run();
-        bn::core::update();
+        bool back_to_title;
 
-        if(current.won())
         {
-            intro::title(random);
+            bn::optional<save_data> saved = resume ? save::load() : bn::nullopt;
+            save::erase();
+
+            game current(random, saved ? &*saved : nullptr);
+            current.run();
+            back_to_title = current.won() || current.quit();
         }
+
+        bn::core::update();
+        resume = back_to_title && intro::title(random, save::exists());
     }
 }

@@ -159,6 +159,25 @@ void floor_map::generate(int floor_number, int overgrown_percent, bool items_all
     }
 }
 
+void floor_map::restore(const floor_room* rooms, int count)
+{
+    for(auto& row : _grid)
+    {
+        for(int& value : row)
+        {
+            value = -1;
+        }
+    }
+
+    _rooms.clear();
+
+    for(int index = 0; index < count; ++index)
+    {
+        _rooms.push_back(rooms[index]);
+        _grid[rooms[index].y][rooms[index].x] = index;
+    }
+}
+
 void floor_map::clear_overgrown(int index, direction side)
 {
     _rooms[index].overgrown[int(side)] = false;

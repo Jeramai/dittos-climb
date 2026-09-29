@@ -42,7 +42,7 @@ namespace
 namespace intro
 {
 
-void title(bn::random& random)
+bool title(bn::random& random, bool can_continue)
 {
     audio::play_music(bn::music_items::title);
     bn::sprite_text_generator big(common::variable_8x16_sprite_font);
@@ -53,15 +53,31 @@ void title(bn::random& random)
 
     bn::vector<bn::sprite_ptr, 12> text;
     big.generate(0, -40, "DITTO'S CLIMB", text);
-    small.generate(0, 40, "PRESS START", text);
+    if(can_continue)
+    {
+        small.generate(0, 40, "A: CONTINUE", text);
+        small.generate(0, 52, "START: NEW RUN", text);
+    }
+    else
+    {
+        small.generate(0, 40, "PRESS START", text);
+    }
 
     bn::sprite_ptr ditto = bn::sprite_items::ditto.create_sprite(0, 0, species_frames::own_walk);
     ditto.set_scale(2);
 
     int frame = 0;
 
+    bool resume = false;
+
     while(! bn::keypad::start_pressed())
     {
+        if(can_continue && bn::keypad::a_pressed())
+        {
+            resume = true;
+            break;
+        }
+
         ++frame;
         ditto.set_y(bn::degrees_lut_sin((frame * 4) % 360) * 4);
         ditto.set_tiles(bn::sprite_items::ditto.tiles_item(), species_frames::own_walk + (frame / 20) % 2);
@@ -78,7 +94,9 @@ void title(bn::random& random)
         bn::core::update();
     }
 
+    audio::play(bn::sound_items::sfx_menu);
     bn::core::update();
+    return resume;
 }
 
 void story()

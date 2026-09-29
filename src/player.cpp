@@ -335,6 +335,32 @@ void player::apply_status(status_effect effect, message_box& messages)
     }
 }
 
+player_state player::state() const
+{
+    return player_state{ _hp, _bonus_hp, _form.has_value(), _form.value_or(form{ species_id::ditto, 0, 0 }),
+                         _held.has_value(), _held.value_or(item_id::ether) };
+}
+
+void player::restore(const player_state& state)
+{
+    _hp = state.hp;
+    _bonus_hp = state.bonus_hp;
+    _form.reset();
+    _held.reset();
+
+    if(state.has_form)
+    {
+        _form = state.form_value;
+    }
+
+    if(state.has_held)
+    {
+        _held = state.held;
+    }
+
+    _update_sprite(false);
+}
+
 int player::max_hp() const
 {
     return ditto().hp + _bonus_hp;

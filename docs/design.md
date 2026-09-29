@@ -80,10 +80,13 @@ holds a reward that shows once the room is clear:
 
 The pause screen shows the held item and the journal count.
 
-### Save and quit (later)
+### Save and quit
 
-No save slots: a run is meant to be short. A "save and quit" option on the pause screen could store the current
-run once, to resume it later.
+No save slots: a run is meant to be short. Select on the pause screen, then A, stores the run in SRAM and returns
+to the title: the floor, the current room, the state of every room (visited, cleared, bushes, rewards), the key
+items, the journal pages, and Ditto's HP, form, PP and held item. The title then offers **Continue**, which
+resumes in the saved room; an uncleared room fills with Pokémon again and a living boss starts at full HP.
+Starting any run deletes the save, so a save cannot be loaded twice.
 
 ### Poké Mart (later)
 
@@ -147,6 +150,7 @@ Bonus floors after the end: Steel, Dark and Fairy.
 | L | Dodge (per form: a roll, a Dig, a Teleport) |
 | R (hold) | Lock the aim direction |
 | Start | Menu / pause |
+| Select (paused) | Save and quit |
 
 ## Art
 
@@ -230,4 +234,5 @@ Bonus floors after the end: Steel, Dark and Fairy.
 16. **Ending.** (done) Mew appears, tells Ditto the truth, and Ditto transforms into Mewtwo. With all 13 journal
     pages, a secret scene follows and Ditto transforms into Mew. The run ends and the title screen returns.
 17. Music and sound effects: 17 original tracks and 20 effects.
-18. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, real art.
+18. Save and quit.
+19. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, real art.

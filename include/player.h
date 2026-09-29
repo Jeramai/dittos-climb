@@ -17,6 +17,16 @@ struct form
     int pp_b;
 };
 
+struct player_state
+{
+    int hp;
+    int bonus_hp;
+    bool has_form;
+    form form_value;
+    bool has_held;
+    item_id held;
+};
+
 class player
 {
 
@@ -62,6 +72,10 @@ public:
     }
 
     [[nodiscard]] bool give_item(item_id id, message_box& messages);
+
+    [[nodiscard]] player_state state() const;
+
+    void restore(const player_state& state);
 
     void set_items_allowed(bool allowed)
     {

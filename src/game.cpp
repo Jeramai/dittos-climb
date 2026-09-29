@@ -108,7 +108,7 @@ namespace
     }
 }
 
-game::game(bn::random& random) :
+game::game(bn::random& random, const save_data* saved) :
     _random(random),
     _camera(bn::camera_ptr::create(0, 0)),
     _player(_camera, bn::fixed_point()),
@@ -131,20 +131,36 @@ game::game(bn::random& random) :
         _won = true;
     #endif
 
-    _start_floor();
+    if(saved)
+    {
+        _floor_number = saved->floor_number;
+        _journal_pages = saved->journal_pages;
+        _has_silph_scope = saved->has_silph_scope;
+        _player.restore(saved->player);
+    }
+
+    _start_floor(saved);
 
     #ifdef DITTO_TEST_FORM
-        _player.start_transform(species_id(DITTO_TEST_FORM));
+        if(! saved)
+        {
+            _player.start_transform(species_id(DITTO_TEST_FORM));
+        }
     #endif
 }
 
 void game::run()
 {
-    while(! _player.fainted() && ! _won)
+    while(! _player.fainted() && ! _won && ! _quit)
     {
         if(bn::keypad::start_pressed())
         {
             _pause_map();
+
+            if(_quit)
+            {
+                break;
+            }
         }
 
         _update_play();
@@ -156,13 +172,13 @@ void game::run()
     {
         _ending();
     }
-    else
+    else if(! _quit)
     {
         _game_over();
     }
 }
 
-void game::_start_floor()
+void game::_start_floor(const save_data* saved)
 {
     _previous_room = -1;
     audio::play_floor_music(_floor_number);
@@ -216,6 +232,17 @@ void game::_start_floor()
             _has_flute = true;
             _has_silph_scope = true;
         }
+    }
+
+    if(saved)
+    {
+        _floor.restore(saved->rooms, saved->room_count);
+        _has_flute = saved->has_flute;
+        _boss_defeated = saved->boss_defeated;
+        _flute_room = saved->flute_room;
+        _enter_room(saved->room, bn::nullopt);
+        _messages.show(floor_label(_floor_number));
+        return;
     }
     #ifdef DITTO_TEST_START_KIND
         for(int index = 0; index < _floor.size(); ++index)
@@ -1534,18 +1561,84 @@ void game::_pause_map()
     big.generate(0, -66, floor_label(_floor_number), text);
     small.generate(0, -48, held, text);
     small.generate(0, -38, pages, text);
-    small.generate(0, 74, "START: RESUME", text);
+    bn::vector<bn::sprite_ptr, 32> prompt;
+    bool confirming = false;
+    auto show_prompt = [&]()
+    {
+        prompt.clear();
+        small.generate(0, 64, confirming ? "A: SAVE AND QUIT" : "START: RESUME", prompt);
+        small.generate(0, 74, confirming ? "B: BACK" : "SELECT: SAVE AND QUIT", prompt);
+    };
+
+    show_prompt();
     bn::core::update();
 
-    while(! bn::keypad::start_pressed())
+    while(true)
     {
+        if(confirming)
+        {
+            if(bn::keypad::a_pressed())
+            {
+                _save_and_quit();
+                return;
+            }
+
+            if(bn::keypad::b_pressed())
+            {
+                confirming = false;
+                show_prompt();
+            }
+        }
+        else if(bn::keypad::start_pressed())
+        {
+            break;
+        }
+        else if(bn::keypad::select_pressed())
+        {
+            audio::play(bn::sound_items::sfx_menu);
+            confirming = true;
+            show_prompt();
+        }
+
         bn::core::update();
     }
 
+    prompt.clear();
     text.clear();
     _overlay.hide();
     _set_world_visible(true);
     bn::core::update();
+}
+
+void game::_save_and_quit()
+{
+    save_data data;
+    data.floor_number = _floor_number;
+    data.room = _room;
+    data.journal_pages = _journal_pages;
+    data.flute_room = _flute_room;
+    data.has_flute = _has_flute;
+    data.has_silph_scope = _has_silph_scope;
+    data.boss_defeated = _boss_defeated;
+    data.player = _player.state();
+    data.room_count = _floor.size();
+
+    for(int index = 0; index < _floor.size(); ++index)
+    {
+        data.rooms[index] = _floor[index];
+    }
+
+    save::write(data);
+    audio::play(bn::sound_items::sfx_pickup);
+    _quit = true;
+    _fade(true);
+    _clear_room_objects();
+    _messages.clear();
+    _hud.set_visible(false);
+    _player.set_visible(false);
+    _overlay.hide();
+    bn::core::update();
+    set_fade(0);
 }
 
 void game::_ending()

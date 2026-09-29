@@ -17,18 +17,24 @@
 #include "player.h"
 #include "projectiles.h"
 #include "room_view.h"
+#include "save.h"
 
 class game
 {
 
 public:
-    explicit game(bn::random& random);
+    game(bn::random& random, const save_data* saved);
 
     void run();
 
     [[nodiscard]] bool won() const
     {
         return _won;
+    }
+
+    [[nodiscard]] bool quit() const
+    {
+        return _quit;
     }
 
 private:
@@ -90,6 +96,7 @@ private:
     bool _on_warp = false;
     bool _won = false;
     bool _boss_defeated = false;
+    bool _quit = false;
 
     [[nodiscard]] const floor_room& _current_room() const
     {
@@ -101,7 +108,7 @@ private:
         return floor_themes::get(_floor_number);
     }
 
-    void _start_floor();
+    void _start_floor(const save_data* saved = nullptr);
 
     void _enter_room(int index, bn::optional<direction> entered_from);
 
@@ -174,6 +181,8 @@ private:
     void _set_world_visible(bool visible);
 
     void _pause_map();
+
+    void _save_and_quit();
 
     void _game_over();
 };

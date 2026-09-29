@@ -51,3 +51,6 @@ make TARGET=test-boss BUILD=build-test-boss USERFLAGS="-DDITTO_TEST_START_KIND=2
 | L | Dodge |
 | R (hold) | Lock aim while moving |
 | Start | Floor map / restart after a black-out |
+| Select (on the floor map) | Save and quit; A confirms, B goes back |
+
+A saved run shows **A: CONTINUE** on the title screen. Continuing deletes the save, so a run resumes once.

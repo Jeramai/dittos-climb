@@ -5,7 +5,7 @@
 
 namespace intro
 {
-    void title(bn::random& random);
+    [[nodiscard]] bool title(bn::random& random, bool can_continue);
 
     void story();
 }

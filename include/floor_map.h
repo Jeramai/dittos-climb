@@ -53,6 +53,8 @@ public:
     void generate(int floor_number, int overgrown_percent, bool items_allowed, bool large_rooms,
                   bn::random& random);
 
+    void restore(const floor_room* rooms, int count);
+
     void clear_overgrown(int index, direction side);
 
     [[nodiscard]] int room_at(int x, int y) const;
