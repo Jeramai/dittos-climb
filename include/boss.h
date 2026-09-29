@@ -99,6 +99,12 @@ public:
         return _max_hp;
     }
 
+    void set_test_hp(int hp)
+    {
+        _max_hp = hp;
+        _hp = hp;
+    }
+
     [[nodiscard]] bool dead() const
     {
         return _hp <= 0;

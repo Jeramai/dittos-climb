@@ -17,7 +17,7 @@ namespace
 
     int bar_frame(int hp, int max_hp)
     {
-        int fill = hp <= 0 ? 0 : bn::max((hp * bar_fill) / max_hp, 1);
+        int fill = hp <= 0 ? 0 : bn::clamp((hp * bar_fill) / max_hp, 1, bar_fill);
         int color = hp * 2 > max_hp ? 0 : hp * 5 > max_hp ? 1 : 2;
         return color * (bar_fill + 1) + fill;
     }

@@ -127,6 +127,10 @@ game::game(bn::random& random, const save_data* saved) :
         _has_silph_scope = true;
     #endif
 
+    #ifdef DITTO_TEST_PAGES
+        _journal_pages = DITTO_TEST_PAGES;
+    #endif
+
     #ifdef DITTO_TEST_ENDING
         _journal_pages = DITTO_TEST_ENDING;
         _won = true;
@@ -707,6 +711,10 @@ void game::_spawn_boss()
         _messages.show("JAMES: Make it double!");
         _messages.show("MEOWTH: Meowth, that's right!");
     }
+
+    #ifdef DITTO_TEST_BOSS_HP
+        _boss->set_test_hp(DITTO_TEST_BOSS_HP);
+    #endif
 }
 
 void game::_update_boss()

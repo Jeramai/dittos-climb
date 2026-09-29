@@ -65,7 +65,7 @@ void mewtwo_boss::update(const bn::fixed_point& target, enemy_projectiles& proje
         return;
     }
 
-    if(! _recovered && _hp * 10 < _max_hp * 3)
+    if(! _recovered && _hp > 0 && _hp * 10 < _max_hp * 3)
     {
         _recovered = true;
         _hp += recover_amount;

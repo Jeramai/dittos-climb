@@ -36,6 +36,8 @@ Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, beca
 | `-DDITTO_TEST_LAYOUT=<n>` | The start combat room uses layout n (0–4; 3 has a centre block) |
 | `-DDITTO_TEST_SCOPE` | Start with the Silph Scope |
 | `-DDITTO_TEST_SHINY` | Every wild Pokémon and the test form are shiny |
+| `-DDITTO_TEST_BOSS_HP=<n>` | The boss has n HP (its maximum too, so Mewtwo does not Recover) |
+| `-DDITTO_TEST_PAGES=<n>` | Start with n journal pages (13 unlocks the secret ending) |
 | `-DDITTO_TEST_SPECIES=<species>` | Every wild Pokémon is this species |
 
 ```
