@@ -67,6 +67,7 @@ private:
     bn::fixed_point _camera_position;
     int _floor_number = 1;
     int _room = 0;
+    int _previous_room = -1;
     int _spawn_delay = 0;
     int _shake_frames = 0;
     int _last_recoil_serial = -1;
@@ -148,6 +149,8 @@ private:
     void _change_room(direction side);
 
     void _climb_stairs();
+
+    void _fall_into_pit();
 
     void _fade(bool out);
 

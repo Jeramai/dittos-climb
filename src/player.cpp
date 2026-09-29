@@ -33,6 +33,7 @@ namespace
     constexpr int freeze_frames = 80;
     constexpr bn::fixed slide_speed = 2.2;
     constexpr bn::fixed current_speed = 0.6;
+    constexpr bn::fixed wind_speed = 0.9;
     constexpr int leftovers_frames = 120;
     constexpr int rare_candy_hp = 5;
 
@@ -477,6 +478,31 @@ void player::set_position(const bn::fixed_point& position)
     _update_sprite(false);
 }
 
+bool player::over_pit() const
+{
+    return ! flying() && ! _transform_frames && room::feet_over_pit(_position);
+}
+
+bool player::flying() const
+{
+    const species_data& current = body();
+    return current.type_1 == pokemon_type::flying || current.type_2 == pokemon_type::flying;
+}
+
+void player::push(const bn::fixed_point& delta)
+{
+    if(! flying())
+    {
+        _move(delta);
+    }
+}
+
+void player::take_fall_damage(int amount)
+{
+    _lose_hp(amount);
+    _invulnerable_frames = hurt_invulnerable_frames;
+}
+
 void player::set_visible(bool visible)
 {
     _sprite.set_visible(visible);
@@ -615,9 +641,10 @@ bool player::_move(const bn::fixed_point& delta)
 {
     bool can_swim = species::can_swim(body());
     bool moved = true;
+    constexpr bool over_pits = true;
     bn::fixed_point next(_position.x() + delta.x(), _position.y());
 
-    if(! room::feet_are_blocked(next, can_swim))
+    if(! room::feet_are_blocked(next, can_swim, over_pits))
     {
         _position = next;
     }
@@ -628,7 +655,7 @@ bool player::_move(const bn::fixed_point& delta)
 
     next = bn::fixed_point(_position.x(), _position.y() + delta.y());
 
-    if(! room::feet_are_blocked(next, can_swim))
+    if(! room::feet_are_blocked(next, can_swim, over_pits))
     {
         _position = next;
     }
@@ -656,7 +683,7 @@ void player::_update_water(message_box& messages)
 {
     bool can_swim = species::can_swim(body());
 
-    if(room::feet_are_blocked(_position, can_swim))
+    if(room::feet_are_blocked(_position, can_swim, true))
     {
         if(bn::optional<bn::fixed_point> shore = room::nearest_standable(_position, can_swim))
         {
@@ -672,6 +699,13 @@ void player::_update_water(message_box& messages)
     if(flow != bn::fixed_point())
     {
         _move(flow * current_speed);
+    }
+
+    bn::fixed_point wind = room::wind_at(_position);
+
+    if(wind != bn::fixed_point() && ! flying())
+    {
+        _move(wind * wind_speed);
     }
 }
 

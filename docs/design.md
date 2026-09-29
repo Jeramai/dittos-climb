@@ -192,4 +192,8 @@ Bonus floors after the end: Steel, Dark and Fairy.
    gate system as the forest bushes). New status Freeze: no action for a moment; Fire and Ice types are immune.
    Seel (Headbutt, Aurora Beam), Jynx (Ice Punch, Lovely Kiss), Shellder (Clamp, Ice Beam). Rare: Omanyte.
    Articuno: Ice Shard bursts, a Blizzard ring of snow clouds, a telegraphed Ice Beam and a diving attack.
-10. Then one floor per milestone.
+10. **Floor 8.** (done) The Chasm: bands of wind push walkers, and pits drop Ditto back into the room it came
+    from (a little HP, never a black-out). Flying forms fly over both; wild Pokémon walk around pits. Pidgey (Gust,
+    Quick Attack), Spearow (Peck, Fury Attack), Aerodactyl (Bite, Rock Slide). Rare: Kabuto. Pidgeot fires feather
+    volleys, summons Whirlwind tornadoes that confuse, dives with Wing Attack, and whips up a Gust that pushes Ditto.
+11. Then one floor per milestone.

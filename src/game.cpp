@@ -22,6 +22,7 @@
 #include "journal.h"
 #include "articuno_boss.h"
 #include "moltres_boss.h"
+#include "pidgeot_boss.h"
 #include "onix_boss.h"
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
@@ -55,6 +56,7 @@ namespace
     constexpr int ember_power = 40;
     constexpr int ember_life = 8;
     constexpr int ember_half_size = 7;
+    constexpr int fall_damage = 4;
 
     constexpr const char* floor_names[] = {
         "CINNABAR LAB", "VIRIDIAN FOREST", "ROCK TUNNEL", "UNDERGROUND LAKE", "POWER PLANT", "VOLCANO",
@@ -134,6 +136,7 @@ void game::run()
 
 void game::_start_floor()
 {
+    _previous_room = -1;
     _floor.generate(_floor_number, _theme().overgrown_percent, _random);
     _has_flute = false;
     _boss_defeated = false;
@@ -202,6 +205,20 @@ void game::_start_floor()
                 #endif
 
                 _enter_room(index, bn::nullopt);
+
+                #ifdef DITTO_TEST_FALL
+                    for(int row = 0; row < room::rows; ++row)
+                    {
+                        for(int column = 0; column < room::columns; ++column)
+                        {
+                            if(room::get(column, row) == room::cells::pit)
+                            {
+                                _player.set_position(room::cell_center(column, row) - bn::fixed_point(0, 4));
+                            }
+                        }
+                    }
+                #endif
+
                 _messages.show(floor_label(_floor_number));
                 return;
             }
@@ -352,6 +369,12 @@ void game::_update_room_state()
     if(bn::optional<direction> side = _view.exit_side(_player.position()))
     {
         _change_room(*side);
+        return;
+    }
+
+    if(_player.over_pit())
+    {
+        _fall_into_pit();
         return;
     }
 
@@ -519,10 +542,15 @@ void game::_spawn_boss()
         _boss.reset(new moltres_boss(position, _camera));
         _messages.show("MOLTRES rose from the magma!");
     }
-    else
+    else if(_theme().boss == boss_kind::articuno)
     {
         _boss.reset(new articuno_boss(position, _camera));
         _messages.show("A freezing wind... ARTICUNO appeared!");
+    }
+    else
+    {
+        _boss.reset(new pidgeot_boss(position, _camera));
+        _messages.show("PIDGEOT swooped down from above!");
     }
 }
 
@@ -562,6 +590,13 @@ void game::_update_boss()
     if(_boss->vulnerable())
     {
         _hud.show_boss(_boss->name(), _boss->hp(), _boss->max_hp());
+    }
+
+    bn::fixed_point wind = _boss->wind();
+
+    if(wind != bn::fixed_point())
+    {
+        _player.push(wind);
     }
 
     if(bn::optional<boss_area_hit> area = _boss->area_hit())
@@ -1150,6 +1185,7 @@ void game::_change_room(direction side)
     }
 
     _fade(true);
+    _previous_room = _room;
     _enter_room(next, directions_of_floor::opposite(side));
     _fade(false);
 }
@@ -1169,6 +1205,15 @@ void game::_climb_stairs()
     ++_floor_number;
     _messages.clear();
     _start_floor();
+    _fade(false);
+}
+
+void game::_fall_into_pit()
+{
+    _messages.show("DITTO fell down the chasm!");
+    _fade(true);
+    _player.take_fall_damage(fall_damage);
+    _enter_room(_previous_room >= 0 ? _previous_room : _room, bn::nullopt);
     _fade(false);
 }
 

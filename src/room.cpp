@@ -14,15 +14,20 @@ namespace
     bn::fixed camera_min_y;
     bn::fixed camera_max_y;
 
-    [[nodiscard]] bool solid_cell(char value, bool can_swim)
+    [[nodiscard]] bool solid_cell(char value, bool can_swim, bool over_pits)
     {
         if(is_water(value))
         {
             return ! can_swim;
         }
 
+        if(value == cells::pit)
+        {
+            return ! over_pits;
+        }
+
         return value != cells::floor && value != cells::stairs && value != cells::grass && value != cells::plate &&
-               value != cells::ice;
+               value != cells::ice && ! is_wind(value);
     }
 
     void set_axis(int first, int last, int screen_size, bn::fixed& min, bn::fixed& max, int map_size)
@@ -80,27 +85,61 @@ bool is_water(char value)
            value == cells::flow_down || value == cells::flow_up;
 }
 
-bool is_solid(bn::fixed x, bn::fixed y, bool can_swim)
+bool is_wind(char value)
 {
-    return solid_cell(at(x, y), can_swim);
+    return value == cells::wind_east || value == cells::wind_west || value == cells::wind_south ||
+           value == cells::wind_north;
+}
+
+bool is_solid(bn::fixed x, bn::fixed y, bool can_swim, bool over_pits)
+{
+    return solid_cell(at(x, y), can_swim, over_pits);
 }
 
 bool blocks_projectiles(bn::fixed x, bn::fixed y)
 {
-    return solid_cell(at(x, y), true);
+    return solid_cell(at(x, y), true, true);
 }
 
-bool area_is_blocked(bn::fixed left, bn::fixed top, bn::fixed right, bn::fixed bottom, bool can_swim)
+bool area_is_blocked(bn::fixed left, bn::fixed top, bn::fixed right, bn::fixed bottom, bool can_swim,
+                     bool over_pits)
 {
-    return is_solid(left, top, can_swim) || is_solid(right, top, can_swim) || is_solid(left, bottom, can_swim) ||
-           is_solid(right, bottom, can_swim);
+    return is_solid(left, top, can_swim, over_pits) || is_solid(right, top, can_swim, over_pits) ||
+           is_solid(left, bottom, can_swim, over_pits) || is_solid(right, bottom, can_swim, over_pits);
 }
 
-bool feet_are_blocked(const bn::fixed_point& position, bool can_swim)
+bool feet_are_blocked(const bn::fixed_point& position, bool can_swim, bool over_pits)
 {
     bn::fixed x = position.x();
     bn::fixed y = position.y();
-    return area_is_blocked(x - 5, y + 2, x + 4, y + 7, can_swim);
+    return area_is_blocked(x - 5, y + 2, x + 4, y + 7, can_swim, over_pits);
+}
+
+bool feet_over_pit(const bn::fixed_point& position)
+{
+    return at(position.x(), position.y() + 4) == cells::pit;
+}
+
+bn::fixed_point wind_at(const bn::fixed_point& position)
+{
+    switch(at(position.x(), position.y() + 4))
+    {
+
+    case cells::wind_east:
+        return bn::fixed_point(1, 0);
+
+    case cells::wind_west:
+        return bn::fixed_point(-1, 0);
+
+    case cells::wind_south:
+        return bn::fixed_point(0, 1);
+
+    case cells::wind_north:
+        return bn::fixed_point(0, -1);
+
+    default:
+        return bn::fixed_point();
+    }
 }
 
 bool feet_in_water(const bn::fixed_point& position)

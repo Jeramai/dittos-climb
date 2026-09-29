@@ -1099,6 +1099,130 @@ HEART = [
 ]
 
 
+PIDGEY_TOP = [
+    "",
+    "",
+    "      kkkk",
+    "     kbbbbk",
+    "    kbbwkbbk",
+    "   kkbbkkbbk",
+    "  kyykbbbbbkkk",
+    "   kkcccbbbbbbk",
+    "    kccccbbbbbk",
+    "    kccccbbbbk",
+    "     kccccbkk",
+]
+
+PIDGEY_1 = PIDGEY_TOP + ["      kykyk", "      kk kk"]
+PIDGEY_2 = PIDGEY_TOP + ["     kyk kyk", "     kk   kk"]
+
+SPEAROW_TOP = [
+    "",
+    "      kkk",
+    "     kxxxk",
+    "    kxxwkxk",
+    "   kkxxkkxk",
+    "  kyyykxxxxk kk",
+    "   kkkcxxxxkknk",
+    "    kccxnnnnnnk",
+    "    kcccnnnnnk",
+    "     kcccxnkk",
+    "      kkkkk",
+]
+
+SPEAROW_1 = SPEAROW_TOP + ["      kykyk", "      kk kk"]
+SPEAROW_2 = SPEAROW_TOP + ["     kyk kyk", "     kk   kk"]
+
+AERODACTYL_1 = [
+    "",
+    "  k           k",
+    " kzk   kkk   kzk",
+    " kzzk kzzzk kzzk",
+    " kzzzkzwzzzkzzzk",
+    "  kzzzzkzzzzzzk",
+    "  kzzzzzzzzzzzk",
+    "   kzzkzwzwzkzk",
+    "   kzk kzzzk kzk",
+    "    k  kzzzk  k",
+    "       kzzk",
+    "      kzzk",
+    "      kzk",
+    "       k",
+]
+
+AERODACTYL_2 = [
+    "",
+    "",
+    "",
+    "        kkk",
+    "  kkkk kzzzk kkkk",
+    " kzzzzkzwzzzkzzzzk",
+    "  kzzzzkzzzzzzzk",
+    "   kzzkzwzwzkzk",
+    "    kk kzzzk kk",
+    "       kzzzk",
+    "       kzzk",
+    "      kzzk",
+    "      kzk",
+    "       k",
+]
+
+AERODACTYL_1 = [row[:16] for row in AERODACTYL_1]
+AERODACTYL_2 = [row[:16] for row in AERODACTYL_2]
+
+KABUTO_1 = [
+    "",
+    "",
+    "",
+    "     kkkkkk",
+    "   kkxxxxxxkk",
+    "  kxxbxxxxbxxk",
+    " kxxxxbbbbxxxxk",
+    " kxxxxxxxxxxxxk",
+    " kkxkyykkyykxkk",
+    "  kxkyykkyykxk",
+    "   kkkkkkkkkk",
+    "   kxk kk kxk",
+    "   kk      kk",
+]
+
+KABUTO_2 = [""] + KABUTO_1[:-1]
+
+FEATHER = [
+    "",
+    "     kk",
+    "    kwk",
+    "   kwsk",
+    "  kwsk",
+    " kwsk",
+    " kkk",
+]
+
+
+def pidgeot_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    wing = 2 * step
+    for side in (-1, 1):
+        for i in range(12):
+            x = 16 + side * (4 + i)
+            top = 8 + i // 2 - wing
+            for y in range(top, 18 + i // 4):
+                if 0 <= x < 32 and 0 <= y < 32:
+                    grid[y][x] = "b" if y < top + 5 else "x"
+    ellipse(grid, 16, 17, 5.5, 7, "c")
+    ellipse(grid, 16, 10, 4, 3.5, "b")
+    for i, x in enumerate(range(12, 18)):
+        grid[3 + (i % 2)][x] = "n"
+        grid[2 + (i % 2)][x + 1] = "y"
+    for x in range(18, 22):
+        grid[11][x] = "y"
+    grid[9][18] = "w" if charging else "k"
+    for y in range(23, 31):
+        for x in range(13 - (y - 23) // 2, 20 + (y - 23) // 2):
+            grid[y][x] = "n" if (x + y) % 3 == 0 else "b"
+    return ["".join(row) for row in outline(grid)]
+
+
 def articuno_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
     wing = 2 * step
@@ -2093,6 +2217,123 @@ def ice_block_tile():
     return tile
 
 
+CHASM_PALETTE = [
+    (16, 20, 48),
+    (184, 160, 120),
+    (160, 136, 100),
+    (208, 188, 148),
+    (136, 116, 88),
+    (96, 80, 64),
+    (120, 100, 80),
+    (152, 128, 96),
+    (112, 92, 72),
+    (192, 168, 128),
+    (120, 100, 76),
+    (32, 40, 88),
+    (56, 72, 136),
+    (232, 240, 248),
+    (176, 200, 232),
+    (64, 52, 40),
+]
+
+
+def chasm_floor_tile(variant):
+    tile = blank(1)
+    for x, y in ((1, 2), (5, 5), (3, 6)):
+        tile[y][x] = 2
+    if variant:
+        tile[2][5] = tile[3][5] = 3
+    return tile
+
+
+def chasm_shadow_tile():
+    tile = blank(4)
+    tile[3][3] = tile[6][6] = 10
+    return tile
+
+
+def chasm_wall_top_tile():
+    tile = blank(5)
+    for x, y in ((2, 1), (6, 3), (1, 5), (4, 6)):
+        tile[y][x] = 6
+    return tile
+
+
+def chasm_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [9] * 8
+    tile[7] = [8] * 8
+    for y in range(1, 7):
+        tile[y][(y * 5 + 1) % 8] = 8
+    return tile
+
+
+def chasm_door_tile():
+    tile = blank(12)
+    for y in range(0, 8, 2):
+        for x in range(8):
+            if (x + y // 2) % 3 == 0:
+                tile[y][x] = 13
+    return tile
+
+
+def chasm_stairs_tiles():
+    big = [[15] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 13
+            big[top + 1][x] = 3
+            big[top + 2][x] = 7
+    return split_quad(big)
+
+
+def feather_tile():
+    tile = chasm_floor_tile(0)
+    tile[2][5] = tile[3][4] = tile[4][3] = 13
+    tile[5][2] = 14
+    return tile
+
+
+def pit_tile():
+    tile = blank(11)
+    tile[1][2] = tile[5][5] = tile[3][6] = 12
+    return tile
+
+
+def wind_tile(dx, dy):
+    tile = chasm_floor_tile(0)
+    for i in range(3):
+        if dx:
+            tile[1 + i * 3][(2 + i * 2) % 8] = 14
+            tile[1 + i * 3][(3 + i * 2) % 8] = 13
+            tile[1 + i * 3][(4 + i * 2) % 8] = 14 if dx > 0 else 13
+        else:
+            tile[(2 + i * 2) % 8][1 + i * 3] = 14
+            tile[(3 + i * 2) % 8][1 + i * 3] = 13
+            tile[(4 + i * 2) % 8][1 + i * 3] = 14 if dy > 0 else 13
+    return tile
+
+
+CHASM_TILES = [
+    blank(0),
+    chasm_floor_tile(0),
+    chasm_floor_tile(1),
+    chasm_shadow_tile(),
+    chasm_wall_top_tile(),
+    chasm_wall_face_tile(),
+    chasm_door_tile(),
+    *chasm_stairs_tiles(),
+    feather_tile(),
+    chasm_floor_tile(0),
+    chasm_wall_top_tile(),
+    pit_tile(),
+    wind_tile(1, 0),
+    wind_tile(-1, 0),
+    wind_tile(0, 1),
+    wind_tile(0, -1),
+]
+
 ICE_TILES = [
     blank(0),
     ice_floor_tile(0),
@@ -2269,7 +2510,7 @@ def main():
     save_species("beedrill", BEEDRILL_1, BEEDRILL_2)
     save_species("venusaur", venusaur_frame(0, False), venusaur_frame(1, False), 32, [venusaur_frame(0, True)])
     save_sprite_sheet("clouds", [cloud_frame("y", "g"), cloud_frame("h", "p"), cloud_frame("o", "n"),
-                                 cloud_frame("d", "m"), cloud_frame("w", "i")], 16)
+                                 cloud_frame("d", "m"), cloud_frame("w", "i"), cloud_frame("s", "w")], 16)
     save_species("geodude", GEODUDE_1, GEODUDE_2)
     save_species("diglett", DIGLETT_1, DIGLETT_2, 16, [DIGLETT_MOUND])
     save_species("zubat", ZUBAT_1, ZUBAT_2)
@@ -2286,7 +2527,7 @@ def main():
     save_species("voltorb", VOLTORB_1, VOLTORB_2)
     save_species("magnemite", MAGNEMITE_1, MAGNEMITE_2)
     save_species("zapdos", zapdos_frame(0, False), zapdos_frame(1, False), 32, [zapdos_frame(0, True)])
-    save_sprite_sheet("electric_projectiles", [SPARK, BOLT, THUNDER_WAVE, EMBER], 8)
+    save_sprite_sheet("electric_projectiles", [SPARK, BOLT, THUNDER_WAVE, EMBER, FEATHER], 8)
     save_species("machop", MACHOP_1, MACHOP_2)
     save_species("charmander", CHARMANDER_1, CHARMANDER_2)
     save_species("bulbasaur", BULBASAUR_1, BULBASAUR_2)
@@ -2303,6 +2544,11 @@ def main():
     save_species("shellder", SHELLDER_1, SHELLDER_2)
     save_species("omanyte", OMANYTE_1, OMANYTE_2)
     save_species("articuno", articuno_frame(0, False), articuno_frame(1, False), 32, [articuno_frame(0, True)])
+    save_species("pidgey", PIDGEY_1, PIDGEY_2)
+    save_species("spearow", SPEAROW_1, SPEAROW_2)
+    save_species("aerodactyl", AERODACTYL_1, AERODACTYL_2)
+    save_species("kabuto", KABUTO_1, KABUTO_2)
+    save_species("pidgeot", pidgeot_frame(0, False), pidgeot_frame(1, False), 32, [pidgeot_frame(0, True)])
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
@@ -2316,6 +2562,7 @@ def main():
     save_tiles("plant", PLANT_TILES, PLANT_PALETTE)
     save_tiles("volcano", VOLCANO_TILES, VOLCANO_PALETTE)
     save_tiles("ice", ICE_TILES, ICE_PALETTE)
+    save_tiles("chasm", CHASM_TILES, CHASM_PALETTE)
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 

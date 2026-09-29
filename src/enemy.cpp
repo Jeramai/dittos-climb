@@ -436,11 +436,13 @@ void enemy::_execute(enemy_projectiles& projectiles, bn::random& random)
 
 void enemy::_walk(const bn::fixed_point& step)
 {
-    bool can_swim = species::can_swim(data());
-    bool aquatic = data().behavior == species_behavior::aquatic;
-    auto allowed = [can_swim, aquatic](const bn::fixed_point& next)
+    const species_data& current = data();
+    bool can_swim = species::can_swim(current);
+    bool flies = current.type_1 == pokemon_type::flying || current.type_2 == pokemon_type::flying;
+    bool aquatic = current.behavior == species_behavior::aquatic;
+    auto allowed = [can_swim, flies, aquatic](const bn::fixed_point& next)
     {
-        return ! room::feet_are_blocked(next, can_swim) && (! aquatic || room::feet_in_water(next));
+        return ! room::feet_are_blocked(next, can_swim, flies) && (! aquatic || room::feet_in_water(next));
     };
 
     bn::fixed_point next(_position.x() + step.x(), _position.y());

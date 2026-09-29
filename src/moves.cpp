@@ -100,6 +100,12 @@ namespace
           no_status, 0, false, water },
         { "BLIZZARD", "BLIZZARD", pokemon_type::ice, 60, 5, cloud, 70, 1, 0, 1, 90, cloud_frames::snow,
           status_effect::freeze, 30 },
+        { "GUST", "GUST", pokemon_type::flying, 35, 0, shot, 20, 1, 0, 3, 40, electric_frames::feather,
+          no_status, 0, false, electric },
+        { "PECK", "PECK", pokemon_type::flying, 35, 0, melee, 16, 0, 0, 0, 6, 0 },
+        { "WING ATTACK", "WING ATK", pokemon_type::flying, 60, 15, dash, 40, 0, 0, 4, 14, 0 },
+        { "WHIRLWIND", "WHIRLWND", pokemon_type::normal, 20, 10, cloud, 50, 1, 0, 1.2, 80, cloud_frames::tornado,
+          status_effect::confusion, 30 },
     };
 }
 

@@ -46,6 +46,11 @@ enum class species_id
     shellder,
     omanyte,
     articuno,
+    pidgey,
+    spearow,
+    aerodactyl,
+    kabuto,
+    pidgeot,
 };
 
 namespace species_frames

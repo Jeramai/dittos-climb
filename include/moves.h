@@ -80,6 +80,10 @@ enum class move_id
     rock_slide,
     ice_shard,
     blizzard,
+    gust,
+    peck,
+    wing_attack,
+    whirlwind,
 };
 
 enum class status_effect

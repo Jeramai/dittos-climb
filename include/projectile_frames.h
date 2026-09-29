@@ -33,6 +33,7 @@ namespace electric_frames
     constexpr int bolt = 1;
     constexpr int wave = 2;
     constexpr int ember = 3;
+    constexpr int feather = 4;
 }
 
 namespace cloud_frames
@@ -42,6 +43,7 @@ namespace cloud_frames
     constexpr int fire = 2;
     constexpr int smog = 3;
     constexpr int snow = 4;
+    constexpr int tornado = 5;
 }
 
 #endif

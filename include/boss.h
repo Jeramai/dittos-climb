@@ -53,6 +53,11 @@ public:
         return false;
     }
 
+    [[nodiscard]] virtual bn::fixed_point wind() const
+    {
+        return bn::fixed_point();
+    }
+
     [[nodiscard]] virtual attack contact_attack() const
     {
         return wild_attack(species::get(_species).move_b);

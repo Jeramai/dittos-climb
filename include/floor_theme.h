@@ -16,6 +16,7 @@ enum class boss_kind
     zapdos,
     moltres,
     articuno,
+    pidgeot,
 };
 
 enum class gate_kind
@@ -54,6 +55,7 @@ struct floor_theme
     bool ember_rain;
     bool ice_floor;
     gate_kind gate;
+    bool chasm;
     int overgrown_percent;
     boss_kind boss;
     species_id rare;

@@ -31,6 +31,11 @@ namespace
         constexpr int flow_down = 17;
         constexpr int flow_up = 18;
         constexpr int plate = 19;
+        constexpr int pit = 14;
+        constexpr int wind_east = 15;
+        constexpr int wind_west = 16;
+        constexpr int wind_south = 17;
+        constexpr int wind_north = 18;
     }
 
     constexpr int river_width = 3;
@@ -54,7 +59,8 @@ namespace
     bool walkable(char value)
     {
         return value == room::cells::floor || value == room::cells::stairs || value == room::cells::grass ||
-               value == room::cells::plate || value == room::cells::ice || room::is_water(value);
+               value == room::cells::plate || value == room::cells::ice || value == room::cells::pit ||
+               room::is_water(value) || room::is_wind(value);
     }
 
     int next_seed(unsigned& seed)
@@ -141,6 +147,11 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked,
     if(theme.ice_floor && value.kind != room_kind::start)
     {
         _plant_ice(seed);
+    }
+
+    if(theme.chasm && value.kind != room_kind::start)
+    {
+        _plant_chasm(seed);
     }
 
     _plant_bushes(value);
@@ -536,6 +547,67 @@ void room_view::_plant_ice(int initial_seed)
     }
 }
 
+void room_view::_plant_chasm(int initial_seed)
+{
+    unsigned seed = unsigned(initial_seed) * 13 + 9;
+    bool horizontal = next_seed(seed) % 2;
+    bool forward = next_seed(seed) % 2;
+    char wind = horizontal ? (forward ? room::cells::wind_east : room::cells::wind_west) :
+                             (forward ? room::cells::wind_south : room::cells::wind_north);
+
+    if(horizontal && _layout.height >= 10)
+    {
+        int row = _interior_top() + 3 + next_seed(seed) % bn::max(_layout.height - 9, 1);
+
+        for(int y = row; y < row + 3; ++y)
+        {
+            for(int x = _interior_left(); x < _interior_left() + _layout.width; ++x)
+            {
+                if(room::get(x, y) == room::cells::floor)
+                {
+                    room::set(x, y, wind);
+                }
+            }
+        }
+    }
+    else if(! horizontal && _layout.width >= 12)
+    {
+        int column = _interior_left() + 3 + next_seed(seed) % bn::max(_layout.width - 9, 1);
+
+        for(int x = column; x < column + 3; ++x)
+        {
+            for(int y = _interior_top(); y < _interior_top() + _layout.height; ++y)
+            {
+                if(room::get(x, y) == room::cells::floor)
+                {
+                    room::set(x, y, wind);
+                }
+            }
+        }
+    }
+
+    for(int patch = 0; patch < 2; ++patch)
+    {
+        int width = 3 + next_seed(seed) % 3;
+        int height = 2 + next_seed(seed) % 2;
+        int column = _interior_left() + 3 + next_seed(seed) % bn::max(_layout.width - width - 6, 1);
+        int row = _interior_top() + 3 + next_seed(seed) % bn::max(_layout.height - height - 6, 1);
+
+        for(int y = row; y < row + height; ++y)
+        {
+            for(int x = column; x < column + width; ++x)
+            {
+                char current = room::get(x, y);
+
+                if(current == room::cells::floor || room::is_wind(current))
+                {
+                    room::set(x, y, room::cells::pit);
+                }
+            }
+        }
+    }
+}
+
 void room_view::_plant_bushes(const floor_room& value)
 {
     for(int side = 0; side < 4; ++side)
@@ -643,6 +715,26 @@ void room_view::_render()
 
             case room::cells::ice:
                 tile = tiles::ice;
+                break;
+
+            case room::cells::pit:
+                tile = tiles::pit;
+                break;
+
+            case room::cells::wind_east:
+                tile = tiles::wind_east;
+                break;
+
+            case room::cells::wind_west:
+                tile = tiles::wind_west;
+                break;
+
+            case room::cells::wind_south:
+                tile = tiles::wind_south;
+                break;
+
+            case room::cells::wind_north:
+                tile = tiles::wind_north;
                 break;
 
             case room::cells::plate:

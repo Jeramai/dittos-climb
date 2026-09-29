@@ -1,5 +1,6 @@
 #include "species.h"
 
+#include "bn_sprite_items_aerodactyl.h"
 #include "bn_sprite_items_articuno.h"
 #include "bn_sprite_items_beedrill.h"
 #include "bn_sprite_items_bulbasaur.h"
@@ -12,6 +13,7 @@
 #include "bn_sprite_items_gyarados.h"
 #include "bn_sprite_items_horsea.h"
 #include "bn_sprite_items_jynx.h"
+#include "bn_sprite_items_kabuto.h"
 #include "bn_sprite_items_machop.h"
 #include "bn_sprite_items_magikarp.h"
 #include "bn_sprite_items_magmar.h"
@@ -22,6 +24,8 @@
 #include "bn_sprite_items_omanyte.h"
 #include "bn_sprite_items_onix.h"
 #include "bn_sprite_items_paras.h"
+#include "bn_sprite_items_pidgeot.h"
+#include "bn_sprite_items_pidgey.h"
 #include "bn_sprite_items_pikachu.h"
 #include "bn_sprite_items_poliwag.h"
 #include "bn_sprite_items_ponyta.h"
@@ -31,6 +35,7 @@
 #include "bn_sprite_items_seel.h"
 #include "bn_sprite_items_shellder.h"
 #include "bn_sprite_items_snorlax.h"
+#include "bn_sprite_items_spearow.h"
 #include "bn_sprite_items_squirtle.h"
 #include "bn_sprite_items_staryu.h"
 #include "bn_sprite_items_venusaur.h"
@@ -118,6 +123,16 @@ namespace
           &bn::sprite_items::omanyte },
         { "ARTICUNO", pokemon_type::ice, pokemon_type::flying, 70, 1.4, move_id::ice_shard, move_id::blizzard,
           &bn::sprite_items::articuno },
+        { "PIDGEY", pokemon_type::normal, pokemon_type::flying, 14, 1.5, move_id::gust, move_id::quick_attack,
+          &bn::sprite_items::pidgey, species_behavior::flyer },
+        { "SPEAROW", pokemon_type::normal, pokemon_type::flying, 14, 1.8, move_id::peck, move_id::fury_attack,
+          &bn::sprite_items::spearow, species_behavior::flyer },
+        { "AERODACTYL", pokemon_type::rock, pokemon_type::flying, 24, 1.7, move_id::bite, move_id::rock_slide,
+          &bn::sprite_items::aerodactyl, species_behavior::flyer },
+        { "KABUTO", pokemon_type::rock, pokemon_type::water, 16, 0.9, move_id::scratch, move_id::rock_slide,
+          &bn::sprite_items::kabuto },
+        { "PIDGEOT", pokemon_type::normal, pokemon_type::flying, 70, 1.5, move_id::gust, move_id::wing_attack,
+          &bn::sprite_items::pidgeot },
     };
 }
 

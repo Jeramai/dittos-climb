@@ -105,6 +105,14 @@ public:
 
     void set_visible(bool visible);
 
+    [[nodiscard]] bool over_pit() const;
+
+    [[nodiscard]] bool flying() const;
+
+    void push(const bn::fixed_point& delta);
+
+    void take_fall_damage(int amount);
+
 private:
     bn::camera_ptr _camera;
     bn::sprite_ptr _sprite;

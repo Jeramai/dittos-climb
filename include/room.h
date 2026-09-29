@@ -28,6 +28,11 @@ namespace room
         constexpr char flow_up = '^';
         constexpr char plate = 'Z';
         constexpr char ice = 'I';
+        constexpr char pit = 'O';
+        constexpr char wind_east = '6';
+        constexpr char wind_west = '4';
+        constexpr char wind_south = '2';
+        constexpr char wind_north = '8';
     }
 
     void clear();
@@ -40,14 +45,20 @@ namespace room
 
     [[nodiscard]] bool is_water(char value);
 
-    [[nodiscard]] bool is_solid(bn::fixed x, bn::fixed y, bool can_swim = false);
+    [[nodiscard]] bool is_wind(char value);
+
+    [[nodiscard]] bool is_solid(bn::fixed x, bn::fixed y, bool can_swim = false, bool over_pits = false);
 
     [[nodiscard]] bool blocks_projectiles(bn::fixed x, bn::fixed y);
 
     [[nodiscard]] bool area_is_blocked(bn::fixed left, bn::fixed top, bn::fixed right, bn::fixed bottom,
-                                       bool can_swim = false);
+                                       bool can_swim = false, bool over_pits = false);
 
-    [[nodiscard]] bool feet_are_blocked(const bn::fixed_point& position, bool can_swim = false);
+    [[nodiscard]] bool feet_are_blocked(const bn::fixed_point& position, bool can_swim = false, bool over_pits = false);
+
+    [[nodiscard]] bool feet_over_pit(const bn::fixed_point& position);
+
+    [[nodiscard]] bn::fixed_point wind_at(const bn::fixed_point& position);
 
     [[nodiscard]] bool feet_in_water(const bn::fixed_point& position);
 

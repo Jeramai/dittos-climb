@@ -93,6 +93,8 @@ private:
 
     void _plant_ice(int seed);
 
+    void _plant_chasm(int seed);
+
     void _plant_bushes(const floor_room& value);
 
     void _bush_area(direction side, int& column, int& row, int& width, int& height) const;

@@ -56,7 +56,7 @@ bool boss::walk(const bn::fixed_point& step, bool can_swim)
     bool moved = false;
     bn::fixed_point next(_position.x() + step.x(), _position.y());
 
-    if(! room::area_is_blocked(next.x() - 10, next.y() + 6, next.x() + 10, next.y() + 14, can_swim))
+    if(! room::area_is_blocked(next.x() - 10, next.y() + 6, next.x() + 10, next.y() + 14, can_swim, can_swim))
     {
         _position = next;
         moved = true;
@@ -64,7 +64,7 @@ bool boss::walk(const bn::fixed_point& step, bool can_swim)
 
     next = bn::fixed_point(_position.x(), _position.y() + step.y());
 
-    if(! room::area_is_blocked(next.x() - 10, next.y() + 6, next.x() + 10, next.y() + 14, can_swim))
+    if(! room::area_is_blocked(next.x() - 10, next.y() + 6, next.x() + 10, next.y() + 14, can_swim, can_swim))
     {
         _position = next;
         moved = true;
