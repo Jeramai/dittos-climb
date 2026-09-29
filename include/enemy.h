@@ -61,6 +61,18 @@ public:
 
     void apply_status(status_effect effect);
 
+    [[nodiscard]] bool take_explosion()
+    {
+        bool result = _exploded;
+        _exploded = false;
+        return result;
+    }
+
+    [[nodiscard]] attack explosion_attack() const
+    {
+        return combat::make_attack(move_id::selfdestruct, data().type_1, data().type_2);
+    }
+
     [[nodiscard]] bool take_reveal()
     {
         bool result = _just_revealed;
@@ -94,6 +106,7 @@ private:
     bool _facing_left = false;
     bool _hidden = false;
     bool _underground = false;
+    bool _exploded = false;
     bool _in_light = true;
     int _burrow_frames = 0;
     int _wobble_frames = 0;

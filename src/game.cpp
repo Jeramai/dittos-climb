@@ -21,6 +21,7 @@
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
 #include "venusaur_boss.h"
+#include "zapdos_boss.h"
 
 namespace
 {
@@ -34,6 +35,14 @@ namespace
     constexpr int boss_talk_distance = 36;
     constexpr int light_radius = 44;
     constexpr bn::fixed light_scale = 1.5;
+    constexpr int plate_cycle = 200;
+    constexpr int boss_plate_cycle = 140;
+    constexpr int plate_warning = 40;
+    constexpr int plate_shock = 30;
+    constexpr int plate_power = 50;
+    constexpr int plate_paralysis_chance = 25;
+    constexpr int explosion_radius = 34;
+    constexpr int flicker_frames = 16;
 
     constexpr const char* floor_names[] = {
         "CINNABAR LAB", "VIRIDIAN FOREST", "ROCK TUNNEL", "UNDERGROUND LAKE", "POWER PLANT", "VOLCANO",
@@ -242,12 +251,15 @@ void game::_update_play()
     _player_projectiles.update([this](const bn::fixed_point& position) { _spawn_effect(position); });
     _enemy_projectiles.update([this](const bn::fixed_point& position) { _spawn_effect(position); });
 
+    _handle_explosions();
     _handle_player_attacks();
     _handle_enemy_attacks();
     _update_boss();
     _update_outlines();
 
     _update_darkness(false);
+    _update_plates();
+    _update_flicker();
     _update_effects();
     _update_camera(false);
     _messages.update();
@@ -446,10 +458,15 @@ void game::_spawn_boss()
         _messages.show("The ground is shaking...");
         _messages.show("A wild ONIX burst out!");
     }
-    else
+    else if(_theme().boss == boss_kind::gyarados)
     {
         _boss.reset(new gyarados_boss(position, _camera));
         _messages.show("A MAGIKARP is splashing around...");
+    }
+    else
+    {
+        _boss.reset(new zapdos_boss(position, _camera));
+        _messages.show("ZAPDOS appeared in a flash of lightning!");
     }
 }
 
@@ -551,6 +568,102 @@ void game::_update_darkness(bool room_changed)
     for(enemy& value : _enemies)
     {
         value.set_in_light(within(value.position(), _player.position(), light_radius, light_radius));
+    }
+}
+
+void game::_update_plates()
+{
+    if(! _theme().plates)
+    {
+        return;
+    }
+
+    int cycle = _boss ? boss_plate_cycle : plate_cycle;
+    _plate_timer = (_plate_timer + 1) % cycle;
+    int phase = _plate_timer < cycle - plate_warning - plate_shock ? 0 : _plate_timer < cycle - plate_shock ? 1 : 2;
+    _view.set_plate_phase(phase);
+
+    if(phase != 2)
+    {
+        return;
+    }
+
+    if(_plate_timer == cycle - plate_shock)
+    {
+        --_plate_serial;
+    }
+
+    attack shock{ move_id::thundershock, pokemon_type::electric, plate_power };
+    bn::fixed_point feet = _player.position() + bn::fixed_point(0, 4);
+
+    if(_player.vulnerable() && room::at(feet.x(), feet.y()) == room::cells::plate)
+    {
+        _messages.show("The floor is electrified!");
+        hit_result result = _player.take_hit(shock, _messages);
+        _shake_frames = shake_frames;
+
+        if(result.effectiveness && _random.get_int(100) < plate_paralysis_chance)
+        {
+            _player.apply_status(status_effect::paralysis, _messages);
+        }
+    }
+
+    for(enemy& value : _enemies)
+    {
+        bn::fixed_point enemy_feet = value.position() + bn::fixed_point(0, 4);
+
+        if(value.active() && room::at(enemy_feet.x(), enemy_feet.y()) == room::cells::plate &&
+           value.hit_by_area(_plate_serial))
+        {
+            hit_result result = value.take_hit(shock);
+            static_cast<void>(result);
+            _spawn_effect(value.position());
+        }
+    }
+}
+
+void game::_update_flicker()
+{
+    if(! _theme().plates)
+    {
+        return;
+    }
+
+    if(_flicker_frames)
+    {
+        --_flicker_frames;
+        bn::bg_palettes::set_fade(bn::color(0, 0, 0), _flicker_frames && (_flicker_frames / 2) % 2 ? 0.6 : 0);
+        return;
+    }
+
+    if(--_flicker_timer <= 0)
+    {
+        _flicker_frames = flicker_frames;
+        _flicker_timer = 300 + _random.get_int(300);
+    }
+}
+
+void game::_handle_explosions()
+{
+    for(enemy& value : _enemies)
+    {
+        if(! value.take_explosion())
+        {
+            continue;
+        }
+
+        show_name_message(_messages, "", value.data().name, " used SELFDESTRUCT!");
+        _shake_frames = shake_frames * 2;
+
+        for(bn::fixed_point offset : { bn::fixed_point(-10, -8), bn::fixed_point(10, -8), bn::fixed_point(0, 10) })
+        {
+            _spawn_effect(value.position() + offset);
+        }
+
+        if(_player.vulnerable() && within(value.position(), _player.position(), explosion_radius, explosion_radius))
+        {
+            static_cast<void>(_player.take_hit(value.explosion_attack(), _messages));
+        }
     }
 }
 

@@ -62,6 +62,10 @@ private:
     int _spawn_delay = 0;
     int _shake_frames = 0;
     int _last_recoil_serial = -1;
+    int _plate_timer = 0;
+    int _plate_serial = -1000;
+    int _flicker_timer = 400;
+    int _flicker_frames = 0;
     int _flute_room = -1;
     bool _locked = false;
     bool _has_flute = false;
@@ -96,6 +100,12 @@ private:
     void _handle_cut();
 
     void _update_darkness(bool room_changed);
+
+    void _update_plates();
+
+    void _update_flicker();
+
+    void _handle_explosions();
 
     [[nodiscard]] status_effect _roll_status(move_id move);
 

@@ -111,6 +111,7 @@ private:
     int _walk_frames = 0;
     int _dash_frames = 0;
     bool _digging = false;
+    bool _self_destructing = false;
     bn::fixed_point _dash_velocity;
     int _area_frames = 0;
     int _area_serial = 0;
@@ -142,6 +143,8 @@ private:
     [[nodiscard]] bool _update_status(message_box& messages);
 
     void _lose_hp(int amount);
+
+    void _faint_form(message_box& messages);
 
     void _update_sprite(bool moving);
 };

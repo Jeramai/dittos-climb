@@ -687,6 +687,148 @@ DRAGON_FIRE = [
 ]
 
 
+PIKACHU_1 = [
+    "",
+    " kk          kk",
+    " kkk        kkk",
+    "  kyk      kyk",
+    "  kyyk kkk kyyk",
+    "   kyykyyykyyk   kk",
+    "    kyyyyyyyk   kyk",
+    "   kyykyyykyyk kyyk",
+    "   kynyyyyynyk kyk",
+    "   kyyyykyyyyk kk",
+    "    kyyyyyyyk kyk",
+    "   kyxyyyyyxyk k",
+    "   kyyyyyyyyykk",
+    "    kyk   kyk",
+    "    kkk   kkk",
+]
+
+PIKACHU_2 = [
+    "",
+    "  kk        kk",
+    "  kkk      kkk",
+    "   kyk    kyk",
+    "   kyyk kkkyyk",
+    "    kyykyyykyk   kk",
+    "    kyyyyyyyk   kyk",
+    "   kyykyyykyyk kyyk",
+    "   kynyyyyynyk kyk",
+    "   kyyyykyyyyk kk",
+    "    kyyyyyyyk kyk",
+    "   kyxyyyyyxyk k",
+    "   kyyyyyyyyykk",
+    "   kyk     kyk",
+    "   kkk     kkk",
+]
+
+PIKACHU_1 = [row[:16] for row in PIKACHU_1]
+PIKACHU_2 = [row[:16] for row in PIKACHU_2]
+
+VOLTORB_1 = [
+    "",
+    "",
+    "     kkkkkk",
+    "   kknnnnnnkk",
+    "  knnhnnnnnnnk",
+    " knnnnnnnnnnnnk",
+    " knkkknnnnkkknk",
+    "kkkwwkkkkkkwwkkk",
+    "kwwkkwwwwwwkkwwk",
+    "kwwwwwwwwwwwwwwk",
+    " kwwwkkkkkkwwwk",
+    " kwwwwwwwwwwwwk",
+    "  kwwwwwwwwwwk",
+    "   kkwwwwwwkk",
+    "     kkkkkk",
+]
+
+VOLTORB_2 = [""] + VOLTORB_1[:-1]
+
+MAGNEMITE_1 = [
+    "",
+    "       kk",
+    "       ks",
+    "      kkkk",
+    "     kssssk",
+    "kkk kssssssk kkk",
+    "kBkkssskkssskkBk",
+    "kBBksskwwksskBBk",
+    "kkkksskwkksskkkk",
+    "kBBksssskssskBBk",
+    "kBkkssssssssskBk",
+    "kkk kssssssk kkk",
+    "      kssssk",
+    "    kk kkkk kk",
+    "    ks      sk",
+    "     k      k",
+]
+
+MAGNEMITE_2 = [""] + MAGNEMITE_1[:-1]
+
+SPARK = [
+    "",
+    "    kk",
+    "   kyk",
+    "  kyk",
+    " kyyyyk",
+    "   kyk",
+    "  kyk",
+    "  kk",
+]
+
+BOLT = [
+    "  kyyk",
+    "  kywk",
+    " kywk",
+    " kyyyyk",
+    "  kwyk",
+    "  kyk",
+    " kyk",
+    " kk",
+]
+
+THUNDER_WAVE = [
+    "",
+    "  yyyy",
+    " y    y",
+    "y  yy  y",
+    "y  yy  y",
+    " y    y",
+    "  yyyy",
+]
+
+
+def zapdos_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    wing = 2 * step
+    for side in (-1, 1):
+        for i in range(12):
+            x = 16 + side * (4 + i)
+            top = 8 + i // 2 - wing + (i % 3)
+            for y in range(top, 18 + i // 3):
+                if 0 <= x < 32 and 0 <= y < 32:
+                    grid[y][x] = "y"
+            if i % 3 == 0 and 0 <= x < 32:
+                grid[top][x] = "k"
+    ellipse(grid, 16, 17, 6, 7, "y")
+    ellipse(grid, 16, 9, 4, 3.5, "y")
+    for i, x in enumerate(range(13, 20)):
+        grid[4 - (i % 2)][x] = "y"
+    for x in range(17, 22):
+        grid[10][x] = "o"
+    grid[9][21] = "o"
+    grid[8][17] = "w" if charging else "k"
+    for y in (15, 18, 21):
+        for x in range(13, 20):
+            grid[y][x] = "k"
+    for x in (13, 19):
+        for y in range(24, 29):
+            grid[y][x] = "o"
+    return ["".join(row) for row in outline(grid)]
+
+
 def gyarados_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
     ellipse(grid, 16, 24 + step, 13, 6, "u")
@@ -1318,6 +1460,118 @@ def flow_tile(dx, dy):
     return tile
 
 
+PLANT_PALETTE = [
+    (8, 8, 12),
+    (136, 136, 120),
+    (112, 112, 100),
+    (168, 168, 152),
+    (88, 88, 80),
+    (40, 44, 48),
+    (64, 72, 80),
+    (96, 104, 112),
+    (64, 68, 76),
+    (136, 144, 152),
+    (72, 72, 64),
+    (232, 200, 48),
+    (248, 240, 160),
+    (240, 240, 232),
+    (200, 80, 40),
+    (32, 32, 36),
+]
+
+
+def plant_floor_tile(variant):
+    tile = blank(1)
+    for i in range(8):
+        tile[0][i] = 3
+        tile[i][0] = 3
+        tile[7][i] = 2
+        tile[i][7] = 2
+    if variant:
+        tile[3][3] = tile[4][4] = 2
+    return tile
+
+
+def plant_shadow_tile():
+    tile = blank(4)
+    for i in range(8):
+        tile[7][i] = 10
+        tile[i][7] = 10
+    return tile
+
+
+def plant_wall_top_tile():
+    tile = blank(5)
+    tile[0] = [6] * 8
+    tile[4][2] = tile[4][5] = 6
+    return tile
+
+
+def plant_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [9] * 8
+    tile[7] = [8] * 8
+    for y in range(2, 6):
+        tile[y][2] = tile[y][5] = 8
+    tile[3][3] = 11
+    return tile
+
+
+def plant_door_tile():
+    tile = blank(15)
+    for y in range(8):
+        tile[y][(y * 2) % 8] = 11
+        tile[y][(y * 2 + 3) % 8] = 12
+    return tile
+
+
+def plant_stairs_tiles():
+    big = [[15] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 13
+            big[top + 1][x] = 3
+            big[top + 2][x] = 7
+    return split_quad(big)
+
+
+def cable_tile():
+    tile = plant_floor_tile(0)
+    for x in range(8):
+        tile[4][x] = 15
+    tile[3][2] = tile[5][6] = 15
+    return tile
+
+
+def plate_tile(state):
+    fill = {0: 10, 1: 11, 2: 12}[state]
+    tile = blank(fill)
+    for i in range(8):
+        tile[0][i] = tile[7][i] = tile[i][0] = tile[i][7] = 15
+    for x, y in ((2, 2), (5, 5), (2, 5), (5, 2)):
+        tile[y][x] = 13 if state == 2 else 2
+    return tile
+
+
+PLANT_TILES = [
+    blank(0),
+    plant_floor_tile(0),
+    plant_floor_tile(1),
+    plant_shadow_tile(),
+    plant_wall_top_tile(),
+    plant_wall_face_tile(),
+    plant_door_tile(),
+    *plant_stairs_tiles(),
+    cable_tile(),
+    plant_floor_tile(0),
+    plant_wall_top_tile(),
+    *[plant_floor_tile(0)] * 5,
+    plate_tile(0),
+    plate_tile(1),
+    plate_tile(2),
+]
+
 LAKE_TILES = [
     blank(0),
     lake_floor_tile(0),
@@ -1456,6 +1710,11 @@ def main():
     save_species("horsea", HORSEA_1, HORSEA_2)
     save_species("gyarados", gyarados_frame(0, False), gyarados_frame(1, False), 32, [gyarados_frame(0, True)])
     save_sprite_sheet("water_projectiles", [BUBBLE, WATER_DROP, STAR, DRAGON_FIRE], 8)
+    save_species("pikachu", PIKACHU_1, PIKACHU_2)
+    save_species("voltorb", VOLTORB_1, VOLTORB_2)
+    save_species("magnemite", MAGNEMITE_1, MAGNEMITE_2)
+    save_species("zapdos", zapdos_frame(0, False), zapdos_frame(1, False), 32, [zapdos_frame(0, True)])
+    save_sprite_sheet("electric_projectiles", [SPARK, BOLT, THUNDER_WAVE], 8)
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
@@ -1466,6 +1725,7 @@ def main():
     save_tiles("forest", FOREST_TILES, FOREST_PALETTE)
     save_tiles("cave", CAVE_TILES, CAVE_PALETTE)
     save_tiles("lake", LAKE_TILES, LAKE_PALETTE)
+    save_tiles("plant", PLANT_TILES, PLANT_PALETTE)
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 

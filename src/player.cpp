@@ -23,6 +23,7 @@ namespace
     constexpr int switch_flash_frames = 8;
     constexpr int dash_half_size = 6;
     constexpr int wave_half_size = 14;
+    constexpr int explode_half_size = 30;
     constexpr int beam_charge_frames = 40;
     constexpr int paralysis_frames = 180;
     constexpr int poison_frames = 300;
@@ -52,9 +53,10 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
 {
     bool used_outline = false;
 
-    if(_area_frames)
+    if(_area_frames && ! --_area_frames && _self_destructing)
     {
-        --_area_frames;
+        _self_destructing = false;
+        _faint_form(messages);
     }
 
     _update_wave();
@@ -232,12 +234,7 @@ hit_result player::take_hit(const attack& hit, message_box& messages)
 
     if(_form->hp <= 0)
     {
-        message_box::text message(current.name);
-        message.append(" fainted!");
-        messages.show(message);
-        messages.show("DITTO lost its shape!");
-        _form.reset();
-        _switch_flash_frames = switch_flash_frames;
+        _faint_form(messages);
     }
 
     return result;
@@ -336,6 +333,21 @@ bool player::_update_status(message_box& messages)
     return ! asleep;
 }
 
+void player::_faint_form(message_box& messages)
+{
+    if(! _form)
+    {
+        return;
+    }
+
+    message_box::text message(species::get(_form->species).name);
+    message.append(" fainted!");
+    messages.show(message);
+    messages.show("DITTO lost its shape!");
+    _form.reset();
+    _switch_flash_frames = switch_flash_frames;
+}
+
 void player::_lose_hp(int amount)
 {
     if(_form)
@@ -430,6 +442,12 @@ void player::_use_move(bool move_a, player_projectiles& projectiles, message_box
 
     case move_pattern::cloud:
         attacks::cloud(projectiles, hit, _position + aim * 8, aim, 1);
+        break;
+
+    case move_pattern::explode:
+        _start_area(hit, data.life, explode_half_size);
+        _self_destructing = true;
+        messages.show("DITTO used SELFDESTRUCT!");
         break;
 
     case move_pattern::dig:

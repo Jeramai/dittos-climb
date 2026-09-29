@@ -29,6 +29,7 @@ namespace
         constexpr int flow_left = 16;
         constexpr int flow_down = 17;
         constexpr int flow_up = 18;
+        constexpr int plate = 19;
     }
 
     constexpr int river_width = 3;
@@ -51,7 +52,7 @@ namespace
     bool walkable(char value)
     {
         return value == room::cells::floor || value == room::cells::stairs || value == room::cells::grass ||
-               room::is_water(value);
+               value == room::cells::plate || room::is_water(value);
     }
 
     int next_seed(unsigned& seed)
@@ -128,6 +129,13 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked,
         _plant_water(seed);
     }
 
+    _plate_phase = 0;
+
+    if(theme.plates && value.kind != room_kind::start)
+    {
+        _plant_plates(seed);
+    }
+
     _plant_bushes(value);
 
     room::set_camera_bounds(_left, _top - 2, _left + _width - 1, _top + _height);
@@ -138,6 +146,15 @@ void room_view::set_locked(bool locked)
 {
     _carve_doors(locked);
     _render();
+}
+
+void room_view::set_plate_phase(int phase)
+{
+    if(phase != _plate_phase)
+    {
+        _plate_phase = phase;
+        _render();
+    }
 }
 
 void room_view::set_camera(const bn::camera_ptr& camera)
@@ -462,6 +479,30 @@ void room_view::_plant_water(int initial_seed)
     }
 }
 
+void room_view::_plant_plates(int initial_seed)
+{
+    unsigned seed = unsigned(initial_seed) * 7 + 3;
+
+    for(int patch = 0; patch < 3; ++patch)
+    {
+        int width = 3 + next_seed(seed) % 4;
+        int height = 2 + next_seed(seed) % 3;
+        int column = _interior_left() + 1 + next_seed(seed) % bn::max(_layout.width - width - 2, 1);
+        int row = _interior_top() + 1 + next_seed(seed) % bn::max(_layout.height - height - 2, 1);
+
+        for(int y = row; y < row + height; ++y)
+        {
+            for(int x = column; x < column + width; ++x)
+            {
+                if(room::get(x, y) == room::cells::floor)
+                {
+                    room::set(x, y, room::cells::plate);
+                }
+            }
+        }
+    }
+}
+
 void room_view::_plant_bushes(const floor_room& value)
 {
     for(int side = 0; side < 4; ++side)
@@ -565,6 +606,10 @@ void room_view::_render()
 
             case room::cells::water:
                 tile = tiles::water;
+                break;
+
+            case room::cells::plate:
+                tile = tiles::plate + _plate_phase;
                 break;
 
             case room::cells::flow_right:

@@ -152,4 +152,10 @@ Bonus floors after the end: Steel, Dark and Fairy.
    Gyarados when a room is cleared), Poliwag (Bubble, Hypnosis), Staryu (Water Gun, Swift), Horsea (Water Gun,
    Bubblebeam). The boss starts as a splashing Magikarp and evolves into Gyarados: Bite lunges, Dragon Rage and a
    telegraphed Hydro Pump; it thrashes (faster bites) below 40% HP.
-7. Then one floor per milestone.
+7. **Floor 5.** (done) Power Plant: patches of floor plates cycle idle, warning glow and shock; the shock hits
+   everything standing on them (Ground types are immune), and the lights flicker now and then. Pikachu
+   (Thundershock, Quick Attack), Voltorb (Sonic Boom, Self-Destruct: a long flashing warning, then an explosion
+   that faints it; a Voltorb form can do the same and loses its shape), Magnemite (Thundershock, Thunder Wave).
+   Zapdos orbits Ditto, fires Thundershock bursts, Drill Pecks, and calls Thunder onto marked spots; the plates
+   cycle faster during the fight.
+8. Then one floor per milestone.

@@ -1,5 +1,6 @@
 #include "moves.h"
 
+#include "bn_sprite_items_electric_projectiles.h"
 #include "bn_sprite_items_water_projectiles.h"
 
 #include "projectile_frames.h"
@@ -9,6 +10,7 @@ namespace
     using enum move_pattern;
 
     constexpr const bn::sprite_item* water = &bn::sprite_items::water_projectiles;
+    constexpr const bn::sprite_item* electric = &bn::sprite_items::electric_projectiles;
     constexpr status_effect no_status = status_effect::none;
 
     constexpr move_data table[] = {
@@ -58,6 +60,17 @@ namespace
           no_status, 0, false, water },
         { "DRAGON RAGE", "D.RAGE", pokemon_type::dragon, 40, 10, shot, 40, 3, 20, 2, 60, water_frames::dragon,
           no_status, 0, false, water },
+        { "THUNDERSHOCK", "T.SHOCK", pokemon_type::electric, 40, 0, shot, 22, 1, 0, 3, 40, electric_frames::spark,
+          status_effect::paralysis, 10, false, electric },
+        { "QUICK ATTACK", "QUICK", pokemon_type::normal, 40, 30, dash, 30, 0, 0, 4.5, 10, 0 },
+        { "SONICBOOM", "S.BOOM", pokemon_type::normal, 40, 0, shot, 26, 1, 0, 2.5, 45, electric_frames::wave,
+          no_status, 0, false, electric },
+        { "SELFDESTRUCT", "S.DESTR", pokemon_type::normal, 130, 1, explode, 60, 0, 0, 0, 8, 0 },
+        { "THUNDER WAVE", "T.WAVE", pokemon_type::electric, 0, 20, shot, 45, 1, 0, 2, 50, electric_frames::wave,
+          status_effect::paralysis, 100, false, electric },
+        { "THUNDER", "THUNDER", pokemon_type::electric, 110, 5, beam, 80, 7, 0, 5, 24, electric_frames::bolt,
+          status_effect::paralysis, 30, false, electric },
+        { "DRILL PECK", "D.PECK", pokemon_type::flying, 80, 15, dash, 45, 0, 0, 3.5, 14, 0 },
     };
 }
 

@@ -26,6 +26,7 @@ namespace room
         constexpr char flow_left = '<';
         constexpr char flow_down = 'v';
         constexpr char flow_up = '^';
+        constexpr char plate = 'Z';
     }
 
     void clear();

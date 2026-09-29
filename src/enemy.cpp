@@ -45,6 +45,9 @@ namespace
         case move_pattern::dash:
             return 22;
 
+        case move_pattern::explode:
+            return 45;
+
         default:
             return 16;
         }
@@ -61,6 +64,9 @@ namespace
         case move_pattern::dash:
         case move_pattern::dig:
             return dash_range;
+
+        case move_pattern::explode:
+            return 36;
 
         case move_pattern::shot:
             return shot_range;
@@ -396,6 +402,11 @@ void enemy::_execute(enemy_projectiles& projectiles, bn::random& random)
 
     case move_pattern::beam:
         attacks::beam(projectiles, hit, _position, _attack_direction);
+        break;
+
+    case move_pattern::explode:
+        _exploded = true;
+        _hp = 0;
         break;
 
     case move_pattern::dash:

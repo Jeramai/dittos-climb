@@ -25,6 +25,13 @@ namespace water_frames
     constexpr int dragon = 3;
 }
 
+namespace electric_frames
+{
+    constexpr int spark = 0;
+    constexpr int bolt = 1;
+    constexpr int wave = 2;
+}
+
 namespace cloud_frames
 {
     constexpr int stun = 0;

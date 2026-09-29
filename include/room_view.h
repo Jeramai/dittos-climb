@@ -20,6 +20,8 @@ public:
 
     void set_locked(bool locked);
 
+    void set_plate_phase(int phase);
+
     void set_camera(const bn::camera_ptr& camera);
 
     [[nodiscard]] const bn::regular_bg_ptr& bg() const
@@ -55,6 +57,7 @@ private:
     int _top = 0;
     int _width = 0;
     int _height = 0;
+    int _plate_phase = 0;
 
     [[nodiscard]] int _interior_left() const
     {
@@ -85,6 +88,8 @@ private:
     void _plant_grass(int seed);
 
     void _plant_water(int seed);
+
+    void _plant_plates(int seed);
 
     void _plant_bushes(const floor_room& value);
 

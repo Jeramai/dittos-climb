@@ -15,6 +15,7 @@ enum class move_pattern
     cloud,
     beam,
     dig,
+    explode,
     fail,
 };
 
@@ -53,6 +54,13 @@ enum class move_id
     bite,
     hydro_pump,
     dragon_rage,
+    thundershock,
+    quick_attack,
+    sonicboom,
+    selfdestruct,
+    thunder_wave,
+    thunder,
+    drill_peck,
 };
 
 enum class status_effect

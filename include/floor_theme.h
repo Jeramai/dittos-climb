@@ -13,6 +13,7 @@ enum class boss_kind
     venusaur,
     onix,
     gyarados,
+    zapdos,
 };
 
 struct spawn_weight
@@ -33,6 +34,7 @@ struct floor_theme
     bool tall_grass;
     bool dark;
     bool water;
+    bool plates;
     int overgrown_percent;
     boss_kind boss;
 };

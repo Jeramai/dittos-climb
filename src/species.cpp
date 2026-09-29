@@ -8,16 +8,20 @@
 #include "bn_sprite_items_gyarados.h"
 #include "bn_sprite_items_horsea.h"
 #include "bn_sprite_items_magikarp.h"
+#include "bn_sprite_items_magnemite.h"
 #include "bn_sprite_items_meowth.h"
 #include "bn_sprite_items_oddish.h"
 #include "bn_sprite_items_onix.h"
 #include "bn_sprite_items_paras.h"
+#include "bn_sprite_items_pikachu.h"
 #include "bn_sprite_items_poliwag.h"
 #include "bn_sprite_items_porygon.h"
 #include "bn_sprite_items_rattata.h"
 #include "bn_sprite_items_snorlax.h"
 #include "bn_sprite_items_staryu.h"
 #include "bn_sprite_items_venusaur.h"
+#include "bn_sprite_items_voltorb.h"
+#include "bn_sprite_items_zapdos.h"
 #include "bn_sprite_items_zubat.h"
 
 namespace
@@ -61,6 +65,14 @@ namespace
           &bn::sprite_items::horsea, species_behavior::aquatic },
         { "GYARADOS", pokemon_type::water, pokemon_type::flying, 70, 1.1, move_id::bite, move_id::hydro_pump,
           &bn::sprite_items::gyarados },
+        { "PIKACHU", pokemon_type::electric, pokemon_type::none, 16, 1.5, move_id::thundershock, move_id::quick_attack,
+          &bn::sprite_items::pikachu },
+        { "VOLTORB", pokemon_type::electric, pokemon_type::none, 16, 1.2, move_id::sonicboom, move_id::selfdestruct,
+          &bn::sprite_items::voltorb },
+        { "MAGNEMITE", pokemon_type::electric, pokemon_type::none, 14, 0.9, move_id::thundershock,
+          move_id::thunder_wave, &bn::sprite_items::magnemite, species_behavior::flyer },
+        { "ZAPDOS", pokemon_type::electric, pokemon_type::flying, 70, 1.4, move_id::thundershock, move_id::thunder,
+          &bn::sprite_items::zapdos },
     };
 }
 

@@ -27,6 +27,10 @@ enum class species_id
     staryu,
     horsea,
     gyarados,
+    pikachu,
+    voltorb,
+    magnemite,
+    zapdos,
 };
 
 namespace species_frames
