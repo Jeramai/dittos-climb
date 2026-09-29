@@ -18,6 +18,10 @@ enum class species_id
     paras,
     beedrill,
     venusaur,
+    geodude,
+    diglett,
+    zubat,
+    onix,
 };
 
 namespace species_frames
@@ -28,7 +32,15 @@ namespace species_frames
     constexpr int ditto_flat = 5;
     constexpr int asleep = 5;
     constexpr int charging = 5;
+    constexpr int mound = 5;
 }
+
+enum class species_behavior
+{
+    normal,
+    burrower,
+    flyer,
+};
 
 struct species_data
 {
@@ -40,6 +52,7 @@ struct species_data
     move_id move_a;
     move_id move_b;
     const bn::sprite_item* sprite;
+    species_behavior behavior = species_behavior::normal;
 };
 
 namespace species

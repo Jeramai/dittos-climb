@@ -22,6 +22,11 @@ public:
 
     void set_camera(const bn::camera_ptr& camera);
 
+    [[nodiscard]] const bn::regular_bg_ptr& bg() const
+    {
+        return _bg;
+    }
+
     [[nodiscard]] bn::fixed_point entry_position(direction side) const;
 
     [[nodiscard]] bn::optional<direction> exit_side(const bn::fixed_point& position) const;

@@ -40,6 +40,11 @@ COLORS = {
     "j": (96, 176, 152),
     "J": (48, 112, 104),
     "s": (168, 168, 176),
+    "a": (136, 128, 112),
+    "A": (88, 80, 72),
+    "z": (160, 120, 200),
+    "Z": (96, 64, 144),
+    "x": (152, 104, 64),
 }
 
 DITTO = [
@@ -383,6 +388,170 @@ BEAM = [
     "ywwwwwwy",
     " yyyyyy",
 ]
+
+
+GEODUDE_BODY = [
+    "",
+    "",
+    "",
+    "      kkkk",
+    "    kkaaaakk",
+    "   kaaaaaaaak",
+    "   kaakaakaak",
+    "  kaaaaaaaaaak",
+    "  kaaaAAAAaaak",
+    "   kaaaaaaaak",
+    "    kkaaaakk",
+]
+
+GEODUDE_1 = GEODUDE_BODY + [
+    " kaak kkkk kaak",
+    " kaaak    kaaak",
+    "  kkk      kkk",
+]
+
+GEODUDE_2 = GEODUDE_BODY + [
+    "kaak  kkkk  kaak",
+    " kaak      kaak",
+    "  kk        kk",
+]
+
+DIGLETT_1 = [
+    "",
+    "",
+    "",
+    "      kkkk",
+    "     kxxxxk",
+    "    kxxxxxxk",
+    "    kxkxxkxk",
+    "    kxxxxxxk",
+    "    kxxqqxxk",
+    "    kxxqqxxk",
+    "    kxxxxxxk",
+    "  kkkkkkkkkkkk",
+    " kAAbAAbAAbAAk",
+    "kAAbAAAAAAbAAAk",
+    " kkkkkkkkkkkkk",
+]
+
+DIGLETT_2 = [""] * 3 + DIGLETT_1[:3] + DIGLETT_1[5:12] + DIGLETT_1[12:]
+
+DIGLETT_MOUND = [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "      kkkk",
+    "    kkAbbAkk",
+    "  kkAbAAAAbAkk",
+    " kAAAAbAAAbAAAk",
+    " kkkkkkkkkkkkkk",
+]
+
+ZUBAT_1 = [
+    "",
+    "",
+    "k             k",
+    "kZk    k k   kZk",
+    "kZZk   kzk  kZZk",
+    " kZZk kzzzk kZZk",
+    " kZzZkzkzkzkZzZk",
+    "  kZzZzzzzzzZzZk",
+    "   kZzzwzwzzZk",
+    "    kkzzzzzkk",
+    "      kzzzk",
+    "      kqkqk",
+    "       k k",
+]
+
+ZUBAT_2 = [
+    "",
+    "",
+    "",
+    "",
+    "        k k",
+    "  kkk  kzk  kkk",
+    " kZZZkkzzzkkZZZk",
+    "kZzZzkzkzkzkZzZk",
+    " kZzZzzzzzzZzZk",
+    "  kkZzzwzwzzZkk",
+    "    kkzzzzzkk",
+    "      kzzzk",
+    "      kqkqk",
+    "       k k",
+]
+
+ROCK = [
+    "",
+    "  kkkk",
+    " ksssskk",
+    "ksswsssk",
+    "kswssksk",
+    "ksssskk",
+    " kkkkk",
+]
+
+SUPERSONIC = [
+    "",
+    "  wwww",
+    " w    w",
+    "w  ww  w",
+    "w  ww  w",
+    " w    w",
+    "  wwww",
+]
+
+ONIX_SEGMENT = [
+    "",
+    "     kkkkk",
+    "   kkaaaaakk",
+    "  kaaaaaaaaak",
+    " kaaaAaaaaaaak",
+    " kaaAaaaaaAaak",
+    "kaaaaaaaaaaaaak",
+    "kaaaaaaaaaaAAak",
+    "kaaAAaaaaaaaaak",
+    "kaaaaaaaaAaaaak",
+    " kaaaaaaaaaaak",
+    " kAaaaaAaaaaAk",
+    "  kAAaaaaaAAk",
+    "   kkAAAAAkk",
+    "     kkkkk",
+]
+
+
+def onix_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    ellipse(grid, 16, 18, 13, 11, "a")
+    ellipse(grid, 16, 22, 10, 6, "A")
+    ellipse(grid, 16, 17, 11, 8, "a")
+    for x in range(10, 23):
+        grid[4 + (x % 3)][x] = "a"
+    for y in range(2, 9):
+        grid[y][16] = "a"
+        grid[y][17] = "A"
+    eye = "w" if charging else "k"
+    for x in (10, 11, 21, 22):
+        grid[15][x] = eye
+    grid[14][10] = grid[14][22] = "k"
+    for x in range(11, 22):
+        grid[23 + step][x] = "k"
+    for x, y in ((8, 12), (24, 12), (13, 26), (19, 26)):
+        grid[y][x] = "A"
+    return ["".join(row) for row in outline(grid)]
+
+
+def light_circle():
+    size = 64
+    grid = [["."] * size for _ in range(size)]
+    ellipse(grid, 31.5, 31.5, 31.5, 31.5, "w")
+    return ["".join(row) for row in grid]
 
 
 def cloud_frame(fill, shade):
@@ -792,6 +961,114 @@ def bush_tile():
     return tile
 
 
+CAVE_PALETTE = [
+    (8, 8, 12),
+    (96, 84, 72),
+    (80, 70, 60),
+    (120, 108, 92),
+    (60, 52, 46),
+    (40, 36, 36),
+    (64, 58, 54),
+    (104, 96, 88),
+    (72, 66, 60),
+    (136, 124, 112),
+    (52, 46, 40),
+    (24, 20, 20),
+    (168, 152, 128),
+    (200, 188, 168),
+    (148, 116, 72),
+    (32, 28, 28),
+]
+
+
+def cave_floor_tile(variant):
+    tile = blank(1)
+    for x, y in ((2, 1), (6, 4), (1, 6)):
+        tile[y][x] = 2
+    if variant:
+        tile[3][4] = tile[3][5] = 3
+        tile[4][4] = 12
+    return tile
+
+
+def cave_shadow_tile():
+    tile = blank(4)
+    tile[5][2] = tile[2][6] = 10
+    return tile
+
+
+def cave_wall_top_tile():
+    tile = blank(5)
+    for x, y in ((1, 2), (5, 1), (3, 5), (6, 6)):
+        tile[y][x] = 6
+    tile[0] = [15] * 8
+    return tile
+
+
+def cave_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [9] * 8
+    tile[7] = [8] * 8
+    for y in range(1, 7):
+        tile[y][(y * 5) % 8] = 8
+    tile[3][2] = tile[4][6] = 9
+    return tile
+
+
+def cave_door_tile():
+    big = blank(5)
+    for cx, cy in ((2, 2), (6, 3), (3, 6)):
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                if 0 <= cx + dx < 8 and 0 <= cy + dy < 8:
+                    big[cy + dy][cx + dx] = 9 if dx + dy < 0 else 7
+    return big
+
+
+def cave_stairs_tiles():
+    big = [[11] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 13
+            big[top + 1][x] = 12
+            big[top + 2][x] = 3
+    return split_quad(big)
+
+
+def hole_tile():
+    tile = cave_floor_tile(0)
+    for y in range(2, 6):
+        for x in range(2, 6):
+            tile[y][x] = 11
+    tile[2][2] = tile[2][5] = tile[5][2] = tile[5][5] = 10
+    return tile
+
+
+def boulder_tile():
+    tile = blank(1)
+    for y in range(1, 7):
+        for x in range(1, 7):
+            tile[y][x] = 7
+    tile[1][2] = tile[2][1] = 9
+    tile[6][5] = tile[5][6] = 8
+    return tile
+
+
+CAVE_TILES = [
+    blank(0),
+    cave_floor_tile(0),
+    cave_floor_tile(1),
+    cave_shadow_tile(),
+    cave_wall_top_tile(),
+    cave_wall_face_tile(),
+    cave_door_tile(),
+    *cave_stairs_tiles(),
+    hole_tile(),
+    cave_floor_tile(0),
+    boulder_tile(),
+]
+
 FOREST_TILES = [
     blank(0),
     forest_floor_tile(0),
@@ -885,13 +1162,21 @@ def main():
     save_species("beedrill", BEEDRILL_1, BEEDRILL_2)
     save_species("venusaur", venusaur_frame(0, False), venusaur_frame(1, False), 32, [venusaur_frame(0, True)])
     save_sprite_sheet("clouds", [cloud_frame("y", "g"), cloud_frame("h", "p")], 16)
-    save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM], 8)
+    save_species("geodude", GEODUDE_1, GEODUDE_2)
+    save_species("diglett", DIGLETT_1, DIGLETT_2, 16, [DIGLETT_MOUND])
+    save_species("zubat", ZUBAT_1, ZUBAT_2)
+    save_species("onix", onix_frame(0, False), onix_frame(1, False), 32, [onix_frame(0, True)])
+    save_sprite_sheet("onix_segment", [ONIX_SEGMENT, whiten(ONIX_SEGMENT)], 16)
+    save_sprite_sheet("light", [light_circle()], 64)
+    save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
+                                      ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
     save_wave()
     save_hp_bar()
     save_text_box()
     save_tiles("lab", LAB_TILES, LAB_PALETTE)
     save_tiles("forest", FOREST_TILES, FOREST_PALETTE)
+    save_tiles("cave", CAVE_TILES, CAVE_PALETTE)
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 

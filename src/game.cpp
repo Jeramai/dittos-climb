@@ -7,13 +7,16 @@
 #include "bn_sprite_palettes.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_string.h"
+#include "bn_window.h"
 
+#include "bn_sprite_items_light.h"
 #include "bn_sprite_items_poke_flute.h"
 #include "bn_sprite_items_projectiles.h"
 
 #include "common_fixed_8x8_sprite_font.h"
 #include "common_variable_8x16_sprite_font.h"
 
+#include "onix_boss.h"
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
 #include "venusaur_boss.h"
@@ -28,6 +31,8 @@ namespace
     constexpr int fade_frames = 8;
     constexpr int min_spawn_distance = 72;
     constexpr int boss_talk_distance = 36;
+    constexpr int light_radius = 44;
+    constexpr bn::fixed light_scale = 1.5;
 
     constexpr const char* floor_names[] = {
         "CINNABAR LAB", "VIRIDIAN FOREST", "ROCK TUNNEL", "UNDERGROUND LAKE", "POWER PLANT", "VOLCANO",
@@ -180,7 +185,7 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
 
     bool boss_room = value.kind == room_kind::stairs && _theme().boss != boss_kind::none && ! _boss_defeated;
     _locked = (value.kind == room_kind::combat && ! value.cleared) ||
-              (boss_room && _theme().boss == boss_kind::venusaur);
+              (boss_room && _theme().boss != boss_kind::snorlax);
     _view.build(value, doors, _locked, _theme(), _floor_number * 977 + index * 131 + 7);
     _player.set_position(entered_from ? _view.entry_position(*entered_from) : _view.interior_center());
     value.visited = true;
@@ -201,6 +206,7 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
     }
 
     _update_flute();
+    _update_darkness(true);
 
     _update_camera(true);
 }
@@ -240,6 +246,7 @@ void game::_update_play()
     _update_boss();
     _update_outlines();
 
+    _update_darkness(false);
     _update_effects();
     _update_camera(false);
     _messages.update();
@@ -318,6 +325,12 @@ void game::_handle_player_attacks()
                 show_name_message(_messages, "", _boss->name(), " is fast asleep...");
             }
 
+            _spawn_effect(shot.position);
+            return true;
+        }
+
+        if(_boss && _boss->blocks(shot.position, shot.half_size))
+        {
             _spawn_effect(shot.position);
             return true;
         }
@@ -403,10 +416,16 @@ void game::_spawn_boss()
         _boss.reset(new snorlax_boss(position, _camera));
         _messages.show("A SNORLAX sleeps on the stairs!");
     }
-    else
+    else if(_theme().boss == boss_kind::venusaur)
     {
         _boss.reset(new venusaur_boss(position, _camera));
         _messages.show("A wild VENUSAUR blocks the stairs!");
+    }
+    else
+    {
+        _boss.reset(new onix_boss(position, _camera));
+        _messages.show("The ground is shaking...");
+        _messages.show("A wild ONIX burst out!");
     }
 }
 
@@ -469,6 +488,42 @@ void game::_update_boss()
         _boss_defeated = true;
         _hud.hide_boss();
         _enemy_projectiles.clear();
+    }
+}
+
+void game::_update_darkness(bool room_changed)
+{
+    if(! _theme().dark)
+    {
+        if(room_changed)
+        {
+            _light.reset();
+            bn::window::outside().set_show_all();
+        }
+
+        return;
+    }
+
+    if(room_changed)
+    {
+        if(! _light)
+        {
+            bn::sprite_ptr light = bn::sprite_items::light.create_sprite(_player.position());
+            light.set_camera(_camera);
+            light.set_scale(light_scale);
+            light.set_window_enabled(true);
+            _light = bn::move(light);
+        }
+
+        bn::window::outside().set_show_all();
+        bn::window::outside().set_show_bg(_view.bg(), false);
+    }
+
+    _light->set_position(_player.position());
+
+    for(enemy& value : _enemies)
+    {
+        value.set_in_light(within(value.position(), _player.position(), light_radius, light_radius));
     }
 }
 
@@ -585,6 +640,11 @@ void game::_handle_enemy_attacks()
         {
             hit = value.dash_attack();
         }
+    }
+
+    if(! hit && _boss && _boss->touches(_player.position()))
+    {
+        hit = _boss->contact_attack();
     }
 
     if(hit)

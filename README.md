@@ -21,9 +21,9 @@ Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, beca
 |---|---|
 | `-DDITTO_TEST_START_KIND=1` | Start in a combat room, which is also the Poké Flute room |
 | `-DDITTO_TEST_START_KIND=2` | Start in the stairs room, with the Poké Flute |
-| `-DDITTO_TEST_FORM=<species>` | Start transformed (1 Rattata, 2 Meowth, 3 Porygon, 4 Snorlax, 5 Oddish, 6 Caterpie, 7 Paras, 8 Beedrill, 9 Venusaur) |
+| `-DDITTO_TEST_FORM=<species>` | Start transformed (1 Rattata, 2 Meowth, 3 Porygon, 4 Snorlax, 5 Oddish, 6 Caterpie, 7 Paras, 8 Beedrill, 9 Venusaur, 10 Geodude, 11 Diglett, 12 Zubat, 13 Onix) |
 | `-DDITTO_TEST_NO_ENEMIES` | Combat rooms spawn nothing |
-| `-DDITTO_TEST_FLOOR=<n>` | Start on floor n (2 is Viridian Forest) |
+| `-DDITTO_TEST_FLOOR=<n>` | Start on floor n (2 Viridian Forest, 3 Rock Tunnel) |
 | `-DDITTO_TEST_OVERGROWN` | Every door of the start room is overgrown with bushes |
 
 ```

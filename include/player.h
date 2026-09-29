@@ -108,6 +108,7 @@ private:
     int _invulnerable_frames = 0;
     int _walk_frames = 0;
     int _dash_frames = 0;
+    bool _digging = false;
     bn::fixed_point _dash_velocity;
     int _area_frames = 0;
     int _area_serial = 0;

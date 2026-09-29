@@ -31,6 +31,12 @@ namespace
         { "SOLAR BEAM", "S.BEAM", pokemon_type::grass, 120, 5, beam, 80, 6, 0, 5, 24, projectile_frames::beam },
         { "SLEEP POWDER", "SLEEP", pokemon_type::grass, 0, 10, cloud, 60, 1, 0, 0.5, 150, cloud_frames::sleep,
           status_effect::sleep, 100 },
+        { "ROCK THROW", "R.THROW", pokemon_type::rock, 50, 0, shot, 30, 1, 0, 2, 50, projectile_frames::rock },
+        { "ROLLOUT", "ROLLOUT", pokemon_type::rock, 60, 15, dash, 50, 0, 0, 3.5, 18, 0 },
+        { "DIG", "DIG", pokemon_type::ground, 80, 10, dig, 50, 0, 0, 3, 20, 0 },
+        { "SUPERSONIC", "SUPERSON", pokemon_type::normal, 0, 15, shot, 45, 1, 0, 2, 50, projectile_frames::supersonic,
+          status_effect::confusion, 100 },
+        { "SLAM", "SLAM", pokemon_type::normal, 80, 10, dash, 45, 0, 0, 3, 14, 0 },
     };
 }
 

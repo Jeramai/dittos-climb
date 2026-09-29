@@ -28,6 +28,7 @@ namespace
     constexpr int poison_frames = 300;
     constexpr int poison_tick_frames = 45;
     constexpr int sleep_frames = 60;
+    constexpr int confusion_frames = 150;
 
     const species_data& ditto()
     {
@@ -101,6 +102,12 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
 
     int input_x = int(bn::keypad::right_held()) - int(bn::keypad::left_held());
     int input_y = int(bn::keypad::down_held()) - int(bn::keypad::up_held());
+
+    if(_status == status_effect::confusion)
+    {
+        input_x = -input_x;
+        input_y = -input_y;
+    }
     int move_direction = directions::from_input(input_x, input_y);
     bool moving = move_direction >= 0;
 
@@ -123,6 +130,7 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
     {
         --_dash_frames;
         _move(_dash_velocity);
+        _digging = _digging && _dash_frames;
     }
     else if(_dodge_frames)
     {
@@ -174,7 +182,7 @@ bool player::update(player_projectiles& projectiles, message_box& messages, cons
 
 bool player::vulnerable() const
 {
-    if(_invulnerable_frames || _transform_frames)
+    if(_invulnerable_frames || _transform_frames || _digging)
     {
         return false;
     }
@@ -256,6 +264,11 @@ void player::apply_status(status_effect effect, message_box& messages)
         messages.show("DITTO was poisoned!");
         break;
 
+    case status_effect::confusion:
+        _status_frames = confusion_frames;
+        messages.show("DITTO became confused!");
+        break;
+
     default:
         _status_frames = sleep_frames;
         _charge_frames = 0;
@@ -310,6 +323,10 @@ bool player::_update_status(message_box& messages)
         {
             messages.show("DITTO woke up!");
         }
+        else if(_status == status_effect::confusion)
+        {
+            messages.show("DITTO snapped out of confusion!");
+        }
 
         _status = status_effect::none;
     }
@@ -334,6 +351,7 @@ void player::start_transform(species_id target)
     _transform_target = target;
     _transform_frames = transform_frames;
     _dash_frames = 0;
+    _digging = false;
     _area_frames = 0;
     _charge_frames = 0;
     _status = status_effect::none;
@@ -344,6 +362,7 @@ void player::set_position(const bn::fixed_point& position)
 {
     _position = position;
     _dash_frames = 0;
+    _digging = false;
     _dodge_frames = 0;
     _area_frames = 0;
     _update_sprite(false);
@@ -400,6 +419,14 @@ void player::_use_move(bool move_a, player_projectiles& projectiles, message_box
 
     case move_pattern::cloud:
         attacks::cloud(projectiles, hit, _position + aim * 8, aim, 1);
+        break;
+
+    case move_pattern::dig:
+        _dash_frames = data.life;
+        _dash_velocity = aim * data.speed;
+        _digging = true;
+        _start_area(hit, data.life, dash_half_size);
+        messages.show("DITTO dug underground!");
         break;
 
     case move_pattern::beam:
@@ -499,6 +526,13 @@ void player::_update_sprite(bool moving)
     }
 
     bool squashed = _dodge_frames && _form;
+
+    if(_digging)
+    {
+        _sprite.set_item(*body().sprite, species_frames::mound);
+        _sprite.set_visible(true);
+        return;
+    }
 
     if(_dodge_frames && ! _form)
     {

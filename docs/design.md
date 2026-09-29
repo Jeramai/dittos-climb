@@ -141,4 +141,9 @@ Bonus floors after the end: Steel, Dark and Fairy.
    Pokémon hide in tall grass until Ditto is near; some doors are overgrown and a Grass form CUTs them. Oddish,
    Caterpie, Paras and Beedrill bring paralysis, poison, sleep and drain moves. Venusaur uses Razor Leaf, Sleep
    Powder clouds and a charged Solar Beam, and speeds up below half HP. Floors 3+ reuse the forest for now.
-5. Then one floor per milestone.
+5. **Floor 3.** (done) Rock Tunnel is dark: a hardware sprite window shows a light circle around Ditto, and wild
+   Pokémon outside it are hidden. Geodude (Rock Throw, Rollout), Diglett (travels underground as a mound and pops
+   up next to Ditto; Dig), Zubat (zigzag flight, Supersonic confuses: reversed controls). Onix is a head with six
+   trailing segments: only the head takes damage, the body blocks shots and hurts on contact; it Slams in a
+   straight line (crashing into walls stuns it) and drops Rock Slide on marked spots.
+6. Then one floor per milestone.

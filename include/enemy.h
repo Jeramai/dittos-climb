@@ -33,7 +33,12 @@ public:
 
     [[nodiscard]] bool active() const
     {
-        return _state != state::spawning;
+        return _state != state::spawning && ! _underground;
+    }
+
+    void set_in_light(bool in_light)
+    {
+        _in_light = in_light;
     }
 
     [[nodiscard]] bool contains(const bn::fixed_point& point, int half_size) const;
@@ -88,6 +93,10 @@ private:
     bool _dash_connected = false;
     bool _facing_left = false;
     bool _hidden = false;
+    bool _underground = false;
+    bool _in_light = true;
+    int _burrow_frames = 0;
+    int _wobble_frames = 0;
     bool _was_hidden = false;
     bool _just_revealed = false;
     status_effect _status = status_effect::none;
@@ -104,6 +113,10 @@ private:
     [[nodiscard]] bool _update_status();
 
     void _update_hidden(const bn::fixed_point& target);
+
+    [[nodiscard]] bool _update_burrow(const bn::fixed_point& target);
+
+    [[nodiscard]] bn::fixed_point _movement(const bn::fixed_point& target, bn::random& random);
 
     void _walk(const bn::fixed_point& step);
 

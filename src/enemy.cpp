@@ -20,6 +20,12 @@ namespace
     constexpr int poison_frames = 360;
     constexpr int poison_tick_frames = 60;
     constexpr int sleep_frames = 150;
+    constexpr int confusion_frames = 180;
+    constexpr int burrow_surface_frames = 150;
+    constexpr int burrow_travel_frames = 120;
+    constexpr int burrow_surface_distance = 20;
+    constexpr bn::fixed burrow_speed_scale = 1.5;
+    constexpr bn::fixed wobble_strength = 0.9;
 
     attack wild_attack(move_id move, const species_data& user)
     {
@@ -53,6 +59,7 @@ namespace
             return melee_range;
 
         case move_pattern::dash:
+        case move_pattern::dig:
             return dash_range;
 
         case move_pattern::shot:
@@ -132,6 +139,12 @@ void enemy::update(const bn::fixed_point& target, enemy_projectiles& projectiles
     case state::moving:
         _update_hidden(target);
 
+        if(_update_burrow(target))
+        {
+            moving = true;
+            break;
+        }
+
         if(_hidden || ! _try_start_attack(target))
         {
             bool shooter = moves::get(_move(0)).pattern == move_pattern::shot ||
@@ -141,7 +154,7 @@ void enemy::update(const bn::fixed_point& target, enemy_projectiles& projectiles
             if(distance(target, _position) > keep_distance)
             {
                 bn::fixed speed = data().speed * walk_speed_scale;
-                _walk(directions::toward(_position, target) * (slowed ? speed / 2 : speed));
+                _walk(_movement(target, random) * (slowed ? speed / 2 : speed));
                 moving = true;
             }
 
@@ -205,7 +218,8 @@ void enemy::apply_status(status_effect effect)
 
     _status = effect;
     _status_frames = effect == status_effect::paralysis ? paralysis_frames :
-                     effect == status_effect::poison ? poison_frames : sleep_frames;
+                     effect == status_effect::poison ? poison_frames :
+                     effect == status_effect::confusion ? confusion_frames : sleep_frames;
 
     if(effect == status_effect::sleep && _state != state::spawning)
     {
@@ -234,6 +248,62 @@ bool enemy::_update_status()
     }
 
     return ! asleep;
+}
+
+bool enemy::_update_burrow(const bn::fixed_point& target)
+{
+    if(data().behavior != species_behavior::burrower)
+    {
+        return false;
+    }
+
+    ++_burrow_frames;
+
+    if(! _underground)
+    {
+        if(_burrow_frames > burrow_surface_frames)
+        {
+            _underground = true;
+            _burrow_frames = 0;
+        }
+
+        return false;
+    }
+
+    _walk(directions::toward(_position, target) * data().speed * walk_speed_scale * burrow_speed_scale);
+
+    if(distance(target, _position) < burrow_surface_distance || _burrow_frames > burrow_travel_frames)
+    {
+        _underground = false;
+        _burrow_frames = 0;
+        _cooldowns[0] = 0;
+    }
+
+    return true;
+}
+
+bn::fixed_point enemy::_movement(const bn::fixed_point& target, bn::random& random)
+{
+    if(_status == status_effect::confusion)
+    {
+        if(++_wobble_frames % 30 == 0)
+        {
+            _attack_direction = directions::vectors[random.get_int(8)];
+        }
+
+        return _attack_direction;
+    }
+
+    bn::fixed_point toward = directions::toward(_position, target);
+
+    if(data().behavior != species_behavior::flyer)
+    {
+        return toward;
+    }
+
+    ++_wobble_frames;
+    bn::fixed wobble = bn::degrees_lut_sin((_wobble_frames * 6) % 360) * wobble_strength;
+    return toward + bn::fixed_point(-toward.y(), toward.x()) * wobble;
 }
 
 void enemy::_update_hidden(const bn::fixed_point& target)
@@ -329,6 +399,7 @@ void enemy::_execute(enemy_projectiles& projectiles, bn::random& random)
         break;
 
     case move_pattern::dash:
+    case move_pattern::dig:
         _dash_attack = hit;
         _dash_connected = false;
         _state = state::dashing;
@@ -361,7 +432,11 @@ void enemy::_update_sprite(bool moving)
 {
     int frame = species_frames::walk;
 
-    if(_flash_frames || (_state == state::windup && (_state_frames / 3) % 2))
+    if(_underground)
+    {
+        frame = species_frames::mound;
+    }
+    else if(_flash_frames || (_state == state::windup && (_state_frames / 3) % 2))
     {
         frame = species_frames::white;
     }
@@ -372,7 +447,7 @@ void enemy::_update_sprite(bool moving)
     }
 
     _sprite.set_tiles(data().sprite->tiles_item(), frame);
-    _sprite.set_visible(! _hidden);
+    _sprite.set_visible(! _hidden && _in_light);
     _sprite.set_position(_position);
     _sprite.set_horizontal_flip(_facing_left);
     _sprite.set_z_order(-_position.y().round_integer());

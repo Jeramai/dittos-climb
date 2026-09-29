@@ -13,6 +13,7 @@ enum class move_pattern
     wave,
     cloud,
     beam,
+    dig,
     fail,
 };
 
@@ -37,6 +38,11 @@ enum class move_id
     razor_leaf,
     solar_beam,
     sleep_powder,
+    rock_throw,
+    rollout,
+    dig,
+    supersonic,
+    slam,
 };
 
 enum class status_effect
@@ -45,6 +51,7 @@ enum class status_effect
     paralysis,
     poison,
     sleep,
+    confusion,
 };
 
 struct move_data

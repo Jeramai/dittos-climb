@@ -13,6 +13,8 @@ namespace projectile_frames
     constexpr int needle = 7;
     constexpr int string = 8;
     constexpr int beam = 9;
+    constexpr int rock = 10;
+    constexpr int supersonic = 11;
 }
 
 namespace cloud_frames

@@ -53,6 +53,7 @@ private:
     bn::vector<effect, 10> _effects;
     bn::unique_ptr<boss> _boss;
     bn::optional<bn::sprite_ptr> _flute_pickup;
+    bn::optional<bn::sprite_ptr> _light;
     hud _hud;
     floor_map _floor;
     bn::fixed_point _camera_position;
@@ -93,6 +94,8 @@ private:
     void _spawn_boss();
 
     void _handle_cut();
+
+    void _update_darkness(bool room_changed);
 
     [[nodiscard]] status_effect _roll_status(move_id move);
 

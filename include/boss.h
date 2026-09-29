@@ -43,6 +43,21 @@ public:
         return bn::nullopt;
     }
 
+    [[nodiscard]] virtual bool touches(const bn::fixed_point&) const
+    {
+        return false;
+    }
+
+    [[nodiscard]] virtual bool blocks(const bn::fixed_point&, int) const
+    {
+        return false;
+    }
+
+    [[nodiscard]] virtual attack contact_attack() const
+    {
+        return wild_attack(species::get(_species).move_b);
+    }
+
     [[nodiscard]] species_id species() const
     {
         return _species;
