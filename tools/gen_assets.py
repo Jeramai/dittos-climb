@@ -107,27 +107,28 @@ DITTO_FLAT = [
 
 RATTATA_BODY = [
     "",
-    "",
-    "",
-    "          k k",
-    "         krkrk",
-    "    kkkkkrrrrk",
-    "   krrrrrrrrerk",
-    "  krrrrrrrrrrcck",
-    " kRrrrrrrrrrrcwk",
-    "kRkRRrrrrrrcccck",
-    " kk kRRRrrrcccck",
+    "         kk  kk",
+    "        kqqkkqqk",
+    "        kqrrrrqk",
+    "       krrrrrrrk",
+    "       krrrwerrk",
+    "      krrrrrrcck",
+    " kk  krrrrrrccck",
+    "k  kkRrrrrrrckkk",
+    "k k kRRrrrrrkwwk",
+    " kk kRRrrrrcckwk",
+    "    kRRRrrcccck",
     "     kRRRcccck",
 ]
 
 RATTATA_1 = RATTATA_BODY + [
-    "     kkcckkcck",
-    "      kk  kk",
+    "    kkcck kcck",
+    "     kk   kk",
 ]
 
 RATTATA_2 = RATTATA_BODY + [
-    "    kcckk kcck",
-    "    kk     kk",
+    "   kcck  kcck",
+    "   kk     kk",
 ]
 
 MEOWTH_BODY = [
