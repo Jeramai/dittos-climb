@@ -72,7 +72,7 @@ void mewtwo_boss::update(const bn::fixed_point& target, enemy_projectiles& proje
         messages.show("MEWTWO used RECOVER!");
     }
 
-    if(! _rising && _hp * 2 < _max_hp)
+    if(! _rising && _hp > 0 && _hp * 2 < _max_hp)
     {
         _rising = true;
         messages.show("MEWTWO's power is rising!");

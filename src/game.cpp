@@ -44,6 +44,8 @@
 namespace
 {
     constexpr int spawn_delay_frames = 30;
+    constexpr int page_min_frames = 45;
+    constexpr int defeat_min_frames = 60;
     constexpr int shake_frames = 10;
     constexpr int effect_frames = 6;
     constexpr int outline_frames = 300;
@@ -781,7 +783,10 @@ void game::_update_boss()
     {
         audio::play(bn::sound_items::sfx_faint);
         audio::stop_music();
+        _messages.clear();
         _boss->announce_defeat(_messages);
+        _enemy_projectiles.clear();
+        _wait_for_a(defeat_min_frames);
         _won = true;
         return;
     }
@@ -1642,6 +1647,23 @@ void game::_pause_map()
     bn::core::update();
 }
 
+void game::_wait_for_a(int min_frames)
+{
+    bool released = false;
+
+    for(int frame = 0; ; ++frame)
+    {
+        released = released || ! bn::keypad::a_held();
+
+        if(released && frame >= min_frames && bn::keypad::a_pressed())
+        {
+            return;
+        }
+
+        bn::core::update();
+    }
+}
+
 void game::_save_and_quit()
 {
     save_data data;
@@ -1755,8 +1777,11 @@ void game::_ending()
         small.generate(0, 72, "A: NEXT", text);
         bn::core::update();
 
-        while(! bn::keypad::a_pressed())
+        bool released = false;
+
+        for(int wait = 0; ! (released && wait >= page_min_frames && bn::keypad::a_pressed()); ++wait)
         {
+            released = released || ! bn::keypad::a_held();
             ++frame_counter;
             mew.set_y(30 + bn::degrees_lut_sin((frame_counter * 4) % 360) * 3);
             mew.set_tiles(bn::sprite_items::mew.tiles_item(), species_frames::walk + (frame_counter / 20) % 2);

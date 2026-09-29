@@ -185,6 +185,8 @@ private:
 
     void _save_and_quit();
 
+    void _wait_for_a(int min_frames);
+
     void _game_over();
 };
 
