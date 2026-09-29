@@ -355,6 +355,7 @@ void player::_update_wave()
         return;
     }
 
+    _wave_sprite->set_tiles(bn::sprite_items::wave.tiles_item(), (_area_frames / 3) % 2);
     _wave_sprite->set_position(_position);
 }
 

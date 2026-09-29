@@ -357,14 +357,16 @@ def save_species(name, walk_1, walk_2, size=16, extra_frames=()):
 
 
 def save_wave():
-    palette = [TRANSPARENT, COLORS["m"]]
+    palette = [TRANSPARENT, (136, 136, 144)]
     pixels = []
-    for y in range(32):
-        row = []
-        for x in range(32):
-            distance = ((x - 15.5) ** 2 + (y - 15.5) ** 2) ** 0.5
-            row.append(1 if abs(distance - 13) < 0.5 else 0)
-        pixels.append(row)
+    strokes = [(6, 11), (3, 15), (25, 11), (28, 15)]
+    for shift in (0, 1):
+        frame = [[0] * 32 for _ in range(32)]
+        for x, y in strokes:
+            x += -shift if x < 16 else shift
+            for step in range(5):
+                frame[y + step + shift][x + (step + shift) % 2] = 1
+        pixels.extend(frame)
     save_indexed("wave", pixels, palette, {"type": "sprite", "height": 32})
 
 
