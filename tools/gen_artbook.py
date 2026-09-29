@@ -136,6 +136,17 @@ def species_image(sprite):
 ROOM_SPOTS = [(40, 60), (150, 90), (230, 56), (100, 100), (268, 92)]
 
 
+def shiny_image(sprite):
+    shiny_path = GRAPHICS / f"{sprite}_shiny.bmp"
+    if not shiny_path.exists():
+        return None
+    image = Image.open(GRAPHICS / f"{sprite}.bmp")
+    image.putpalette(Image.open(shiny_path).getpalette())
+    size = 32 if image.size[0] == 32 else 16
+    frames = [to_rgba(image.crop((0, index * size, size, index * size + size))) for index in (0, 3)]
+    return save_strip(frames, f"{sprite}_shiny.png")
+
+
 def tileset_image(name, sprites):
     image = Image.open(GRAPHICS / f"{name}_tiles.bmp").convert("RGB")
     tiles = [image.crop((x, 0, x + 8, 8)) for x in range(0, image.size[0], 8)]
@@ -163,11 +174,13 @@ def move_label(moves, move_id, show_pp):
 def species_row(species, moves, sprite, role):
     data = species.get(sprite)
     image = species_image(sprite)
+    shiny = shiny_image(sprite)
+    shiny_cell = f"![shiny {sprite}](images/{shiny})" if shiny else ""
     if not data:
-        return f"| ![{sprite}](images/{image}) | {sprite.replace('_', ' ').title()} | | | | {role} |"
+        return f"| ![{sprite}](images/{image}) | {shiny_cell} | {sprite.replace('_', ' ').title()} | | | | {role} |"
     types = " / ".join(t.title() for t in data["types"])
-    return (f"| ![{data['name']}](images/{image}) | **{data['name']}** | {types} | {move_label(moves, data['move_a'], False)} "
-            f"| {move_label(moves, data['move_b'], True)} | {role} |")
+    return (f"| ![{data['name']}](images/{image}) | {shiny_cell} | **{data['name']}** | {types} "
+            f"| {move_label(moves, data['move_a'], False)} | {move_label(moves, data['move_b'], True)} | {role} |")
 
 
 def room_sprites(theme, sprite_by_id):
@@ -199,7 +212,7 @@ def main():
         "",
     ]
 
-    header = "| Sprite | Pokémon | Type | Move A | Move B | Role |\n|---|---|---|---|---|---|"
+    header = "| Sprite | Shiny | Pokémon | Type | Move A | Move B | Role |\n|---|---|---|---|---|---|---|"
 
     for number, theme in enumerate(themes, start=1):
         lines += [f"## {number}F · {theme['name'].title()}", "", FLOOR_MECHANICS[number - 1], "",

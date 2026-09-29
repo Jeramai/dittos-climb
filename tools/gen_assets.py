@@ -2196,11 +2196,19 @@ def save_sprite_sheet(name, frames, size):
 
 
 SHINY_HUE_SHIFT = {
-    "rattata": 150, "gyarados": 140, "magikarp": 40, "pikachu": -15, "zubat": 100, "golbat": 100,
-    "dragonite": 95, "dratini": 110, "dragonair": 120, "charmander": 20, "onix": 60, "gengar": -40,
-    "haunter": -40, "gastly": -40, "mewtwo": 90, "mew": -150, "snorlax": 40, "voltorb": 200, "geodude": 30,
+    "rattata": 150, "gyarados": 140, "magikarp": 40, "pikachu": -15, "golbat": 100,
+    "dratini": 110, "dragonair": 120, "charmander": 20, "gengar": -40,
+    "haunter": -40, "gastly": -40, "mew": -150, "snorlax": 40, "voltorb": 200, "geodude": 30,
     "venusaur": 60, "bulbasaur": 60, "squirtle": 40, "vulpix": 30, "growlithe": 20, "lapras": 90,
     "machop": 60, "machoke": 60, "abra": -20, "kadabra": -20, "seel": 40, "slowpoke": 60, "arbok": 60,
+}
+
+
+SHINY_COLORS = {
+    "onix": {"a": (216, 184, 72), "A": (160, 128, 40)},
+    "zubat": {"z": (128, 192, 96), "Z": (64, 128, 64)},
+    "dragonite": {"o": (152, 176, 80)},
+    "mewtwo": {"h": (232, 236, 228), "p": (200, 208, 200), "z": (120, 192, 96)},
 }
 
 
@@ -2215,8 +2223,11 @@ def shiny_color(color, degrees):
 
 
 def save_shiny_palette(name, palette):
-    degrees = SHINY_HUE_SHIFT.get(name, 120)
-    shiny = [shiny_color(color, degrees) for color in palette]
+    if name in SHINY_COLORS:
+        swaps = {COLORS[letter]: color for letter, color in SHINY_COLORS[name].items()}
+        shiny = [swaps.get(color, color) for color in palette]
+    else:
+        shiny = [shiny_color(color, SHINY_HUE_SHIFT.get(name, 120)) for color in palette]
     shiny += [(0, 0, 0)] * (16 - len(shiny))
     save_indexed(f"{name}_shiny", [[0] * 8 for _ in range(8)], shiny,
                  {"type": "sprite_palette", "bpp_mode": "bpp_4", "colors_count": 16})
