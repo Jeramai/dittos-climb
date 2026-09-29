@@ -204,6 +204,10 @@ Warp pads send Ditto to their partner. Abra and Kadabra teleport.
 
 ![ditto](images/shared_ditto.png)
 
+**Shiny Ditto** (1 in 8192 per run)
+
+![shiny ditto](images/ditto_shiny.png)
+
 **Mew (ending)**
 
 ![mew](images/shared_mew.png)

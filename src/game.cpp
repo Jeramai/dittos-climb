@@ -139,8 +139,18 @@ game::game(bn::random& random, const save_data* saved) :
         _has_silph_scope = saved->has_silph_scope;
         _player.restore(saved->player);
     }
+    else
+    {
+        _player.set_shiny_ditto(shiny::roll(_random));
+    }
 
     _start_floor(saved);
+
+    if(! saved && _player.shiny_ditto())
+    {
+        _messages.show("Huh? DITTO is shiny!");
+        audio::play(bn::sound_items::sfx_key_item);
+    }
 
     #ifdef DITTO_TEST_FORM
         if(! saved)
@@ -1704,6 +1714,17 @@ void game::_ending()
 
     bn::sprite_ptr mew = bn::sprite_items::mew.create_sprite(-24, 30, species_frames::walk);
     bn::sprite_ptr ditto = bn::sprite_items::ditto.create_sprite(24, 34, species_frames::own_walk);
+    bool shiny_ditto = _player.shiny_ditto();
+    auto set_ditto_item = [&](const bn::sprite_item& item, int frame)
+    {
+        ditto.set_item(item, frame);
+
+        if(shiny_ditto && &item == &bn::sprite_items::ditto)
+        {
+            ditto.set_palette(shiny::ditto_palette());
+        }
+    };
+    set_ditto_item(bn::sprite_items::ditto, species_frames::own_walk);
     mew.set_bg_priority(0);
     mew.set_horizontal_flip(true);
     ditto.set_bg_priority(0);
@@ -1735,11 +1756,11 @@ void game::_ending()
         for(int frame = 0; frame < 60; ++frame)
         {
             bool show_target = (frame / 4) % 2 && frame > 20;
-            ditto.set_item(show_target ? target : bn::sprite_items::ditto, species_frames::white);
+            set_ditto_item(show_target ? target : bn::sprite_items::ditto, species_frames::white);
             bn::core::update();
         }
 
-        ditto.set_item(target, species_frames::own_walk);
+        set_ditto_item(target, species_frames::own_walk);
         show_page(page{ { message, "", "" } });
     };
 
@@ -1752,7 +1773,7 @@ void game::_ending()
 
     if(_journal_pages >= journal::page_count)
     {
-        ditto.set_item(bn::sprite_items::ditto, species_frames::own_walk);
+        set_ditto_item(bn::sprite_items::ditto, species_frames::own_walk);
 
         for(const page& value : secret)
         {

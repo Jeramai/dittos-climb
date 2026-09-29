@@ -229,6 +229,8 @@ def main():
     for name, size, caption in SHARED_SHEETS:
         image = save_strip(sheet_frames(name, size), f"shared_{name}.png")
         lines += [f"**{caption}**", "", f"![{name}](images/{image})", ""]
+        if name == "ditto":
+            lines += ["**Shiny Ditto** (1 in 8192 per run)", "", f"![shiny ditto](images/{shiny_image('ditto')})", ""]
 
     hp_frames = sheet_frames("hp_bar", 8)
     lines += ["**HP bar** (green, yellow, red at full)", "",

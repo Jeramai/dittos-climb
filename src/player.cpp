@@ -340,13 +340,14 @@ void player::apply_status(status_effect effect, message_box& messages)
 player_state player::state() const
 {
     return player_state{ _hp, _bonus_hp, _form.has_value(), _form.value_or(form{ species_id::ditto, 0, 0 }),
-                         _held.has_value(), _held.value_or(item_id::ether) };
+                         _held.has_value(), _held.value_or(item_id::ether), _shiny_ditto };
 }
 
 void player::restore(const player_state& state)
 {
     _hp = state.hp;
     _bonus_hp = state.bonus_hp;
+    _shiny_ditto = state.shiny_ditto;
     _form.reset();
     _held.reset();
 
@@ -826,6 +827,16 @@ void player::_update_sprite(bool moving)
     {
         _sprite.set_palette(*shiny::palette(_form->species));
     }
+    else if(! _form && _shiny_ditto && ! _transform_frames)
+    {
+        _sprite.set_palette(shiny::ditto_palette());
+    }
+}
+
+void player::set_shiny_ditto(bool shiny)
+{
+    _shiny_ditto = shiny;
+    _update_sprite(false);
 }
 
 void player::_update_sprite_item(bool moving)

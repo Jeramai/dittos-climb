@@ -26,6 +26,7 @@ struct player_state
     form form_value;
     bool has_held;
     item_id held;
+    bool shiny_ditto;
 };
 
 class player
@@ -77,6 +78,13 @@ public:
     [[nodiscard]] player_state state() const;
 
     void restore(const player_state& state);
+
+    [[nodiscard]] bool shiny_ditto() const
+    {
+        return _shiny_ditto;
+    }
+
+    void set_shiny_ditto(bool shiny);
 
     void set_items_allowed(bool allowed)
     {
@@ -166,6 +174,7 @@ private:
     int _transform_frames = 0;
     species_id _transform_target = species_id::ditto;
     bool _transform_shiny = false;
+    bool _shiny_ditto = false;
     bn::optional<species_id> _evolving_from;
     int _switch_flash_frames = 0;
     status_effect _status = status_effect::none;

@@ -13,6 +13,8 @@ namespace shiny
     [[nodiscard]] bool roll(bn::random& random);
 
     [[nodiscard]] const bn::sprite_palette_item* palette(species_id id);
+
+    [[nodiscard]] const bn::sprite_palette_item& ditto_palette();
 }
 
 #endif

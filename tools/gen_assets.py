@@ -2205,6 +2205,7 @@ SHINY_HUE_SHIFT = {
 
 
 SHINY_COLORS = {
+    "ditto": {"m": (40, 64, 136), "d": (80, 120, 200), "p": (120, 168, 232), "h": (200, 224, 248)},
     "onix": {"a": (216, 184, 72), "A": (160, 128, 40)},
     "zubat": {"z": (128, 192, 96), "Z": (64, 128, 64)},
     "dragonite": {"o": (152, 176, 80)},
@@ -3920,7 +3921,8 @@ def main():
         for suffix in [".bmp", ".json"]:
             (GRAPHICS / f"{old}{suffix}").unlink(missing_ok=True)
 
-    save_sprite_sheet("ditto", [DITTO, DITTO_SQUISH, whiten(DITTO), DITTO, DITTO_SQUISH, DITTO_FLAT], 16)
+    save_shiny_palette("ditto", save_sprite_sheet("ditto", [DITTO, DITTO_SQUISH, whiten(DITTO), DITTO, DITTO_SQUISH,
+                                                          DITTO_FLAT], 16))
     save_species("rattata", RATTATA_1, RATTATA_2)
     save_species("meowth", MEOWTH_1, MEOWTH_2)
     save_species("porygon", PORYGON_1, PORYGON_2)

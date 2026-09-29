@@ -1,5 +1,6 @@
 #include "shiny.h"
 
+#include "bn_sprite_palette_items_ditto_shiny.h"
 #include "bn_sprite_palette_items_rattata_shiny.h"
 #include "bn_sprite_palette_items_meowth_shiny.h"
 #include "bn_sprite_palette_items_porygon_shiny.h"
@@ -162,6 +163,11 @@ bool roll(bn::random& random)
 const bn::sprite_palette_item* palette(species_id id)
 {
     return palettes[int(id)];
+}
+
+const bn::sprite_palette_item& ditto_palette()
+{
+    return bn::sprite_palette_items::ditto_shiny;
 }
 
 }

@@ -86,6 +86,8 @@ Every wild Pokémon, including a side room's rare one, is shiny at Emerald's odd
 own palette (the known shinies keep their real colours: red Gyarados, gold Magikarp, green Dragonite, gold Onix;
 the others get a hue shift) and announces itself with a sparkle, a jingle and "A shiny X appeared!". Ditto keeps
 the shiny colours when it transforms into a defeated shiny, and through an evolution.
+Ditto itself is the player, so the roll happens once per new run: at 1 in 8192 the run starts as a blue shiny
+Ditto (the Gen 2-4 colours), which the save and the ending keep.
 
 ### Save and quit
 
