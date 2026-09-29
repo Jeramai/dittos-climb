@@ -1,5 +1,6 @@
 #include "species.h"
 
+#include "bn_sprite_items_abra.h"
 #include "bn_sprite_items_aerodactyl.h"
 #include "bn_sprite_items_arbok.h"
 #include "bn_sprite_items_articuno.h"
@@ -10,6 +11,10 @@
 #include "bn_sprite_items_caterpie.h"
 #include "bn_sprite_items_diglett.h"
 #include "bn_sprite_items_ditto.h"
+#include "bn_sprite_items_dragonair.h"
+#include "bn_sprite_items_dragonite.h"
+#include "bn_sprite_items_dratini.h"
+#include "bn_sprite_items_drowzee.h"
 #include "bn_sprite_items_ekans.h"
 #include "bn_sprite_items_exeggcute.h"
 #include "bn_sprite_items_farfetchd.h"
@@ -25,7 +30,9 @@
 #include "bn_sprite_items_horsea.h"
 #include "bn_sprite_items_jynx.h"
 #include "bn_sprite_items_kabuto.h"
+#include "bn_sprite_items_kadabra.h"
 #include "bn_sprite_items_koffing.h"
+#include "bn_sprite_items_lapras.h"
 #include "bn_sprite_items_machoke.h"
 #include "bn_sprite_items_machop.h"
 #include "bn_sprite_items_magikarp.h"
@@ -33,6 +40,8 @@
 #include "bn_sprite_items_magnemite.h"
 #include "bn_sprite_items_mankey.h"
 #include "bn_sprite_items_meowth.h"
+#include "bn_sprite_items_mew.h"
+#include "bn_sprite_items_mewtwo.h"
 #include "bn_sprite_items_moltres.h"
 #include "bn_sprite_items_oddish.h"
 #include "bn_sprite_items_omanyte.h"
@@ -46,6 +55,7 @@
 #include "bn_sprite_items_porygon.h"
 #include "bn_sprite_items_rattata.h"
 #include "bn_sprite_items_sandshrew.h"
+#include "bn_sprite_items_seadra.h"
 #include "bn_sprite_items_seel.h"
 #include "bn_sprite_items_shellder.h"
 #include "bn_sprite_items_slowpoke.h"
@@ -53,6 +63,7 @@
 #include "bn_sprite_items_spearow.h"
 #include "bn_sprite_items_squirtle.h"
 #include "bn_sprite_items_staryu.h"
+#include "bn_sprite_items_venomoth.h"
 #include "bn_sprite_items_venusaur.h"
 #include "bn_sprite_items_voltorb.h"
 #include "bn_sprite_items_vulpix.h"
@@ -181,6 +192,28 @@ namespace
           &bn::sprite_items::exeggcute },
         { "GENGAR", pokemon_type::ghost, pokemon_type::poison, 70, 1.3, move_id::lick, move_id::shadow_ball,
           &bn::sprite_items::gengar },
+        { "DRATINI", pokemon_type::dragon, pokemon_type::none, 18, 1.2, move_id::twister, move_id::thunder_wave,
+          &bn::sprite_items::dratini },
+        { "DRAGONAIR", pokemon_type::dragon, pokemon_type::none, 24, 1.4, move_id::twister, move_id::dragon_rage,
+          &bn::sprite_items::dragonair },
+        { "SEADRA", pokemon_type::water, pokemon_type::none, 20, 1.2, move_id::water_gun, move_id::bubblebeam,
+          &bn::sprite_items::seadra },
+        { "LAPRAS", pokemon_type::water, pokemon_type::ice, 24, 1, move_id::ice_shard, move_id::ice_beam,
+          &bn::sprite_items::lapras },
+        { "DRAGONITE", pokemon_type::dragon, pokemon_type::flying, 70, 1.3, move_id::twister, move_id::hyper_beam,
+          &bn::sprite_items::dragonite },
+        { "ABRA", pokemon_type::psychic, pokemon_type::none, 12, 1, move_id::psywave, move_id::teleport,
+          &bn::sprite_items::abra, species_behavior::teleporter },
+        { "KADABRA", pokemon_type::psychic, pokemon_type::none, 20, 1.2, move_id::psywave, move_id::psybeam,
+          &bn::sprite_items::kadabra, species_behavior::teleporter },
+        { "DROWZEE", pokemon_type::psychic, pokemon_type::none, 20, 0.9, move_id::psywave, move_id::hypnosis,
+          &bn::sprite_items::drowzee },
+        { "VENOMOTH", pokemon_type::bug, pokemon_type::poison, 20, 1.3, move_id::leech_life, move_id::psybeam,
+          &bn::sprite_items::venomoth, species_behavior::flyer },
+        { "MEWTWO", pokemon_type::psychic, pokemon_type::none, 80, 1.4, move_id::psywave, move_id::psychic,
+          &bn::sprite_items::mewtwo },
+        { "MEW", pokemon_type::psychic, pokemon_type::none, 80, 1.4, move_id::psywave, move_id::psychic,
+          &bn::sprite_items::mew },
     };
 }
 

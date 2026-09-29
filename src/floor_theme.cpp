@@ -4,22 +4,26 @@
 
 #include "bn_bg_palette_items_cave_palette.h"
 #include "bn_bg_palette_items_chasm_palette.h"
+#include "bn_bg_palette_items_den_palette.h"
 #include "bn_bg_palette_items_dojo_palette.h"
 #include "bn_bg_palette_items_forest_palette.h"
 #include "bn_bg_palette_items_hideout_palette.h"
 #include "bn_bg_palette_items_ice_palette.h"
 #include "bn_bg_palette_items_lake_palette.h"
+#include "bn_bg_palette_items_peak_palette.h"
 #include "bn_bg_palette_items_plant_palette.h"
 #include "bn_bg_palette_items_tower_palette.h"
 #include "bn_bg_palette_items_volcano_palette.h"
 #include "bn_bg_palette_items_lab_palette.h"
 #include "bn_regular_bg_tiles_items_cave_tiles.h"
 #include "bn_regular_bg_tiles_items_chasm_tiles.h"
+#include "bn_regular_bg_tiles_items_den_tiles.h"
 #include "bn_regular_bg_tiles_items_dojo_tiles.h"
 #include "bn_regular_bg_tiles_items_forest_tiles.h"
 #include "bn_regular_bg_tiles_items_hideout_tiles.h"
 #include "bn_regular_bg_tiles_items_ice_tiles.h"
 #include "bn_regular_bg_tiles_items_lake_tiles.h"
+#include "bn_regular_bg_tiles_items_peak_tiles.h"
 #include "bn_regular_bg_tiles_items_plant_tiles.h"
 #include "bn_regular_bg_tiles_items_tower_tiles.h"
 #include "bn_regular_bg_tiles_items_volcano_tiles.h"
@@ -81,6 +85,16 @@ namespace
           { { species_id::gastly, 40 }, { species_id::haunter, 30 }, { species_id::cubone, 30 } }, 3,
           false, true, false, hazard_kind::none, false, false, gate_kind::spirit, false, false, key_item::none, 1,
           false, true, 35, boss_kind::gengar, species_id::exeggcute },
+        { "DRAGON'S DEN", &bn::regular_bg_tiles_items::den_tiles, &bn::bg_palette_items::den_palette,
+          "The water surged over the exits!", "The water calmed down!",
+          { { species_id::dratini, 40 }, { species_id::dragonair, 30 }, { species_id::seadra, 30 } }, 3,
+          false, false, true, hazard_kind::none, false, false, gate_kind::none, false, false, key_item::none, 1,
+          false, false, 0, boss_kind::dragonite, species_id::lapras, true, true, false },
+        { "CERULEAN CAVE", &bn::regular_bg_tiles_items::peak_tiles, &bn::bg_palette_items::peak_palette,
+          "A strange power sealed the exits!", "The strange power faded!",
+          { { species_id::abra, 30 }, { species_id::kadabra, 30 }, { species_id::drowzee, 40 } }, 3,
+          false, false, false, hazard_kind::none, false, false, gate_kind::none, false, false, key_item::none, 1,
+          false, false, 0, boss_kind::mewtwo, species_id::venomoth, false, false, true },
     };
 
     constexpr int theme_count = sizeof(themes) / sizeof(themes[0]);

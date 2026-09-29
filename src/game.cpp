@@ -10,7 +10,10 @@
 #include "bn_window.h"
 
 #include "bn_sprite_items_electric_projectiles.h"
+#include "bn_sprite_items_ditto.h"
 #include "bn_sprite_items_light.h"
+#include "bn_sprite_items_mew.h"
+#include "bn_sprite_items_mewtwo.h"
 #include "bn_sprite_items_pickups.h"
 #include "bn_sprite_items_poke_flute.h"
 #include "bn_sprite_items_projectiles.h"
@@ -20,9 +23,11 @@
 
 #include "gyarados_boss.h"
 #include "journal.h"
+#include "mewtwo_boss.h"
 #include "articuno_boss.h"
 #include "moltres_boss.h"
 #include "pidgeot_boss.h"
+#include "dragonite_boss.h"
 #include "gengar_boss.h"
 #include "hitmon_boss.h"
 #include "team_rocket_boss.h"
@@ -118,6 +123,11 @@ game::game(bn::random& random) :
         _has_silph_scope = true;
     #endif
 
+    #ifdef DITTO_TEST_ENDING
+        _journal_pages = DITTO_TEST_ENDING;
+        _won = true;
+    #endif
+
     _start_floor();
 
     #ifdef DITTO_TEST_FORM
@@ -127,7 +137,7 @@ game::game(bn::random& random) :
 
 void game::run()
 {
-    while(! _player.fainted())
+    while(! _player.fainted() && ! _won)
     {
         if(bn::keypad::start_pressed())
         {
@@ -139,13 +149,20 @@ void game::run()
         bn::core::update();
     }
 
-    _game_over();
+    if(_won)
+    {
+        _ending();
+    }
+    else
+    {
+        _game_over();
+    }
 }
 
 void game::_start_floor()
 {
     _previous_room = -1;
-    _floor.generate(_floor_number, _theme().overgrown_percent, ! _theme().no_items, _random);
+    _floor.generate(_floor_number, _theme().overgrown_percent, ! _theme().no_items, _theme().large_rooms, _random);
     _player.set_items_allowed(! _theme().no_items);
 
     if(_theme().no_items && _player.held_item())
@@ -232,12 +249,18 @@ void game::_start_floor()
 
                 _enter_room(index, bn::nullopt);
 
-                #ifdef DITTO_TEST_FALL
+                #if defined(DITTO_TEST_FALL) || defined(DITTO_TEST_WARP)
+                    #ifdef DITTO_TEST_WARP
+                        constexpr char test_cell = room::cells::warp;
+                    #else
+                        constexpr char test_cell = room::cells::pit;
+                    #endif
+
                     for(int row = 0; row < room::rows; ++row)
                     {
                         for(int column = 0; column < room::columns; ++column)
                         {
-                            if(room::get(column, row) == room::cells::pit)
+                            if(room::get(column, row) == test_cell)
                             {
                                 _player.set_position(room::cell_center(column, row) - bn::fixed_point(0, 4));
                             }
@@ -343,6 +366,7 @@ void game::_update_play()
     _update_camera(false);
     _messages.update();
     _update_struggle_check();
+    _update_warps();
     _hud.update(_player);
     _update_room_state();
 }
@@ -603,6 +627,17 @@ void game::_spawn_boss()
         _boss.reset(new pidgeot_boss(position, _camera));
         _messages.show("PIDGEOT swooped down from above!");
     }
+    else if(_theme().boss == boss_kind::dragonite)
+    {
+        _boss.reset(new dragonite_boss(position, _camera));
+        _messages.show("A wild DRAGONITE descends!");
+    }
+    else if(_theme().boss == boss_kind::mewtwo)
+    {
+        _boss.reset(new mewtwo_boss(position, _camera));
+        _messages.show("MEWTWO: So you are the other clone.");
+        _messages.show("MEWTWO: There can be only one of us!");
+    }
     else if(_theme().boss == boss_kind::gengar)
     {
         _boss.reset(new gengar_boss(position, _camera));
@@ -681,6 +716,13 @@ void game::_update_boss()
                 _player.apply_status(_roll_status(area->hit.move), _messages);
             }
         }
+    }
+
+    if(_boss->dead() && _theme().boss == boss_kind::mewtwo)
+    {
+        _boss->announce_defeat(_messages);
+        _won = true;
+        return;
     }
 
     if(_boss->dead())
@@ -901,6 +943,31 @@ void game::_handle_explosions()
         {
             static_cast<void>(_player.take_hit(value.explosion_attack(), _messages));
         }
+    }
+}
+
+void game::_update_warps()
+{
+    bn::fixed_point feet = _player.position() + bn::fixed_point(0, 4);
+
+    if(room::at(feet.x(), feet.y()) != room::cells::warp || _player.transforming())
+    {
+        _on_warp = false;
+        return;
+    }
+
+    if(_on_warp)
+    {
+        return;
+    }
+
+    _on_warp = true;
+
+    if(bn::optional<bn::fixed_point> partner = _view.warp_partner(feet))
+    {
+        _player.set_position(*partner - bn::fixed_point(0, 4));
+        _messages.show("DITTO was warped!");
+        _spawn_effect(*partner);
     }
 }
 
@@ -1437,6 +1504,134 @@ void game::_pause_map()
     text.clear();
     _overlay.hide();
     _set_world_visible(true);
+    bn::core::update();
+}
+
+void game::_ending()
+{
+    struct page
+    {
+        const char* lines[3];
+    };
+
+    constexpr page story[] = {
+        { { "MEWTWO fell to its knees.", "", "" } },
+        { { "A soft pink light filled", "the cave. MEW floated", "down to DITTO." } },
+        { { "MEW: You came all this way,", "little one.", "" } },
+        { { "MEW: You were made from me,", "just like MEWTWO.", "" } },
+        { { "MEW: You have no true shape.", "That is not a failure.", "That is your gift." } },
+        { { "DITTO smiled its silly smile...", "", "" } },
+    };
+
+    constexpr page secret[] = {
+        { { "MEW: You found every page", "of the lab journal.", "You know the whole truth." } },
+        { { "MEW: Then take my shape too.", "It was always yours.", "" } },
+    };
+
+    for(int frame = 0; frame < 120; ++frame)
+    {
+        _messages.update();
+        _update_effects();
+        bn::core::update();
+    }
+
+    _fade(true);
+    _clear_room_objects();
+    _messages.clear();
+    _hud.set_visible(false);
+    _player.set_visible(false);
+    _light.reset();
+    bn::window::outside().set_show_all();
+    _overlay.show_black();
+    set_fade(0);
+
+    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
+    big.set_center_alignment();
+    big.set_bg_priority(0);
+
+    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    small.set_center_alignment();
+    small.set_bg_priority(0);
+
+    bn::sprite_ptr mew = bn::sprite_items::mew.create_sprite(-24, 30, species_frames::walk);
+    bn::sprite_ptr ditto = bn::sprite_items::ditto.create_sprite(24, 34, species_frames::own_walk);
+    mew.set_bg_priority(0);
+    ditto.set_bg_priority(0);
+    int frame_counter = 0;
+
+    auto show_page = [&](const page& value)
+    {
+        bn::vector<bn::sprite_ptr, 40> text;
+
+        for(int line = 0; line < 3; ++line)
+        {
+            big.generate(0, -60 + line * 18, value.lines[line], text);
+        }
+
+        small.generate(0, 72, "A: NEXT", text);
+        bn::core::update();
+
+        while(! bn::keypad::a_pressed())
+        {
+            ++frame_counter;
+            mew.set_y(30 + bn::degrees_lut_sin((frame_counter * 4) % 360) * 3);
+            mew.set_tiles(bn::sprite_items::mew.tiles_item(), species_frames::walk + (frame_counter / 20) % 2);
+            bn::core::update();
+        }
+    };
+
+    auto transform_ditto = [&](const bn::sprite_item& target, const char* message)
+    {
+        for(int frame = 0; frame < 60; ++frame)
+        {
+            bool show_target = (frame / 4) % 2 && frame > 20;
+            ditto.set_item(show_target ? target : bn::sprite_items::ditto, species_frames::white);
+            bn::core::update();
+        }
+
+        ditto.set_item(target, species_frames::own_walk);
+        show_page(page{ { message, "", "" } });
+    };
+
+    for(const page& value : story)
+    {
+        show_page(value);
+    }
+
+    transform_ditto(bn::sprite_items::mewtwo, "...and TRANSFORMED into MEWTWO!");
+
+    if(_journal_pages >= journal::page_count)
+    {
+        ditto.set_item(bn::sprite_items::ditto, species_frames::own_walk);
+
+        for(const page& value : secret)
+        {
+            show_page(value);
+        }
+
+        transform_ditto(bn::sprite_items::mew, "DITTO transformed into MEW!");
+    }
+
+    bn::string<32> pages("JOURNAL ");
+    pages.append(bn::to_string<4>(_journal_pages));
+    pages.append("/");
+    pages.append(bn::to_string<4>(journal::page_count));
+
+    bn::vector<bn::sprite_ptr, 32> text;
+    big.generate(0, -50, "THE END", text);
+    small.generate(0, -30, "THANKS FOR PLAYING!", text);
+    small.generate(0, 60, pages, text);
+    small.generate(0, 72, "PRESS START", text);
+
+    while(! bn::keypad::start_pressed())
+    {
+        ++frame_counter;
+        mew.set_y(30 + bn::degrees_lut_sin((frame_counter * 4) % 360) * 3);
+        bn::core::update();
+    }
+
+    text.clear();
+    _overlay.hide();
     bn::core::update();
 }
 

@@ -5,6 +5,7 @@
 #include "bn_optional.h"
 #include "bn_regular_bg_map_ptr.h"
 #include "bn_regular_bg_ptr.h"
+#include "bn_vector.h"
 
 #include "floor_map.h"
 #include "floor_theme.h"
@@ -43,6 +44,8 @@ public:
 
     [[nodiscard]] bool bushes_remaining(direction side) const;
 
+    [[nodiscard]] bn::optional<bn::fixed_point> warp_partner(const bn::fixed_point& position) const;
+
     [[nodiscard]] bn::fixed_point interior_center() const;
 
     [[nodiscard]] bn::fixed_point open_spot_near(const bn::fixed_point& position) const;
@@ -60,6 +63,7 @@ private:
     int _width = 0;
     int _height = 0;
     int _plate_phase = 0;
+    bn::vector<bn::fixed_point, 4> _warps;
 
     [[nodiscard]] int _interior_left() const
     {
@@ -89,7 +93,7 @@ private:
 
     void _plant_grass(int seed);
 
-    void _plant_water(int seed);
+    void _plant_water(int seed, bool whirlpools);
 
     void _plant_plates(int seed);
 
@@ -98,6 +102,8 @@ private:
     void _plant_chasm(int seed);
 
     void _plant_spinners(int seed);
+
+    void _plant_warps(int seed);
 
     void _plant_bushes(const floor_room& value);
 

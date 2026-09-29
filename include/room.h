@@ -37,9 +37,14 @@ namespace room
         constexpr char spin_left = 'L';
         constexpr char spin_down = 'K';
         constexpr char spin_up = 'U';
+        constexpr char waterfall = 'F';
+        constexpr char whirlpool = 'Q';
+        constexpr char warp = 'P';
     }
 
     void clear();
+
+    void set_whirlpool_center(const bn::fixed_point& center);
 
     void set(int column, int row, char value);
 

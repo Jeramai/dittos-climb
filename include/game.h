@@ -26,6 +26,11 @@ public:
 
     void run();
 
+    [[nodiscard]] bool won() const
+    {
+        return _won;
+    }
+
 private:
     struct effect
     {
@@ -82,6 +87,8 @@ private:
     bool _locked = false;
     bool _has_flute = false;
     bool _has_silph_scope = false;
+    bool _on_warp = false;
+    bool _won = false;
     bool _boss_defeated = false;
 
     [[nodiscard]] const floor_room& _current_room() const
@@ -115,6 +122,10 @@ private:
     void _update_darkness(bool room_changed);
 
     void _update_struggle_check();
+
+    void _update_warps();
+
+    void _ending();
 
     void _update_plates();
 

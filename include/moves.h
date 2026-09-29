@@ -16,6 +16,7 @@ enum class move_pattern
     beam,
     dig,
     explode,
+    teleport,
     fail,
 };
 
@@ -103,6 +104,11 @@ enum class move_id
     psywave,
     shadow_ball,
     dream_eater,
+    twister,
+    outrage,
+    hyper_beam,
+    teleport,
+    psychic,
 };
 
 enum class status_effect

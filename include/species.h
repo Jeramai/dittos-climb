@@ -67,6 +67,17 @@ enum class species_id
     cubone,
     exeggcute,
     gengar,
+    dratini,
+    dragonair,
+    seadra,
+    lapras,
+    dragonite,
+    abra,
+    kadabra,
+    drowzee,
+    venomoth,
+    mewtwo,
+    mew,
 };
 
 namespace species_frames
@@ -86,6 +97,7 @@ enum class species_behavior
     burrower,
     flyer,
     aquatic,
+    teleporter,
 };
 
 struct species_data

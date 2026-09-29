@@ -26,6 +26,10 @@ namespace
     constexpr int burrow_surface_distance = 20;
     constexpr bn::fixed burrow_speed_scale = 1.5;
     constexpr bn::fixed wobble_strength = 0.9;
+    constexpr int teleport_interval = 160;
+    constexpr int teleport_panic_distance = 32;
+    constexpr int teleport_panic_frames = 120;
+    constexpr int teleport_distance = 72;
 
     attack wild_attack(move_id move, const species_data& user)
     {
@@ -150,6 +154,8 @@ void enemy::update(const bn::fixed_point& target, enemy_projectiles& projectiles
             moving = true;
             break;
         }
+
+        _update_teleport(target, random);
 
         if(_hidden || ! _try_start_attack(target))
         {
@@ -298,6 +304,33 @@ bool enemy::_update_burrow(const bn::fixed_point& target)
     }
 
     return true;
+}
+
+void enemy::_update_teleport(const bn::fixed_point& target, bn::random& random)
+{
+    if(data().behavior != species_behavior::teleporter)
+    {
+        return;
+    }
+
+    bool too_close = distance(target, _position) < teleport_panic_distance;
+
+    if(--_teleport_frames > 0 && ! (too_close && _teleport_frames < teleport_panic_frames))
+    {
+        return;
+    }
+
+    int degrees = random.get_int(8) * 45;
+    bn::fixed_point goal = target + bn::fixed_point(bn::degrees_lut_cos(degrees) * teleport_distance,
+                                                    bn::degrees_lut_sin(degrees) * teleport_distance);
+
+    if(bn::optional<bn::fixed_point> spot = room::nearest_standable(goal, false))
+    {
+        _position = *spot;
+        _flash_frames = 6;
+    }
+
+    _teleport_frames = teleport_interval + random.get_int(60);
 }
 
 bn::fixed_point enemy::_movement(const bn::fixed_point& target, bn::random& random)

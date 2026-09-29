@@ -20,6 +20,8 @@ enum class boss_kind
     team_rocket,
     hitmon,
     gengar,
+    dragonite,
+    mewtwo,
 };
 
 enum class key_item
@@ -77,6 +79,9 @@ struct floor_theme
     int overgrown_percent;
     boss_kind boss;
     species_id rare;
+    bool whirlpools = false;
+    bool large_rooms = false;
+    bool warps = false;
 };
 
 namespace floor_themes

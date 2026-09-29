@@ -50,7 +50,8 @@ public:
     static constexpr int grid_size = 5;
     static constexpr int max_rooms = 11;
 
-    void generate(int floor_number, int overgrown_percent, bool items_allowed, bn::random& random);
+    void generate(int floor_number, int overgrown_percent, bool items_allowed, bool large_rooms,
+                  bn::random& random);
 
     void clear_overgrown(int index, direction side);
 

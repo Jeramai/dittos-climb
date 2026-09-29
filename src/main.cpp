@@ -17,5 +17,10 @@ int main()
         game current(random);
         current.run();
         bn::core::update();
+
+        if(current.won())
+        {
+            intro::title(random);
+        }
     }
 }

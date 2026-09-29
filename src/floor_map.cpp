@@ -7,7 +7,8 @@
 
 using namespace directions_of_floor;
 
-void floor_map::generate(int floor_number, int overgrown_percent, bool items_allowed, bn::random& random)
+void floor_map::generate(int floor_number, int overgrown_percent, bool items_allowed, bool large_rooms,
+                         bn::random& random)
 {
     for(auto& row : _grid)
     {
@@ -38,8 +39,9 @@ void floor_map::generate(int floor_number, int overgrown_percent, bool items_all
         }
 
         _grid[y][x] = _rooms.size();
-        _rooms.push_back(floor_room{ x, y, random.get_int(room_layouts::combat_count), room_kind::combat,
-                                     false, false, {} });
+        constexpr int large_layouts[] = { 1, 2, 4 };
+        int layout = large_rooms ? large_layouts[random.get_int(3)] : random.get_int(room_layouts::combat_count);
+        _rooms.push_back(floor_room{ x, y, layout, room_kind::combat, false, false, {} });
     }
 
     int distances[max_rooms];

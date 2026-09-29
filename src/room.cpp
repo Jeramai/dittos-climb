@@ -13,6 +13,9 @@ namespace
     bn::fixed camera_max_x;
     bn::fixed camera_min_y;
     bn::fixed camera_max_y;
+    bn::fixed_point whirlpool_center;
+    constexpr bn::fixed waterfall_strength = 2.2;
+    constexpr bn::fixed whirlpool_strength = 0.5;
 
     [[nodiscard]] bool solid_cell(char value, bool can_swim, bool over_pits)
     {
@@ -27,7 +30,7 @@ namespace
         }
 
         return value != cells::floor && value != cells::stairs && value != cells::grass && value != cells::plate &&
-               value != cells::ice && ! is_wind(value) && ! is_spinner(value);
+               value != cells::ice && value != cells::warp && ! is_wind(value) && ! is_spinner(value);
     }
 
     void set_axis(int first, int last, int screen_size, bn::fixed& min, bn::fixed& max, int map_size)
@@ -44,6 +47,11 @@ namespace
         min = low;
         max = high;
     }
+}
+
+void set_whirlpool_center(const bn::fixed_point& center)
+{
+    whirlpool_center = center;
 }
 
 void clear()
@@ -82,7 +90,8 @@ char at(bn::fixed x, bn::fixed y)
 bool is_water(char value)
 {
     return value == cells::water || value == cells::flow_right || value == cells::flow_left ||
-           value == cells::flow_down || value == cells::flow_up;
+           value == cells::flow_down || value == cells::flow_up || value == cells::waterfall ||
+           value == cells::whirlpool;
 }
 
 bool is_wind(char value)
@@ -191,6 +200,23 @@ bn::fixed_point flow_at(const bn::fixed_point& position)
 
     case cells::flow_up:
         return bn::fixed_point(0, -1);
+
+    case cells::waterfall:
+        return bn::fixed_point(0, waterfall_strength);
+
+    case cells::whirlpool:
+    {
+        bn::fixed_point delta = whirlpool_center - position;
+        bn::fixed length = bn::abs(delta.x()) + bn::abs(delta.y());
+
+        if(length < 2)
+        {
+            return bn::fixed_point();
+        }
+
+        bn::fixed_point inward = delta / length;
+        return bn::fixed_point(inward.x() - inward.y(), inward.y() + inward.x()) * whirlpool_strength;
+    }
 
     default:
         return bn::fixed_point();

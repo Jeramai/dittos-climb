@@ -216,4 +216,14 @@ Bonus floors after the end: Steel, Dark and Fairy.
     doors and a Ghost form phases through. Gastly (Lick, Confuse Ray), Haunter (Lick, Night Shade), Cubone (Bone
     Club, Bonemerang). Rare: Exeggcute. Gengar fires Shadow Ball fans, vanishes and reappears next to Ditto with a
     Lick, and follows Hypnosis with Dream Eater. Base Ditto (Normal) is immune to its Ghost moves.
-14. Then one floor per milestone.
+14. **Floor 12.** (done) Dragon's Den uses the large combat layouts; its rivers are waterfalls (too strong to swim
+    up; a land bridge crosses) and its ponds are whirlpools that pull swimmers gently. Dratini (Twister, Thunder
+    Wave), Dragonair (Twister, Dragon Rage), Seadra (Water Gun, Bubblebeam). Rare: Lapras. Dragonite fires Twister
+    fans and Dragon Rage, rampages with three Outrage lunges and is then tired, and must recharge after a
+    telegraphed Hyper Beam.
+15. **Floor 13.** (done) Cerulean Cave: paired warp pads send Ditto to their partner. Abra and Kadabra teleport
+    around Ditto (an Abra form's B is Teleport), Drowzee uses Hypnosis. Rare: Venomoth. Mewtwo fires Confusion,
+    rings of Psychic shots and (below half HP) Swift, raises Barrier, teleports, and uses Recover once.
+16. **Ending.** (done) Mew appears, tells Ditto the truth, and Ditto transforms into Mewtwo. With all 13 journal
+    pages, a secret scene follows and Ditto transforms into Mew. The run ends and the title screen returns.
+17. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, sound, real art.

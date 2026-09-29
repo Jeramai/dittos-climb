@@ -116,6 +116,7 @@ private:
     bool _unseen = false;
     int _burrow_frames = 0;
     int _wobble_frames = 0;
+    int _teleport_frames = 150;
     bool _was_hidden = false;
     bool _just_revealed = false;
     status_effect _status = status_effect::none;
@@ -134,6 +135,8 @@ private:
     void _update_hidden(const bn::fixed_point& target);
 
     [[nodiscard]] bool _update_burrow(const bn::fixed_point& target);
+
+    void _update_teleport(const bn::fixed_point& target, bn::random& random);
 
     [[nodiscard]] bn::fixed_point _movement(const bn::fixed_point& target, bn::random& random);
 

@@ -1485,6 +1485,237 @@ BONE = [
 ]
 
 
+DRATINI_1 = [
+    "",
+    "",
+    "    kkk",
+    "   kuuuk",
+    "  kwkuuuk",
+    "  kuuuuuk kk",
+    "   kkkuuukwk",
+    "     kuuuukk",
+    "    kuuuuk",
+    "   kuuuukk",
+    "  kuwwuk  kkkk",
+    "  kuwwukkkuuuuk",
+    "   kuuuuuuuuuk",
+    "    kkkkkkkkk",
+]
+
+DRATINI_2 = [""] + DRATINI_1[:-1]
+
+DRAGONAIR_1 = [
+    "",
+    "   kkk",
+    "  kuuuk   k",
+    " kwkuuuk kwk",
+    " kuuuuuukwk",
+    "  kkkuuuuk",
+    "     kiuk",
+    "    kuiuk",
+    "   kuuiuk",
+    "  kuuiuk   kkkk",
+    "  kuiuuk  kuuuuk",
+    "  kuuiukkkuiuuk",
+    "   kuuuuuuuuuk",
+    "    kkkkkkkkkk",
+]
+
+DRAGONAIR_1 = [row[:16] for row in DRAGONAIR_1]
+DRAGONAIR_2 = [""] + DRAGONAIR_1[:-1]
+
+SEADRA_1 = [
+    "",
+    "     kkkk",
+    "    kBBBBk",
+    "  kkkBwkBBk",
+    " kBBBBBBBBkkk",
+    "  kkkBBBBkBBk",
+    "     kBByBkk",
+    "  kk kBByyBk",
+    " kBBkkBByyBk",
+    "  kkBBBByyBk",
+    "     kBByBk",
+    "      kBBBk",
+    "    kk kBk",
+    "     kkBk",
+    "       k",
+]
+
+SEADRA_2 = [""] + SEADRA_1[:-1]
+
+LAPRAS_TOP = [
+    "",
+    "   kkk",
+    "  kiiik",
+    " kiwkiik",
+    " kiiiiik",
+    "  kkiik",
+    "    kiik  kkk",
+    "    kiik kcckk",
+    "   kkiikkcckcck",
+    "  kiiiikcckckcck",
+    " kiiiiiikkcckcck",
+    " kiiiiiiiikkkcck",
+]
+
+LAPRAS_1 = LAPRAS_TOP + ["  kiiiiiiiiiiik", "   kkkkkkkkkkk"]
+LAPRAS_2 = LAPRAS_TOP + [" kiiiiiiiiiiiik", "  kkkkkkkkkkkk"]
+
+ABRA_TOP = [
+    "",
+    "   kk    kk",
+    "  kyyk  kyyk",
+    "  kyyykkyyyk",
+    "  kyyyyyyyyk",
+    "  kykkyykkyk",
+    "  kyyyyyyyyk",
+    "   kyyxxyyk",
+    "  kbbkyykbbk",
+    " kbbbkkkkbbbk",
+    "  kkyyyyyykk",
+    "   kyyyyyyk",
+]
+
+ABRA_1 = ABRA_TOP + ["   kyk  kyk", "   kkk  kkk"]
+ABRA_2 = ABRA_TOP + ["  kyk    kyk", "  kkk    kkk"]
+
+KADABRA_TOP = [
+    "",
+    "  kk      kk",
+    " kyyk    kyyk",
+    " kyyykkkkyyyk",
+    "  kyyyyyyyyk",
+    "  kynkyyknyk",
+    "  kyyyyyyyyk  kk",
+    "   kyykkyyk  ksk",
+    "  kbbkyykbbkksk",
+    " kbbbkkkkbbbkk",
+    "  kkyyyyyykk",
+    "   kyyxxyyk",
+]
+
+KADABRA_1 = KADABRA_TOP + ["   kyk  kyk", "   kkk  kkk"]
+KADABRA_2 = KADABRA_TOP + ["  kyk    kyk", "  kkk    kkk"]
+
+DROWZEE_TOP = [
+    "",
+    "    kkkkkk",
+    "   kyyyyyyk",
+    "  kyykyykyyk",
+    "  kyyyyyyyyk",
+    "   kyyxxyyk",
+    "  kkkyxxykkk",
+    " kbbkyyyykbbk",
+    " kyykbbbbkyyk",
+    "  kkbbbbbbkk",
+    "   kbbbbbbk",
+    "   kyyyyyyk",
+]
+
+DROWZEE_1 = DROWZEE_TOP + ["   kyk  kyk", "   kkk  kkk"]
+DROWZEE_2 = DROWZEE_TOP + ["  kyk    kyk", "  kkk    kkk"]
+
+VENOMOTH_1 = [
+    "",
+    " kk  k  k  kk",
+    "kzzk kk kk kzzk",
+    "kzhzk kkk kzhzk",
+    "kzzzzkzzzkzzzzk",
+    " kzhzzkekzzhzk",
+    " kzzzzzzzzzzzk",
+    "  kzzkzzzkzzk",
+    " kzhzzkzkzzhzk",
+    "kzzzzk kzk kzzzk",
+    "kzhzk  kzk  kzhk",
+    " kkk   kk   kkk",
+]
+
+VENOMOTH_2 = [
+    "",
+    "",
+    "     k  k",
+    "  kk  kk  kk",
+    " kzzkkkkkkzzk",
+    "kzhzzkzzzkzzhzk",
+    "kzzzzkekzzzzzzk",
+    " kzzzzzzzzzzzk",
+    "  kkzzzzzzzkk",
+    " kzhzzkzkzzhzk",
+    " kzzzk kzk kzzk",
+    "  kkk  kk  kkk",
+]
+
+MEW_1 = [
+    "",
+    "",
+    "  kk     kk",
+    "  kqk   kqk",
+    "  kqqkkkqqk",
+    "  kqqqqqqqk",
+    "  kqkBqqkBk",
+    "  kqqqqqqqk",
+    "   kqqqqqk     kk",
+    "    kqqqk     kqk",
+    "   kqqqqqk   kqk",
+    "  kqkqqqkqkkqqk",
+    "   k kqqqk kqk",
+    "      kqqkkqk",
+    "      kqqqqk",
+    "       kkkk",
+]
+
+MEW_1 = [row[:16] for row in MEW_1]
+MEW_2 = [""] + MEW_1[:-1]
+
+
+def dragonite_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    ellipse(grid, 16, 18, 10, 11, "o")
+    ellipse(grid, 16, 20, 6, 7, "c")
+    ellipse(grid, 16, 6, 6, 5, "o")
+    for side in (-1, 1):
+        for i in range(8):
+            x = 16 + side * (9 + i)
+            for y in range(8 - step * 2 + i // 2, 16 + i // 3):
+                if 0 <= x < 32:
+                    grid[y][x] = "G" if y < 11 else "g"
+    grid[5][14] = grid[5][18] = "w" if charging else "k"
+    for x in range(13, 20):
+        grid[8][x] = "k"
+    grid[0][13] = grid[1][13] = grid[0][19] = grid[1][19] = "o"
+    for x in (11, 12, 20, 21):
+        for y in range(28, 31):
+            grid[y][x] = "o"
+    return ["".join(row) for row in outline(grid)]
+
+
+def mewtwo_frame(step, charging):
+    grid = [["."] * 32 for _ in range(32)]
+    ellipse(grid, 16, 16, 6, 8, "h")
+    ellipse(grid, 16, 21, 5, 4, "z")
+    ellipse(grid, 16, 6, 5, 4.5, "h")
+    for x in (11, 12, 20, 21):
+        grid[2][x] = grid[3][x] = "h"
+    for y in range(8, 11):
+        grid[y][16] = "p"
+    grid[6][14] = grid[6][18] = "w" if charging else "z"
+    for side in (-1, 1):
+        for i in range(6):
+            grid[12 + i][16 + side * (7 + i // 2)] = "h"
+        ellipse(grid, 16 + side * 11, 19, 1.5, 1.5, "h")
+    for i in range(12):
+        x = 22 + i // 2 - step
+        y = 22 + (i // 3)
+        if x < 32 and y < 32:
+            grid[y][x] = "z"
+            grid[y][min(x + 1, 31)] = "z"
+    for x in (13, 14, 18, 19):
+        for y in range(24, 31):
+            grid[y][x] = "h"
+    return ["".join(row) for row in outline(grid)]
+
+
 def gengar_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
     ellipse(grid, 16, 17 + step, 12, 11, "z")
@@ -2987,6 +3218,236 @@ def spirit_barrier_tile():
     return tile
 
 
+DEN_PALETTE = [
+    (6, 10, 16),
+    (80, 104, 96),
+    (64, 88, 80),
+    (104, 128, 112),
+    (48, 64, 60),
+    (24, 36, 40),
+    (40, 60, 60),
+    (72, 96, 100),
+    (48, 68, 72),
+    (104, 136, 136),
+    (40, 52, 52),
+    (112, 160, 96),
+    (40, 88, 168),
+    (232, 244, 255),
+    (104, 160, 224),
+    (16, 24, 28),
+]
+
+
+def den_floor_tile(variant):
+    tile = blank(1)
+    for x, y in ((2, 2), (6, 5), (1, 6)):
+        tile[y][x] = 2
+    if variant:
+        tile[3][4] = tile[4][4] = 11
+    return tile
+
+
+def den_shadow_tile():
+    tile = blank(4)
+    tile[2][2] = tile[6][5] = 10
+    return tile
+
+
+def den_wall_top_tile():
+    tile = blank(5)
+    for x, y in ((2, 1), (5, 4), (1, 6)):
+        tile[y][x] = 6
+    return tile
+
+
+def den_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [9] * 8
+    tile[7] = [8] * 8
+    for y in range(1, 7):
+        tile[y][(y * 3 + 1) % 8] = 8
+    tile[3][5] = 11
+    return tile
+
+
+def den_door_tile():
+    tile = blank(12)
+    for y in range(8):
+        for x in range(8):
+            if (x + y) % 4 == 0:
+                tile[y][x] = 13
+            elif (x * 2 + y) % 5 == 0:
+                tile[y][x] = 14
+    return tile
+
+
+def den_stairs_tiles():
+    big = [[15] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 13
+            big[top + 1][x] = 3
+            big[top + 2][x] = 7
+    return split_quad(big)
+
+
+def den_water_tile():
+    tile = blank(12)
+    tile[2][1] = tile[2][2] = tile[6][5] = tile[6][6] = 14
+    return tile
+
+
+def waterfall_tile():
+    tile = blank(14)
+    for x in range(8):
+        for y in range(8):
+            if (x * 3 + y) % 4 == 0:
+                tile[y][x] = 13
+            elif x % 3 == 0:
+                tile[y][x] = 12
+    return tile
+
+
+def den_flow_tile(dx):
+    tile = blank(12)
+    for i in range(-2, 3):
+        tile[3 + i][3 - dx + dx * (2 - abs(i))] = 13
+    return tile
+
+
+def whirlpool_tile():
+    tile = blank(12)
+    for x, y in ((1, 3), (2, 1), (4, 1), (6, 2), (6, 4), (5, 6), (3, 6), (1, 5)):
+        tile[y][x] = 14
+    tile[3][3] = tile[4][4] = 13
+    return tile
+
+
+DEN_TILES = [
+    blank(0),
+    den_floor_tile(0),
+    den_floor_tile(1),
+    den_shadow_tile(),
+    den_wall_top_tile(),
+    den_wall_face_tile(),
+    den_door_tile(),
+    *den_stairs_tiles(),
+    den_floor_tile(1),
+    den_floor_tile(0),
+    den_wall_top_tile(),
+    den_water_tile(),
+    den_flow_tile(1),
+    den_flow_tile(-1),
+    waterfall_tile(),
+    waterfall_tile(),
+    whirlpool_tile(),
+]
+
+PEAK_PALETTE = [
+    (10, 6, 16),
+    (104, 88, 120),
+    (88, 72, 104),
+    (136, 120, 152),
+    (64, 52, 80),
+    (36, 28, 52),
+    (56, 44, 76),
+    (96, 80, 120),
+    (68, 56, 88),
+    (136, 116, 164),
+    (52, 44, 64),
+    (200, 144, 224),
+    (240, 200, 248),
+    (248, 244, 255),
+    (120, 200, 216),
+    (20, 16, 30),
+]
+
+
+def peak_floor_tile(variant):
+    tile = blank(1)
+    for x, y in ((1, 1), (5, 3), (3, 6)):
+        tile[y][x] = 2
+    if variant:
+        tile[2][5] = tile[3][5] = 3
+    return tile
+
+
+def peak_shadow_tile():
+    tile = blank(4)
+    tile[3][3] = tile[6][6] = 10
+    return tile
+
+
+def peak_wall_top_tile():
+    tile = blank(5)
+    for x, y in ((1, 2), (6, 1), (4, 5)):
+        tile[y][x] = 6
+    return tile
+
+
+def peak_wall_face_tile():
+    tile = blank(7)
+    tile[0] = [9] * 8
+    tile[7] = [8] * 8
+    for y in range(1, 7):
+        tile[y][(y * 5 + 2) % 8] = 8
+    tile[2][2] = tile[5][6] = 11
+    return tile
+
+
+def peak_door_tile():
+    tile = blank(5)
+    for y in range(8):
+        tile[y][(y * 2) % 8] = 11
+        tile[y][(y * 2 + 5) % 8] = 12
+    return tile
+
+
+def peak_stairs_tiles():
+    big = [[15] * 16 for _ in range(16)]
+    for step in range(4):
+        top = 2 + step * 3
+        for x in range(1 + step, 15 - step):
+            big[top][x] = 13
+            big[top + 1][x] = 3
+            big[top + 2][x] = 7
+    return split_quad(big)
+
+
+def crystal_tile():
+    tile = peak_floor_tile(0)
+    tile[2][3] = tile[3][3] = tile[3][4] = tile[4][3] = 14
+    tile[1][3] = 13
+    return tile
+
+
+def warp_tile():
+    tile = blank(4)
+    for i in range(8):
+        tile[0][i] = tile[7][i] = tile[i][0] = tile[i][7] = 11
+    for x, y in ((2, 2), (5, 2), (2, 5), (5, 5)):
+        tile[y][x] = 12
+    tile[3][3] = tile[3][4] = tile[4][3] = tile[4][4] = 13
+    return tile
+
+
+PEAK_TILES = [
+    blank(0),
+    peak_floor_tile(0),
+    peak_floor_tile(1),
+    peak_shadow_tile(),
+    peak_wall_top_tile(),
+    peak_wall_face_tile(),
+    peak_door_tile(),
+    *peak_stairs_tiles(),
+    crystal_tile(),
+    peak_floor_tile(0),
+    peak_wall_top_tile(),
+    *[peak_floor_tile(0)] * 5,
+    warp_tile(),
+]
+
 TOWER_TILES = [
     blank(0),
     tower_floor_tile(0),
@@ -3291,6 +3752,17 @@ def main():
     save_species("cubone", CUBONE_1, CUBONE_2)
     save_species("exeggcute", EXEGGCUTE_1, EXEGGCUTE_2)
     save_species("gengar", gengar_frame(0, False), gengar_frame(1, False), 32, [gengar_frame(0, True)])
+    save_species("dratini", DRATINI_1, DRATINI_2)
+    save_species("dragonair", DRAGONAIR_1, DRAGONAIR_2)
+    save_species("seadra", SEADRA_1, SEADRA_2)
+    save_species("lapras", LAPRAS_1, LAPRAS_2)
+    save_species("dragonite", dragonite_frame(0, False), dragonite_frame(1, False), 32, [dragonite_frame(0, True)])
+    save_species("abra", ABRA_1, ABRA_2)
+    save_species("kadabra", KADABRA_1, KADABRA_2)
+    save_species("drowzee", DROWZEE_1, DROWZEE_2)
+    save_species("venomoth", VENOMOTH_1, VENOMOTH_2)
+    save_species("mewtwo", mewtwo_frame(0, False), mewtwo_frame(1, False), 32, [mewtwo_frame(0, True)])
+    save_species("mew", MEW_1, MEW_2)
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
@@ -3308,6 +3780,8 @@ def main():
     save_tiles("hideout", HIDEOUT_TILES, HIDEOUT_PALETTE)
     save_tiles("dojo", DOJO_TILES, DOJO_PALETTE)
     save_tiles("tower", TOWER_TILES, TOWER_PALETTE)
+    save_tiles("den", DEN_TILES, DEN_PALETTE)
+    save_tiles("peak", PEAK_TILES, PEAK_PALETTE)
     save_tiles("overlay", OVERLAY_TILES, OVERLAY_PALETTE)
 
 

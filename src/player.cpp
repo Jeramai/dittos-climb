@@ -24,6 +24,8 @@ namespace
     constexpr int dash_half_size = 6;
     constexpr int wave_half_size = 14;
     constexpr int explode_half_size = 30;
+    constexpr int teleport_distance = 56;
+    constexpr int teleport_invulnerable_frames = 20;
     constexpr int beam_charge_frames = 40;
     constexpr int paralysis_frames = 180;
     constexpr int poison_frames = 300;
@@ -598,6 +600,24 @@ void player::_use_move(bool move_a, player_projectiles& projectiles, message_box
     case move_pattern::cloud:
         attacks::cloud(projectiles, hit, _position + aim * 8, aim, 1);
         break;
+
+    case move_pattern::teleport:
+    {
+        bn::fixed_point goal = _position + aim * teleport_distance;
+        bool can_swim = species::can_swim(current);
+
+        if(room::feet_are_blocked(goal, can_swim))
+        {
+            bn::optional<bn::fixed_point> spot = room::nearest_standable(goal, can_swim);
+            goal = spot ? *spot : _position;
+        }
+
+        _position = goal;
+        _invulnerable_frames = teleport_invulnerable_frames;
+        _switch_flash_frames = switch_flash_frames;
+        messages.show("DITTO used TELEPORT!");
+        break;
+    }
 
     case move_pattern::explode:
         _start_area(hit, data.life, explode_half_size);

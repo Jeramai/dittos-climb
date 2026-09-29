@@ -36,6 +36,8 @@ namespace
         constexpr int wind_west = 16;
         constexpr int wind_south = 17;
         constexpr int wind_north = 18;
+        constexpr int waterfall = 17;
+        constexpr int special = 19;
     }
 
     constexpr int river_width = 3;
@@ -60,6 +62,7 @@ namespace
     {
         return value == room::cells::floor || value == room::cells::stairs || value == room::cells::grass ||
                value == room::cells::plate || value == room::cells::ice || value == room::cells::pit ||
+               value == room::cells::warp ||
                room::is_water(value) || room::is_wind(value) || room::is_spinner(value);
     }
 
@@ -134,7 +137,7 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked,
     }
     else if(value.kind == room_kind::combat && theme.water)
     {
-        _plant_water(seed);
+        _plant_water(seed, theme.whirlpools);
     }
 
     _plate_phase = 0;
@@ -157,6 +160,13 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked,
     if(theme.spinners && value.kind != room_kind::start)
     {
         _plant_spinners(seed);
+    }
+
+    _warps.clear();
+
+    if(theme.warps && value.kind == room_kind::combat)
+    {
+        _plant_warps(seed);
     }
 
     _plant_bushes(value);
@@ -441,11 +451,11 @@ void room_view::_plant_grass(int initial_seed)
     }
 }
 
-void room_view::_plant_water(int initial_seed)
+void room_view::_plant_water(int initial_seed, bool whirlpools)
 {
     unsigned seed = unsigned(initial_seed);
-    bool horizontal = next_seed(seed) % 2;
-    bool forward = next_seed(seed) % 2;
+    bool horizontal = next_seed(seed) % 2 && ! whirlpools;
+    bool forward = next_seed(seed) % 2 || whirlpools;
 
     if(horizontal && _layout.height >= 12)
     {
@@ -483,7 +493,7 @@ void room_view::_plant_water(int initial_seed)
             column = _door_column() + 2 <= last ? _door_column() + 2 : _door_column() - 2 - river_width;
         }
 
-        char flow = forward ? room::cells::flow_down : room::cells::flow_up;
+        char flow = whirlpools ? room::cells::waterfall : forward ? room::cells::flow_down : room::cells::flow_up;
         int bridge = _interior_top() + 2 + next_seed(seed) % bn::max(_layout.height - bridge_width - 4, 1);
 
         for(int x = column; x < column + river_width; ++x)
@@ -509,9 +519,14 @@ void room_view::_plant_water(int initial_seed)
         {
             if(room::get(x, y) == room::cells::floor)
             {
-                room::set(x, y, room::cells::water);
+                room::set(x, y, whirlpools ? room::cells::whirlpool : room::cells::water);
             }
         }
+    }
+
+    if(whirlpools)
+    {
+        room::set_whirlpool_center(room::cell_center(column + width / 2, row + height / 2) - bn::fixed_point(4, 4));
     }
 }
 
@@ -653,6 +668,54 @@ void room_view::_plant_spinners(int initial_seed)
     }
 }
 
+void room_view::_plant_warps(int initial_seed)
+{
+    unsigned seed = unsigned(initial_seed) * 19 + 7;
+
+    for(int attempt = 0; attempt < 40 && ! _warps.full(); ++attempt)
+    {
+        int column = _interior_left() + 2 + next_seed(seed) % bn::max(_layout.width - 4, 1);
+        int row = _interior_top() + 2 + next_seed(seed) % bn::max(_layout.height - 4, 1);
+        bn::fixed_point position = room::cell_center(column, row);
+        bool clear = room::get(column, row) == room::cells::floor && ! room::feet_are_blocked(position);
+
+        for(const bn::fixed_point& other : _warps)
+        {
+            bn::fixed_point delta = other - position;
+            clear = clear && bn::abs(delta.x()) + bn::abs(delta.y()) > 64;
+        }
+
+        if(clear)
+        {
+            room::set(column, row, room::cells::warp);
+            _warps.push_back(position);
+        }
+    }
+
+    if(_warps.size() % 2)
+    {
+        bn::fixed_point last = _warps.back();
+        room::set((last.x().round_integer() + room::pixel_width / 2) / room::tile_size,
+                  (last.y().round_integer() + room::pixel_height / 2) / room::tile_size, room::cells::floor);
+        _warps.pop_back();
+    }
+}
+
+bn::optional<bn::fixed_point> room_view::warp_partner(const bn::fixed_point& position) const
+{
+    for(int index = 0; index < _warps.size(); ++index)
+    {
+        bn::fixed_point delta = _warps[index] - position;
+
+        if(bn::abs(delta.x()) < room::tile_size && bn::abs(delta.y()) < room::tile_size)
+        {
+            return _warps[index ^ 1];
+        }
+    }
+
+    return bn::nullopt;
+}
+
 void room_view::_plant_bushes(const floor_room& value)
 {
     for(int side = 0; side < 4; ++side)
@@ -764,6 +827,15 @@ void room_view::_render()
 
             case room::cells::pit:
                 tile = tiles::pit;
+                break;
+
+            case room::cells::waterfall:
+                tile = tiles::waterfall;
+                break;
+
+            case room::cells::whirlpool:
+            case room::cells::warp:
+                tile = tiles::special;
                 break;
 
             case room::cells::wind_east:

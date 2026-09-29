@@ -135,6 +135,13 @@ namespace
           no_status, 0, false, water },
         { "DREAM EATER", "D.EATER", pokemon_type::psychic, 100, 5, shot, 60, 1, 0, 3, 50, projectile_frames::psybeam,
           no_status, 0, true },
+        { "TWISTER", "TWISTER", pokemon_type::dragon, 40, 0, shot, 22, 1, 0, 2.8, 40, water_frames::dragon,
+          no_status, 0, false, water },
+        { "OUTRAGE", "OUTRAGE", pokemon_type::dragon, 120, 10, dash, 50, 0, 0, 4, 16, 0 },
+        { "HYPER BEAM", "H.BEAM", pokemon_type::normal, 150, 5, beam, 90, 8, 0, 5, 26, projectile_frames::beam },
+        { "TELEPORT", "TELEPORT", pokemon_type::psychic, 0, 20, teleport, 40, 0, 0, 0, 0, 0 },
+        { "PSYCHIC", "PSYCHIC", pokemon_type::psychic, 90, 10, shot, 40, 3, 10, 3, 45, projectile_frames::psybeam,
+          status_effect::confusion, 10 },
     };
 }
 
