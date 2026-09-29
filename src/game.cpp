@@ -35,6 +35,7 @@
 #include "team_rocket_boss.h"
 #include "onix_boss.h"
 #include "audio.h"
+#include "profile.h"
 #include "shiny.h"
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
@@ -144,12 +145,21 @@ game::game(bn::random& random, const save_data* saved) :
         _floor_number = saved->floor_number;
         _journal_pages = saved->journal_pages;
         _journal_mask = saved->journal_mask;
+        _run_frames = saved->run_frames;
+        _defeated = saved->defeated;
+        _shinies = saved->shinies;
+
+        for(int word = 0; word < 3; ++word)
+        {
+            _run_forms[word] = saved->run_forms[word];
+        }
         _has_silph_scope = saved->has_silph_scope;
         _player.restore(saved->player);
     }
     else
     {
         _player.set_shiny_ditto(shiny::roll(_random));
+        profile::record_run_start();
     }
 
     _start_floor(saved);
@@ -183,6 +193,7 @@ void game::run()
         }
 
         _update_play();
+        ++_run_frames;
         _random.update();
         bn::core::update();
     }
@@ -199,6 +210,7 @@ void game::run()
 
 void game::_start_floor(const save_data* saved)
 {
+    profile::record_floor(_floor_number);
     _previous_room = -1;
     audio::play_floor_music(_floor_number);
     _floor.generate(_floor_number, _theme().overgrown_percent, ! _theme().no_items, _theme().large_rooms, _random);
@@ -389,6 +401,11 @@ void game::_update_play()
     if(_player.update(_player_projectiles, _messages, outline_species, outline_shiny))
     {
         _outlines.erase(_outlines.begin() + outline_index);
+    }
+
+    if(const form* current = _player.active_form())
+    {
+        _register_form(current->species, current->shiny);
     }
 
     for(enemy& value : _enemies)
@@ -609,6 +626,7 @@ void game::_handle_player_attacks()
         }
 
         show_name_message(_messages, "Wild ", value.data().name, " fainted!");
+        ++_defeated;
         audio::play_quiet(bn::sound_items::sfx_faint);
         _spawn_effect(value.position());
         _spawn_outline(value.id(), value.position(), value.shiny());
@@ -789,6 +807,7 @@ void game::_update_boss()
         _boss->announce_defeat(_messages);
         _enemy_projectiles.clear();
         _wait_for_a(defeat_min_frames);
+        ++_defeated;
         _won = true;
         return;
     }
@@ -807,6 +826,7 @@ void game::_update_boss()
         }
         _boss.reset();
         _boss_defeated = true;
+        ++_defeated;
         _hud.hide_boss();
         _enemy_projectiles.clear();
     }
@@ -1514,6 +1534,7 @@ void game::_spawn_enemies()
         if(value.shiny())
         {
             show_name_message(_messages, "A shiny ", value.data().name, " appeared!");
+            ++_shinies;
             audio::play(bn::sound_items::sfx_key_item);
             _spawn_effect(value.position());
         }
@@ -1736,6 +1757,89 @@ void game::_pause_map()
     bn::core::update();
 }
 
+void game::_register_form(species_id id, bool shiny)
+{
+    unsigned bit = 1u << (int(id) % 32);
+    unsigned& word = _run_forms[int(id) / 32];
+
+    if(! (word & bit) || shiny)
+    {
+        word |= bit;
+        profile::register_form(id, shiny);
+    }
+}
+
+void game::_show_run_stats(const char* title)
+{
+    _overlay.show_black();
+
+    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
+    big.set_center_alignment();
+    big.set_bg_priority(0);
+
+    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    small.set_center_alignment();
+    small.set_bg_priority(0);
+
+    int seconds = _run_frames / 60;
+    bn::string<24> time("TIME ");
+
+    if(seconds >= 3600)
+    {
+        time.append(bn::to_string<4>(seconds / 3600));
+        time.append(":");
+    }
+
+    int minutes = (seconds / 60) % 60;
+    time.append(minutes < 10 && seconds >= 3600 ? "0" : "");
+    time.append(bn::to_string<4>(minutes));
+    time.append(seconds % 60 < 10 ? ":0" : ":");
+    time.append(bn::to_string<4>(seconds % 60));
+
+    int forms = 0;
+
+    for(unsigned word : _run_forms)
+    {
+        for(; word; word &= word - 1)
+        {
+            ++forms;
+        }
+    }
+
+    auto line = [](const char* label, int value)
+    {
+        bn::string<24> result(label);
+        result.append(bn::to_string<8>(value));
+        return result;
+    };
+
+    bn::string<24> dex("POKEDEX ");
+    dex.append(bn::to_string<4>(profile::form_count()));
+    dex.append("/");
+    dex.append(bn::to_string<4>(int(species_id::mew)));
+
+    bn::vector<bn::sprite_ptr, 48> text;
+    big.generate(0, -60, title, text);
+    small.generate(0, -32, time, text);
+    small.generate(0, -20, line("FLOOR REACHED ", _floor_number), text);
+    small.generate(0, -8, line("POKEMON DEFEATED ", _defeated), text);
+    small.generate(0, 4, line("FORMS USED ", forms), text);
+    small.generate(0, 16, line("SHINIES SEEN ", _shinies), text);
+    small.generate(0, 28, line("JOURNAL PAGES ", _journal_pages), text);
+    small.generate(0, 44, dex, text);
+    small.generate(0, 70, "PRESS START", text);
+    bn::core::update();
+
+    while(! bn::keypad::start_pressed())
+    {
+        bn::core::update();
+    }
+
+    text.clear();
+    _overlay.hide();
+    bn::core::update();
+}
+
 void game::_wait_for_a(int min_frames)
 {
     bool released = false;
@@ -1760,6 +1864,14 @@ void game::_save_and_quit()
     data.room = _room;
     data.journal_pages = _journal_pages;
     data.journal_mask = _journal_mask;
+    data.run_frames = _run_frames;
+    data.defeated = _defeated;
+    data.shinies = _shinies;
+
+    for(int word = 0; word < 3; ++word)
+    {
+        data.run_forms[word] = _run_forms[word];
+    }
     data.flute_room = _flute_room;
     data.has_flute = _has_flute;
     data.has_silph_scope = _has_silph_scope;
@@ -1787,6 +1899,7 @@ void game::_save_and_quit()
 
 void game::_ending()
 {
+    profile::record_win();
     struct page
     {
         const char* lines[3];
@@ -1881,6 +1994,8 @@ void game::_ending()
 
     auto transform_ditto = [&](const bn::sprite_item& target, const char* message)
     {
+        _register_form(&target == &bn::sprite_items::mew ? species_id::mew : species_id::mewtwo, false);
+
         for(int frame = 0; frame < 60; ++frame)
         {
             bool show_target = (frame / 4) % 2 && frame > 20;
@@ -1930,8 +2045,9 @@ void game::_ending()
     }
 
     text.clear();
-    _overlay.hide();
-    bn::core::update();
+    mew.set_visible(false);
+    ditto.set_visible(false);
+    _show_run_stats("RUN COMPLETE!");
 }
 
 void game::_game_over()
@@ -1944,24 +2060,5 @@ void game::_game_over()
     _player.set_visible(false);
     bn::bg_palettes::set_fade(bn::color(0, 0, 0), 0.6);
 
-    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
-    big.set_center_alignment();
-    big.set_bg_priority(0);
-
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
-    small.set_center_alignment();
-    small.set_bg_priority(0);
-
-    bn::string<24> reached("FLOOR REACHED: ");
-    reached.append(bn::to_string<4>(_floor_number));
-
-    bn::vector<bn::sprite_ptr, 20> text;
-    big.generate(0, -24, "DITTO blacked out!", text);
-    small.generate(0, 4, reached, text);
-    small.generate(0, 24, "PRESS START", text);
-
-    while(! bn::keypad::start_pressed())
-    {
-        bn::core::update();
-    }
+    _show_run_stats("DITTO blacked out!");
 }

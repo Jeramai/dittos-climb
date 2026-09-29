@@ -90,6 +90,10 @@ private:
     int _flicker_frames = 0;
     int _journal_pages = 0;
     int _journal_mask = 0;
+    int _run_frames = 0;
+    int _defeated = 0;
+    int _shinies = 0;
+    unsigned _run_forms[3] = {};
     int _ember_timer = 60;
     int _flute_room = -1;
     bool _locked = false;
@@ -191,6 +195,10 @@ private:
     void _save_and_quit();
 
     void _wait_for_a(int min_frames);
+
+    void _register_form(species_id id, bool shiny);
+
+    void _show_run_stats(const char* title);
 
     void _game_over();
 };

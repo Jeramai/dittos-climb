@@ -2,9 +2,11 @@
 
 #include "bn_sram.h"
 
+static_assert(sizeof(save_data) <= 4096, "The profile starts at SRAM offset 4096");
+
 namespace
 {
-    constexpr unsigned save_magic = 0x44434c34;
+    constexpr unsigned save_magic = 0x44434c35;
 }
 
 namespace save

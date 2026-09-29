@@ -2,19 +2,23 @@
 
 #include "bn_core.h"
 #include "bn_keypad.h"
+#include "bn_bg_palettes.h"
 #include "bn_math.h"
+#include "bn_regular_bg_ptr.h"
 #include "bn_sprite_ptr.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_vector.h"
 
 #include "bn_music_items.h"
 #include "bn_sound_items.h"
+#include "bn_regular_bg_items_title_bg.h"
 #include "bn_sprite_items_ditto.h"
 
 #include "common_fixed_8x8_sprite_font.h"
 #include "common_variable_8x16_sprite_font.h"
 
 #include "audio.h"
+#include "pokedex.h"
 #include "species.h"
 
 namespace
@@ -45,14 +49,13 @@ namespace intro
 bool title(bn::random& random, bool can_continue)
 {
     audio::play_music(bn::music_items::title);
-    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
-    big.set_center_alignment();
+    bn::regular_bg_ptr background = bn::regular_bg_items::title_bg.create_bg(8, 48);
+    bn::bg_palettes::set_transparent_color(bn::color(2, 2, 5));
 
     bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
     small.set_center_alignment();
 
-    bn::vector<bn::sprite_ptr, 12> text;
-    big.generate(0, -40, "DITTO'S CLIMB", text);
+    bn::vector<bn::sprite_ptr, 20> text;
     if(can_continue)
     {
         small.generate(0, 40, "A: CONTINUE", text);
@@ -62,6 +65,8 @@ bool title(bn::random& random, bool can_continue)
     {
         small.generate(0, 40, "PRESS START", text);
     }
+
+    small.generate(0, 66, "SELECT: POKEDEX", text);
 
     bn::sprite_ptr ditto = bn::sprite_items::ditto.create_sprite(0, 0, species_frames::own_walk);
     ditto.set_scale(2);
@@ -78,13 +83,36 @@ bool title(bn::random& random, bool can_continue)
             break;
         }
 
+        if(bn::keypad::select_pressed())
+        {
+            audio::play(bn::sound_items::sfx_menu);
+            ditto.set_visible(false);
+            background.set_visible(false);
+            bn::bg_palettes::set_transparent_color(bn::nullopt);
+
+            for(bn::sprite_ptr& sprite : text)
+            {
+                sprite.set_visible(false);
+            }
+
+            pokedex::show();
+            ditto.set_visible(true);
+            background.set_visible(true);
+            bn::bg_palettes::set_transparent_color(bn::color(2, 2, 5));
+
+            for(bn::sprite_ptr& sprite : text)
+            {
+                sprite.set_visible(true);
+            }
+        }
+
         ++frame;
         ditto.set_y(bn::degrees_lut_sin((frame * 4) % 360) * 4);
         ditto.set_tiles(bn::sprite_items::ditto.tiles_item(), species_frames::own_walk + (frame / 20) % 2);
 
         for(bn::sprite_ptr& sprite : text)
         {
-            if(sprite.y() > 0)
+            if(sprite.y() > 0 && sprite.y() < 60)
             {
                 sprite.set_visible((frame / 30) % 2 == 0);
             }
@@ -95,6 +123,7 @@ bool title(bn::random& random, bool can_continue)
     }
 
     audio::play(bn::sound_items::sfx_menu);
+    bn::bg_palettes::set_transparent_color(bn::nullopt);
     bn::core::update();
     return resume;
 }

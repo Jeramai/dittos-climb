@@ -91,6 +91,13 @@ colours of its target. The Mew in the ending rolls 1 in 8192 too.
 Ditto itself is the player, so the roll happens once per new run: at 1 in 8192 the run starts as a blue shiny
 Ditto (the Gen 2-4 colours), which the save and the ending keep.
 
+### Pokédex and run stats
+
+The Pokédex (Select on the title) records every form Ditto has used, and whether it was shiny, across runs,
+with the number of runs, wins and the best floor. It lives at its own place in SRAM, so it survives new runs
+and deleted run saves. A run ends (a black-out or the ending) with its stats: time, floor, Pokémon defeated,
+forms used, shinies seen, journal pages and the Pokédex count.
+
 ### Save and quit
 
 No save slots: a run is meant to be short. Select on the pause screen, then A, stores the run in SRAM and returns
@@ -253,4 +260,5 @@ Bonus floors after the end: Steel, Dark and Fairy.
 17. Music and sound effects: 17 original tracks and 20 effects.
 18. Save and quit.
 19. Emerald-style tilesets, animated tiles and shiny Pokémon.
-20. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, real art.
+20. Journal reader, Pokédex across runs, run stats and a title screen.
+21. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, real art.

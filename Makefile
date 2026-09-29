@@ -76,6 +76,7 @@ include $(LIBBUTANOABS)/butano.mak
 
 assets:
 	$(PYTHON) tools/gen_assets.py
+	$(PYTHON) tools/gen_title.py
 
 artbook:
 	$(PYTHON) tools/gen_artbook.py

@@ -54,6 +54,7 @@ make TARGET=test-boss BUILD=build-test-boss USERFLAGS="-DDITTO_TEST_START_KIND=2
 | L | Dodge |
 | R (hold) | Lock aim while moving |
 | Start | Floor map / restart after a black-out |
+| Select (on the title screen) | Pokédex of the forms Ditto has used, across runs; D-pad moves, L/R turn pages, A shows a shiny |
 | A (on the floor map) | Read the collected journal pages; Left/Right turn, B goes back |
 | Select (on the floor map) | Save and quit; A confirms, B goes back |
 

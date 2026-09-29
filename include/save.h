@@ -13,6 +13,10 @@ struct save_data
     int room;
     int journal_pages;
     int journal_mask;
+    int run_frames;
+    int defeated;
+    int shinies;
+    unsigned run_forms[3];
     int flute_room;
     bool has_flute;
     bool has_silph_scope;
