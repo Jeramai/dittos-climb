@@ -554,37 +554,23 @@ def onix_frame(step, charging):
 
 MAGIKARP_1 = [
     "",
-    "",
-    "      kkk",
-    "     kyyyk",
-    "   kkkkkkkk",
-    "  koooooooook",
-    " kowkooooooookk",
-    " kokkoooooooookw",
-    "kyooooccoooookww",
-    " kooooccooooookw",
-    "  kyooooooooookk",
-    "   kkkooooookk",
-    "     kwkkkwk",
-    "      k   k",
+    ".....k.k.k......",
+    "....kckckck...kk",
+    "...kkcccccck.kck",
+    "..knnnnnnnnnkcck",
+    ".knwwnnonnonnkck",
+    ".knwkwnnonnonnkk",
+    "kcnwwnonnonnonk",
+    "kcccnnnnonnonnk",
+    ".kcknnnnnnnnnnkk",
+    "ykcknnnnnnnnnkck",
+    "y..kccnnnnnnkcck",
+    "....kcckkcck.kck",
+    ".....kk..kk...kk",
 ]
+MAGIKARP_1 = [row.replace(".", " ") for row in MAGIKARP_1]
 
-MAGIKARP_2 = [
-    "",
-    "",
-    "",
-    "      kkk",
-    "     kyyyk",
-    "   kkkkkkkk  kk",
-    "  koooooooookwk",
-    " kowkoooooooookw",
-    "kyokkoooccooookw",
-    " kooooooccoooook",
-    "  kyooooooooook",
-    "   kkkooooookk",
-    "     kwkkkwk",
-    "      k   k",
-]
+MAGIKARP_2 = [""] + MAGIKARP_1[:-1]
 
 POLIWAG_1 = [
     "",
@@ -1128,27 +1114,6 @@ EXEGGCUTE_1 = [
 ]
 
 EXEGGCUTE_2 = [""] + EXEGGCUTE_1[:-1]
-
-MEW_1 = [
-    "",
-    "  kk      kk kkk",
-    "  k5k    k5k k5k",
-    "  k55kkkk55k k5k",
-    " k5555555555kk5k",
-    " k55kk55kk55kk5k",
-    " k5kBwkkBwk5kk5k",
-    " k5kBBkkBBk5kk5k",
-    " k55kk55kk55kk5k",
-    "  k555q5555k k5k",
-    "   kk5555kk  k5k",
-    "    k5555k  k5k",
-    "   k5k55k5kk5k",
-    "    k555555k5k",
-    "    k6kkkk6kk",
-    "    kk    kk",
-]
-
-MEW_2 = [""] + MEW_1[:-1]
 
 JYNX_TOP = [
     "",
@@ -2099,6 +2064,31 @@ def polygon(grid, points, color):
 
 def mirrored(points):
     return [(32 - x, y) for x, y in points]
+
+
+def mew_frame(step):
+    grid = [["."] * 16 for _ in range(16)]
+    dy = step
+    for t in range(31):
+        u = t / 30
+        x = (1 - u) ** 2 * 9 + 2 * (1 - u) * u * 15.5 + u * u * 13
+        y = (1 - u) ** 2 * (12.5 + dy) + 2 * (1 - u) * u * 12 + u * u * (4.5 - step)
+        grid[round(y)][round(x)] = "5"
+    ellipse(grid, 13, 3.4 - step, 1.3, 1.8, "5")
+    ellipse(grid, 7, 11.2 + dy, 2.2, 2.1, "5")
+    ellipse(grid, 8, 13.6 + dy, 2.2, 0.9, "6")
+    ellipse(grid, 4, 10.6 + dy, 1, 0.7, "5")
+    ellipse(grid, 5.5, 6.6 + dy, 4, 3.6, "5")
+    polygon(grid, [(2, 4.6 + dy), (2.4, 2.3 + dy), (4.4, 3.4 + dy)], "5")
+    polygon(grid, [(7, 3.3 + dy), (8.8, 2.3 + dy), (9.2, 4.6 + dy)], "5")
+    for x, y in ((3, 6), (4, 6), (3, 7), (4, 7), (3, 8), (4, 8), (7, 6), (8, 6), (7, 7), (8, 7), (7, 8), (8, 8)):
+        grid[y + dy][x] = "B"
+    grid[6 + dy][3] = grid[6 + dy][7] = "w"
+    grid[8 + dy][3] = grid[8 + dy][7] = "U"
+    grid[10 + dy][5] = "6"
+    for x, y in ((9, 9), (8, 12), (9, 12)):
+        grid[y + dy][x] = "6"
+    return ["".join(row) for row in outline(grid)]
 
 
 def snorlax_frame(step, asleep):
@@ -3870,7 +3860,7 @@ def main():
     save_species("drowzee", DROWZEE_1, DROWZEE_2)
     save_species("venomoth", VENOMOTH_1, VENOMOTH_2)
     save_species("mewtwo", mewtwo_frame(0, False), mewtwo_frame(1, False), 32, [mewtwo_frame(0, True)])
-    save_species("mew", MEW_1, MEW_2)
+    save_species("mew", mew_frame(0), mew_frame(1))
     save_sprite_sheet("projectiles", [SPIT, ENEMY_SHOT, IMPACT, COIN, TRI, PSYBEAM, LEAF, NEEDLE, STRING, BEAM,
                                       ROCK, SUPERSONIC], 8)
     save_sprite_sheet("slash", [SLASH], 16)
