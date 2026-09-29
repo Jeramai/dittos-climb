@@ -28,6 +28,7 @@ Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, beca
 | `-DDITTO_TEST_REWARD=<n>` | The start room holds a reward (1 journal page, 2 rare Pokémon, 3 item) |
 | `-DDITTO_TEST_ITEM=<n>` | The item reward (0 Charcoal … 8 Leftovers, 9 Quick Claw, 10 Ether, 11 Rare Candy) |
 | `-DDITTO_TEST_FALL` | Start on a pit (floors with pits only) |
+| `-DDITTO_TEST_LAYOUT=<n>` | The start combat room uses layout n (0–4; 3 has a centre block) |
 
 ```
 make TARGET=test-boss BUILD=build-test-boss USERFLAGS="-DDITTO_TEST_START_KIND=2 -DDITTO_TEST_FORM=1"

@@ -345,6 +345,17 @@ bool room_view::bushes_remaining(direction side) const
     return false;
 }
 
+bn::fixed_point room_view::open_spot_near(const bn::fixed_point& position) const
+{
+    if(! room::feet_are_blocked(position))
+    {
+        return position;
+    }
+
+    bn::optional<bn::fixed_point> spot = room::nearest_standable(position, false);
+    return spot ? *spot : position;
+}
+
 bn::fixed_point room_view::interior_center() const
 {
     return room::cell_center(_door_column(), _door_row()) - bn::fixed_point(room::tile_size / 2, 0);

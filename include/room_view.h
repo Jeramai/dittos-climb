@@ -45,6 +45,8 @@ public:
 
     [[nodiscard]] bn::fixed_point interior_center() const;
 
+    [[nodiscard]] bn::fixed_point open_spot_near(const bn::fixed_point& position) const;
+
 private:
     bn::regular_bg_ptr _bg;
     bn::regular_bg_map_ptr _bg_map;

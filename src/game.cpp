@@ -196,6 +196,10 @@ void game::_start_floor()
                     _floor[index].item = item_id(DITTO_TEST_ITEM);
                 #endif
 
+                #ifdef DITTO_TEST_LAYOUT
+                    _floor[index].layout = DITTO_TEST_LAYOUT;
+                #endif
+
                 #ifdef DITTO_TEST_OVERGROWN
                     for(int side = 0; side < 4; ++side)
                     {
@@ -251,7 +255,8 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
     _locked = (value.kind == room_kind::combat && ! value.cleared) ||
               (boss_room && _theme().boss != boss_kind::snorlax);
     _view.build(value, doors, _locked, _theme(), _floor_number * 977 + index * 131 + 7);
-    _player.set_position(entered_from ? _view.entry_position(*entered_from) : _view.interior_center());
+    _player.set_position(entered_from ? _view.entry_position(*entered_from) :
+                                        _view.open_spot_near(_view.interior_center()));
     value.visited = true;
 
     if(value.kind == room_kind::combat && _locked)
@@ -938,8 +943,9 @@ void game::_update_flute()
         return;
     }
 
-    bn::sprite_ptr sprite = scope ? bn::sprite_items::pickups.create_sprite(_view.interior_center(), 2) :
-                                    bn::sprite_items::poke_flute.create_sprite(_view.interior_center());
+    bn::fixed_point position = _view.open_spot_near(_view.interior_center());
+    bn::sprite_ptr sprite = scope ? bn::sprite_items::pickups.create_sprite(position, 2) :
+                                    bn::sprite_items::poke_flute.create_sprite(position);
     sprite.set_camera(_camera);
     sprite.set_z_order(600);
     _flute_pickup = bn::move(sprite);
@@ -957,7 +963,8 @@ void game::_update_reward()
     }
 
     bool page = value.reward == room_reward::journal;
-    bn::fixed_point position = _view.interior_center() + bn::fixed_point(0, _flute_room == _room ? 20 : 0);
+    bn::fixed_point position = _view.open_spot_near(_view.interior_center() +
+                                                    bn::fixed_point(0, _flute_room == _room ? 20 : 0));
     bn::sprite_ptr sprite = bn::sprite_items::pickups.create_sprite(position, page ? 1 : 0);
     sprite.set_camera(_camera);
     sprite.set_z_order(600);
