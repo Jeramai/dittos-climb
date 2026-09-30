@@ -195,44 +195,47 @@ void room_view::build(const floor_room& value, const bool doors[4], bool locked,
         _fill(_interior_left() + block.x, _interior_top() + block.y, block.width, block.height, room::cells::wall);
     }
 
+    bool mart = value.reward == room_reward::mart;
+    bool plain = value.kind == room_kind::start || mart;
+
     if(value.kind == room_kind::stairs)
     {
         _fill(_door_column() - 1, _door_row() - 1, 2, 2, room::cells::stairs);
     }
-    else if(value.kind == room_kind::combat && theme.tall_grass)
+    else if(value.kind == room_kind::combat && ! mart && theme.tall_grass)
     {
         _plant_grass(seed);
     }
-    else if(value.kind == room_kind::combat && theme.water)
+    else if(value.kind == room_kind::combat && ! mart && theme.water)
     {
         _plant_water(seed, theme.whirlpools);
     }
 
     _plate_phase = 0;
 
-    if(theme.hazard != hazard_kind::none && value.kind != room_kind::start)
+    if(theme.hazard != hazard_kind::none && ! plain)
     {
         _plant_plates(seed);
     }
 
-    if(theme.ice_floor && value.kind != room_kind::start)
+    if(theme.ice_floor && ! plain)
     {
         _plant_ice(seed);
     }
 
-    if(theme.chasm && value.kind != room_kind::start)
+    if(theme.chasm && ! plain)
     {
         _plant_chasm(seed);
     }
 
-    if(theme.spinners && value.kind != room_kind::start)
+    if(theme.spinners && ! plain)
     {
         _plant_spinners(seed);
     }
 
     _warps.clear();
 
-    if(theme.warps && value.kind == room_kind::combat)
+    if(theme.warps && value.kind == room_kind::combat && ! mart)
     {
         _plant_warps(seed);
     }

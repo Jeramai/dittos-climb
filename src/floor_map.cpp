@@ -148,6 +148,7 @@ void floor_map::generate(int floor_number, int overgrown_percent, bool items_all
         floor_room& mart = _rooms[side_rooms[pick]];
         mart.reward = room_reward::mart;
         mart.cleared = true;
+        mart.layout = 0;
 
         for(int slot = 0; slot < 3; ++slot)
         {

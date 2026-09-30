@@ -448,6 +448,15 @@ void game::_update_play()
         {
             show_name_message(_messages, "A wild ", value.data().name, " jumped out!");
         }
+
+        if(value.take_shiny_sighting())
+        {
+            show_name_message(_messages, "A shiny ", value.data().name, " appeared!");
+            ++_shinies;
+            profile::register_seen(value.id(), true);
+            audio::play(bn::sound_items::sfx_key_item);
+            _spawn_effect(value.position());
+        }
     }
 
     _handle_cut();
@@ -1353,12 +1362,7 @@ void game::_show_journal_page(int page)
     bn::vector<bn::sprite_ptr, 40> text;
     _generate_journal_page(page, text);
     small.generate(0, 70, "A: CLOSE", text);
-    bn::core::update();
-
-    while(! bn::keypad::a_pressed())
-    {
-        bn::core::update();
-    }
+    _wait_for_a(page_min_frames);
 
     text.clear();
     _overlay.hide();
@@ -1579,17 +1583,6 @@ void game::_spawn_enemies()
         _messages.show("Wild POKEMON appeared!");
     }
 
-    for(const enemy& value : _enemies)
-    {
-        if(value.shiny())
-        {
-            show_name_message(_messages, "A shiny ", value.data().name, " appeared!");
-            ++_shinies;
-            profile::register_seen(value.id(), true);
-            audio::play(bn::sound_items::sfx_key_item);
-            _spawn_effect(value.position());
-        }
-    }
 }
 
 void game::_spawn_effect(const bn::fixed_point& position)

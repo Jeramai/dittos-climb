@@ -339,7 +339,16 @@ void player::apply_status(status_effect effect, message_box& messages)
 
 player_state player::state() const
 {
-    return player_state{ _hp, _bonus_hp, _form.has_value(), _form.value_or(form{ species_id::ditto, 0, 0 }),
+    bn::optional<form> saved_form = _form;
+
+    if(_transform_frames)
+    {
+        const species_data& target = species::get(_transform_target);
+        saved_form = form{ _transform_target, target.hp * form_hp_scale, moves::get(target.move_b).pp,
+                           _transform_shiny };
+    }
+
+    return player_state{ _hp, _bonus_hp, saved_form.has_value(), saved_form.value_or(form{ species_id::ditto, 0, 0 }),
                          _held.has_value(), _held.value_or(item_id::ether), _shiny_ditto,
                          _bag.has_value(), _bag.value_or(item_id::potion) };
 }

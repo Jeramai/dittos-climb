@@ -83,6 +83,13 @@ public:
         return combat::make_attack(move_id::selfdestruct, data().type_1, data().type_2);
     }
 
+    [[nodiscard]] bool take_shiny_sighting()
+    {
+        bool result = _shiny && ! _shiny_seen && _sprite.visible();
+        _shiny_seen = _shiny_seen || result;
+        return result;
+    }
+
     [[nodiscard]] bool take_reveal()
     {
         bool result = _just_revealed;
@@ -102,6 +109,7 @@ private:
 
     bn::sprite_ptr _sprite;
     bool _shiny = false;
+    bool _shiny_seen = false;
     bn::fixed_point _position;
     bn::fixed_point _attack_direction;
     species_id _id;
