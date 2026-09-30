@@ -12,20 +12,35 @@
 
 #include "common_fixed_8x8_sprite_font.h"
 #include "common_variable_8x16_sprite_font.h"
+#include "common_variable_8x8_sprite_font.h"
 
 #include "audio.h"
+#include "overlay.h"
 #include "profile.h"
+#include "ui.h"
 
 namespace options
 {
 
 void show()
 {
+    overlay screen;
+    screen.show_backdrop();
+    screen.window(0, 0, 30, 3, window_style::blue);
+    screen.window(0, 3, 30, 10, window_style::white);
+    screen.window(0, 13, 30, 7, window_style::white);
+
     bn::sprite_text_generator big(common::variable_8x16_sprite_font);
     big.set_center_alignment();
+    big.set_bg_priority(0);
 
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    bn::sprite_text_generator small(common::fixed_8x8_sprite_font, ui::dark_text_palette());
     small.set_center_alignment();
+    small.set_bg_priority(0);
+
+    bn::sprite_text_generator hint(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    hint.set_center_alignment();
+    hint.set_bg_priority(0);
 
     int levels[2] = { profile::get().music_level, profile::get().sound_level };
     const char* labels[2] = { "MUSIC", "SOUND" };
@@ -35,7 +50,7 @@ void show()
     auto draw = [&]()
     {
         text.clear();
-        big.generate(0, -60, "OPTIONS", text);
+        big.generate(0, ui::row_y(1) + 2, "OPTIONS", text);
 
         for(int row = 0; row < 2; ++row)
         {
@@ -52,11 +67,12 @@ void show()
 
             line.append(" ");
             line.append(levels[row] < profile::max_level ? ">" : " ");
-            small.generate(0, -24 + row * 18, line, text);
+            small.generate(0, ui::row_y(6) + row * 24, line, text);
         }
 
-        small.generate(0, 40, "LEFT/RIGHT: CHANGE", text);
-        small.generate(0, 70, "B: BACK", text);
+        hint.generate(0, ui::row_y(15), "UP/DOWN: CHOOSE", text);
+        hint.generate(0, ui::row_y(16) + 2, "LEFT/RIGHT: CHANGE", text);
+        hint.generate(0, ui::row_y(18), "B: BACK", text);
     };
 
     draw();

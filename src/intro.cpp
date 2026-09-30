@@ -12,17 +12,21 @@
 
 #include "bn_music_items.h"
 #include "bn_sound_items.h"
+#include "bn_regular_bg_items_story_bg.h"
 #include "bn_regular_bg_items_title_bg.h"
 #include "bn_sprite_items_ditto.h"
 
 #include "common_fixed_8x8_sprite_font.h"
 #include "common_variable_8x16_sprite_font.h"
+#include "common_variable_8x8_sprite_font.h"
 
 #include "audio.h"
 #include "options.h"
+#include "overlay.h"
 #include "pokedex.h"
 #include "profile.h"
 #include "species.h"
+#include "ui.h"
 
 namespace
 {
@@ -42,8 +46,8 @@ namespace
         { { "So DITTO began to climb.", "", "" } },
     };
 
-    constexpr int line_height = 18;
-    constexpr int text_top = -30;
+    constexpr int story_line_height = 16;
+    constexpr int story_text_top = 22;
 }
 
 namespace intro
@@ -145,11 +149,19 @@ bool title(bn::random& random, bool can_continue)
 
 void story()
 {
-    bn::sprite_text_generator generator(common::variable_8x16_sprite_font);
-    generator.set_center_alignment();
+    bn::regular_bg_ptr background = bn::regular_bg_items::story_bg.create_bg(8, 24);
+    bn::bg_palettes::set_transparent_color(bn::color(2, 2, 5));
+    overlay window;
+    window.clear();
+    window.window(0, 12, 30, 8, window_style::white);
 
-    bn::sprite_text_generator hint_generator(common::fixed_8x8_sprite_font);
+    bn::sprite_text_generator generator(common::variable_8x16_sprite_font, ui::dark_text_palette());
+    generator.set_center_alignment();
+    generator.set_bg_priority(0);
+
+    bn::sprite_text_generator hint_generator(common::variable_8x8_sprite_font, ui::dark_text_palette());
     hint_generator.set_right_alignment();
+    hint_generator.set_bg_priority(0);
 
     for(const page& current : pages)
     {
@@ -157,10 +169,10 @@ void story()
 
         for(int line = 0; line < 3; ++line)
         {
-            generator.generate(0, text_top + line * line_height, current.lines[line], text);
+            generator.generate(0, story_text_top + line * story_line_height, current.lines[line], text);
         }
 
-        hint_generator.generate(116, 72, "A: NEXT  START: SKIP", text);
+        hint_generator.generate(ui::tile_x(29) - 2, ui::row_y(18) + 2, "A: NEXT   START: SKIP", text);
 
         while(true)
         {
@@ -168,6 +180,7 @@ void story()
 
             if(bn::keypad::start_pressed())
             {
+                bn::bg_palettes::set_transparent_color(bn::nullopt);
                 bn::core::update();
                 return;
             }
@@ -180,6 +193,7 @@ void story()
         }
     }
 
+    bn::bg_palettes::set_transparent_color(bn::nullopt);
     bn::core::update();
 }
 

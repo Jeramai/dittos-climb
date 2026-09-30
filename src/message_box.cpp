@@ -4,16 +4,18 @@
 
 #include "common_variable_8x16_sprite_font.h"
 
+#include "ui.h"
+
 namespace
 {
     constexpr int display_frames = 100;
     constexpr int hurried_display_frames = 55;
-    constexpr int text_y = 68;
+    constexpr int text_y = 65;
 }
 
 message_box::message_box() :
     _bg(bn::regular_bg_items::text_box.create_bg(0, 0)),
-    _generator(common::variable_8x16_sprite_font)
+    _generator(common::variable_8x16_sprite_font, ui::dark_text_palette())
 {
     _bg.set_priority(1);
     _bg.set_visible(false);

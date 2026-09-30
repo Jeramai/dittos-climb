@@ -12,13 +12,15 @@
 
 #include "bn_sound_items.h"
 
-#include "common_fixed_8x8_sprite_font.h"
 #include "common_variable_8x16_sprite_font.h"
+#include "common_variable_8x8_sprite_font.h"
 
 #include "audio.h"
+#include "overlay.h"
 #include "profile.h"
 #include "shiny.h"
 #include "species.h"
+#include "ui.h"
 
 namespace
 {
@@ -44,7 +46,7 @@ namespace
 
     bn::fixed_point cell_position(int slot)
     {
-        return bn::fixed_point(-84 + (slot % columns) * 56, -30 + (slot / columns) * 34);
+        return bn::fixed_point(-84 + (slot % columns) * 56, -28 + (slot / columns) * 32);
     }
 }
 
@@ -53,11 +55,23 @@ namespace pokedex
 
 void show()
 {
+    overlay screen;
+    screen.show_backdrop();
+    screen.window(0, 0, 30, 5, window_style::blue);
+    screen.window(0, 5, 30, 11, window_style::white);
+    screen.window(0, 16, 30, 4, window_style::white);
+
     bn::sprite_text_generator big(common::variable_8x16_sprite_font);
     big.set_center_alignment();
+    big.set_bg_priority(0);
 
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    bn::sprite_text_generator record_text(common::variable_8x8_sprite_font);
+    record_text.set_center_alignment();
+    record_text.set_bg_priority(0);
+
+    bn::sprite_text_generator small(common::variable_8x8_sprite_font, ui::dark_text_palette());
     small.set_center_alignment();
+    small.set_bg_priority(0);
 
     const profile::data& stats = profile::get();
     bn::string<32> header("SEEN ");
@@ -76,8 +90,8 @@ void show()
     record.append("F");
 
     bn::vector<bn::sprite_ptr, 16> title;
-    big.generate(0, -70, header, title);
-    small.generate(0, -54, record, title);
+    big.generate(0, ui::row_y(1) + 2, header, title);
+    record_text.generate(0, ui::row_y(3), record, title);
 
     bn::vector<bn::sprite_ptr, per_page> icons;
     bn::vector<bn::sprite_ptr, 24> footer;
@@ -101,6 +115,7 @@ void show()
             species_id id = entry_species(entry);
             const bn::sprite_item& item = *species::get(id).sprite;
             bn::sprite_ptr icon = item.create_sprite(cell_position(index), species_frames::walk);
+            icon.set_bg_priority(0);
 
             if(! profile::has_seen(id))
             {
@@ -137,8 +152,9 @@ void show()
             label.append(" *");
         }
 
-        small.generate(0, 62, label, footer);
-        small.generate(0, 74, profile::has_shiny_form(id) ? "A: SHINY  L/R: PAGE  B: BACK" : "L/R: PAGE  B: BACK", footer);
+        small.generate(0, ui::row_y(17), label, footer);
+        small.generate(0, ui::row_y(18) + 4, profile::has_shiny_form(id) ? "A: SHINY    L/R: PAGE    B: BACK" :
+                       "L/R: PAGE    B: BACK", footer);
     };
 
     auto set_shiny_view = [&](bool value)

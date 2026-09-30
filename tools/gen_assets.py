@@ -2320,14 +2320,19 @@ def save_hp_bar():
 
 
 def save_text_box():
-    palette = [TRANSPARENT, (240, 240, 232), (40, 48, 88), (120, 144, 200)]
+    palette = [TRANSPARENT, (40, 48, 72), (112, 136, 184), (200, 208, 224), (248, 248, 240)]
     pixels = [[0] * 256 for _ in range(256)]
-    top, bottom, left, right = 182, 207, 9, 246
+    top, bottom, left, right = 178, 207, 9, 246
     for y in range(top, bottom + 1):
         for x in range(left, right + 1):
-            edge = y in (top, bottom) or x in (left, right)
-            inner_edge = y in (top + 1, bottom - 1) or x in (left + 1, right - 1)
-            pixels[y][x] = 1 if edge else 3 if inner_edge else 2
+            depth = min(x - left, y - top, right - x, bottom - y)
+            pixels[y][x] = 1 if depth == 0 else 2 if depth == 1 else 3 if depth == 2 else 4
+    for cx, cy in ((left, top), (right, top), (left, bottom), (right, bottom)):
+        dx = 1 if cx == left else -1
+        dy = 1 if cy == top else -1
+        for x, y in ((cx, cy), (cx + dx, cy), (cx, cy + dy)):
+            pixels[y][x] = 0
+        pixels[cy + dy][cx + dx] = 1
     save_indexed("text_box", pixels, palette, {"type": "regular_bg"})
 
 
@@ -2350,7 +2355,48 @@ OVERLAY_PALETTE = [
     (104, 48, 128),
     (232, 192, 48),
     (208, 64, 72),
+    (40, 48, 72),
+    (112, 136, 184),
+    (200, 208, 224),
+    (232, 216, 168),
+    (152, 104, 64),
+    (28, 34, 54),
 ]
+
+WINDOW_STYLES = {
+    "white": (10, 11, 12, 5),
+    "paper": (2, 14, 5, 13),
+    "blue": (10, 12, 5, 11),
+    "dark": (10, 11, 3, 1),
+}
+
+
+def window_tiles(outline, frame, highlight, fill):
+    size = 24
+    big = [[fill] * size for _ in range(size)]
+    for y in range(size):
+        for x in range(size):
+            depth = min(x, y, size - 1 - x, size - 1 - y)
+            big[y][x] = outline if depth == 0 else frame if depth == 1 else highlight if depth == 2 else fill
+    for cx, cy in ((0, 0), (size - 1, 0), (0, size - 1), (size - 1, size - 1)):
+        dx = 1 if cx == 0 else -1
+        dy = 1 if cy == 0 else -1
+        big[cy][cx] = 0
+        big[cy][cx + dx] = 0
+        big[cy + dy][cx] = 0
+        big[cy + dy][cx + dx] = outline
+        big[cy][cx + 2 * dx] = outline
+        big[cy + 2 * dy][cx] = outline
+    return [[row[x0:x0 + 8] for row in big[y0:y0 + 8]] for y0 in (0, 8, 16) for x0 in (0, 8, 16)]
+
+
+def backdrop_tiles():
+    big = [[1] * 16 for _ in range(16)]
+    for y in range(16):
+        for x in range(16):
+            band = (x + y) % 16
+            big[y][x] = 15 if band < 5 else 10 if band < 7 else 1
+    return split_quad(big)
 
 
 def room_marker(fill, border, icon=None, icon_color=None):
@@ -2386,6 +2432,8 @@ OVERLAY_TILES = [
     *room_marker(4, 5, "stairs", 8),
     connector(True),
     connector(False),
+    *backdrop_tiles(),
+    *[tile for style in ("white", "paper", "blue", "dark") for tile in window_tiles(*WINDOW_STYLES[style])],
 ]
 
 

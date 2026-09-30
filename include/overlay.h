@@ -6,15 +6,32 @@
 
 class floor_map;
 
+enum class window_style
+{
+    white,
+    paper,
+    blue,
+    dark,
+};
+
 class overlay
 {
 
 public:
+    static constexpr int screen_columns = 30;
+    static constexpr int screen_rows = 20;
+
     overlay();
 
     void show_black();
 
-    void show_map(const floor_map& floor, int current_room);
+    void clear();
+
+    void show_backdrop();
+
+    void window(int x, int y, int width, int height, window_style style);
+
+    void map(const floor_map& floor, int current_room, int x, int y, int width, int height);
 
     void hide();
 
@@ -23,6 +40,8 @@ private:
     bn::regular_bg_map_ptr _bg_map;
 
     void _set(int column, int row, int tile);
+
+    void _fill(int tile);
 };
 
 #endif

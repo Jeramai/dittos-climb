@@ -186,6 +186,10 @@ Some types open paths, like HMs:
   seamless 16×16 blocks (floor, floor detail, grass, water, gates, flows, the three special phases) and a wall
   with a top, an upper face and a lower face. The renderer picks each 8×8 tile from the world position, so a
   block repeats every 16 px. The sets live in `tools/tilesets/<floor>.py`; the art book shows a sample room of each.
+- Menus follow Emerald's windows: a striped backdrop and framed windows (white menus, a paper journal page, blue
+  title bars and a dark map window) from one 16-colour overlay tileset, with dark text on light windows. The
+  story and the ending play over the night peak scene from the title, and the in-game message box is a white
+  dialog window.
 - Water, currents, waterfalls, winds, spinners, lava and whirlpools animate, as in Emerald: those floors have four
   versions of their tile set, and the room swaps the tile graphics every 12 frames.
 - The music and sound effects come from `tools/gen_audio.py` and play through Maxmod. Every floor has its own

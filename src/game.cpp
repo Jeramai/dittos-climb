@@ -16,13 +16,15 @@
 #include "bn_sprite_items_light.h"
 #include "bn_sprite_items_mew.h"
 #include "bn_sprite_items_mewtwo.h"
+#include "bn_regular_bg_items_story_bg.h"
+#include "bn_sprite_items_item_icons.h"
 #include "bn_sprite_items_mart.h"
 #include "bn_sprite_items_pickups.h"
 #include "bn_sprite_items_poke_flute.h"
 #include "bn_sprite_items_projectiles.h"
 
-#include "common_fixed_8x8_sprite_font.h"
 #include "common_variable_8x16_sprite_font.h"
+#include "common_variable_8x8_sprite_font.h"
 
 #include "gyarados_boss.h"
 #include "journal.h"
@@ -38,6 +40,7 @@
 #include "audio.h"
 #include "profile.h"
 #include "shiny.h"
+#include "ui.h"
 #include "projectile_frames.h"
 #include "snorlax_boss.h"
 #include "venusaur_boss.h"
@@ -1349,36 +1352,39 @@ void game::_collect_reward()
 
 void game::_generate_journal_page(int page, bn::ivector<bn::sprite_ptr>& text)
 {
-    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
+    _overlay.show_backdrop();
+    _overlay.window(1, 1, 28, 15, window_style::paper);
+    _overlay.window(0, 16, 30, 4, window_style::white);
+
+    bn::sprite_text_generator big(common::variable_8x16_sprite_font, ui::dark_text_palette());
     big.set_center_alignment();
     big.set_bg_priority(0);
 
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    bn::sprite_text_generator small(common::variable_8x8_sprite_font, ui::dark_text_palette());
     small.set_center_alignment();
     small.set_bg_priority(0);
 
-    bn::string<32> title("LAB JOURNAL  PAGE ");
+    bn::string<32> title("LAB JOURNAL - PAGE ");
     title.append(bn::to_string<4>(page + 1));
-    small.generate(0, -56, title, text);
+    small.generate(0, ui::row_y(3), title, text);
 
     for(int line = 0; line < journal::lines_per_page; ++line)
     {
-        big.generate(0, -20 + line * 18, journal::line(page, line), text);
+        big.generate(0, ui::row_y(7) + line * 18, journal::line(page, line), text);
     }
 }
 
 void game::_show_journal_page(int page)
 {
     _set_world_visible(false);
-    _overlay.show_black();
 
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    bn::sprite_text_generator small(common::variable_8x8_sprite_font, ui::dark_text_palette());
     small.set_center_alignment();
     small.set_bg_priority(0);
 
     bn::vector<bn::sprite_ptr, 40> text;
     _generate_journal_page(page, text);
-    small.generate(0, 70, "A: CLOSE", text);
+    small.generate(0, ui::row_y(18) - 4, "A: CLOSE", text);
     _wait_for_a(page_min_frames);
 
     text.clear();
@@ -1399,9 +1405,8 @@ void game::_read_journal()
         }
     }
 
-    _overlay.show_black();
 
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    bn::sprite_text_generator small(common::variable_8x8_sprite_font, ui::dark_text_palette());
     small.set_center_alignment();
     small.set_bg_priority(0);
 
@@ -1417,8 +1422,8 @@ void game::_read_journal()
         position.append("/");
         position.append(bn::to_string<4>(collected.size()));
         position.append(index < collected.size() - 1 ? "  >" : "   ");
-        small.generate(0, 58, position, text);
-        small.generate(0, 70, "B: BACK", text);
+        small.generate(0, ui::row_y(17), position, text);
+        small.generate(0, ui::row_y(18) + 2, "B: BACK", text);
     };
 
     draw();
@@ -1728,6 +1733,8 @@ void game::_set_world_visible(bool visible)
         bn::bg_palettes::set_fade(bn::color(0, 0, 0), 0);
     }
 
+    _view.set_visible(visible);
+
     _hud.set_visible(visible);
     _messages.set_visible(visible);
 }
@@ -1736,51 +1743,74 @@ void game::_pause_map()
 {
     audio::play(bn::sound_items::sfx_menu);
     _set_world_visible(false);
-    _overlay.show_map(_floor, _room);
 
     bn::sprite_text_generator big(common::variable_8x16_sprite_font);
     big.set_center_alignment();
     big.set_bg_priority(0);
 
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
-    small.set_center_alignment();
-    small.set_bg_priority(0);
+    bn::sprite_text_generator label(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    label.set_left_alignment();
+    label.set_bg_priority(0);
 
-    bn::string<32> held("HELD: ");
-    held.append(_player.held_item() ? items::get(*_player.held_item()).name : "NOTHING");
+    bn::sprite_text_generator prompt_text(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    prompt_text.set_center_alignment();
+    prompt_text.set_bg_priority(0);
 
-    bn::string<32> bag("BAG: ");
-    bag.append(_player.bag_item() ? items::get(*_player.bag_item()).name : "EMPTY");
-    bag.append(_player.bag_item() ? "  (SELECT)" : "");
-
-    bn::string<32> pages("JOURNAL ");
-    pages.append(bn::to_string<4>(_journal_page_count()));
-    pages.append("/");
+    bn::string<16> pages(bn::to_string<4>(_journal_page_count()));
+    pages.append(" / ");
     pages.append(bn::to_string<4>(journal::page_count));
-    pages.append("  COINS ");
-    pages.append(bn::to_string<8>(profile::get().coins));
 
-    bn::vector<bn::sprite_ptr, 56> text;
-    auto show_header = [&]()
+    bn::vector<bn::sprite_ptr, 48> text;
+    bn::vector<bn::sprite_ptr, 2> icons;
+    auto show_screen = [&]()
     {
+        _overlay.show_backdrop();
+        _overlay.window(0, 0, 30, 3, window_style::blue);
+        _overlay.window(0, 3, 17, 13, window_style::dark);
+        _overlay.window(17, 3, 13, 13, window_style::white);
+        _overlay.window(0, 16, 30, 4, window_style::white);
+        _overlay.map(_floor, _room, 1, 4, 15, 11);
+
         text.clear();
-        big.generate(0, -70, floor_label(_floor_number), text);
-        small.generate(0, -55, held, text);
-        small.generate(0, -46, bag, text);
-        small.generate(0, -37, pages, text);
+        icons.clear();
+        big.generate(0, ui::row_y(1) + 2, floor_label(_floor_number), text);
+
+        int x = ui::tile_x(18) + 3;
+        label.generate(x, ui::row_y(4) + 4, "HELD", text);
+        label.generate(x, ui::row_y(5) + 6, _player.held_item() ? items::get(*_player.held_item()).name : "-", text);
+        label.generate(x, ui::row_y(7) + 4, "BAG", text);
+        label.generate(x, ui::row_y(8) + 6, _player.bag_item() ? items::get(*_player.bag_item()).name : "-", text);
+        label.generate(x, ui::row_y(10) + 4, "JOURNAL", text);
+        label.generate(x, ui::row_y(11) + 6, pages, text);
+        label.generate(x, ui::row_y(13) + 4, "COINS", text);
+        label.generate(x, ui::row_y(14) + 6, bn::to_string<8>(profile::get().coins), text);
+
+        auto add_icon = [&](const bn::optional<item_id>& item, int row)
+        {
+            if(item)
+            {
+                bn::sprite_ptr icon = bn::sprite_items::item_icons.create_sprite(ui::tile_x(28) + 4,
+                                                                                 ui::row_y(row) + 4, int(*item));
+                icon.set_bg_priority(0);
+                icons.push_back(bn::move(icon));
+            }
+        };
+
+        add_icon(_player.held_item(), 4);
+        add_icon(_player.bag_item(), 7);
     };
 
-    show_header();
-    bn::vector<bn::sprite_ptr, 32> prompt;
+    bn::vector<bn::sprite_ptr, 24> prompt;
     bool confirming = false;
     auto show_prompt = [&]()
     {
         prompt.clear();
-        small.generate(0, 64, confirming ? "A: SAVE AND QUIT" : _journal_mask ? "START: RESUME  A: JOURNAL" : "START: RESUME",
-                       prompt);
-        small.generate(0, 74, confirming ? "B: BACK" : "SELECT: SAVE AND QUIT", prompt);
+        prompt_text.generate(0, ui::row_y(17) + 4, confirming ? "A: SAVE AND QUIT" :
+                             _journal_mask ? "START: RESUME     A: JOURNAL" : "START: RESUME", prompt);
+        prompt_text.generate(0, ui::row_y(18) + 4, confirming ? "B: BACK" : "SELECT: SAVE AND QUIT", prompt);
     };
 
+    show_screen();
     show_prompt();
     bn::core::update();
 
@@ -1808,10 +1838,10 @@ void game::_pause_map()
         {
             audio::play(bn::sound_items::sfx_menu);
             text.clear();
+            icons.clear();
             prompt.clear();
             _read_journal();
-            _overlay.show_map(_floor, _room);
-            show_header();
+            show_screen();
             show_prompt();
         }
         else if(bn::keypad::select_pressed())
@@ -1825,6 +1855,7 @@ void game::_pause_map()
     }
 
     prompt.clear();
+    icons.clear();
     text.clear();
     _overlay.hide();
     _set_world_visible(true);
@@ -1845,18 +1876,30 @@ void game::_register_form(species_id id, bool shiny)
 
 void game::_show_run_stats(const char* title)
 {
-    _overlay.show_black();
+    _view.set_visible(false);
+    _overlay.show_backdrop();
+    _overlay.window(0, 0, 30, 3, window_style::blue);
+    _overlay.window(0, 3, 30, 14, window_style::white);
+    _overlay.window(0, 17, 30, 3, window_style::white);
 
     bn::sprite_text_generator big(common::variable_8x16_sprite_font);
     big.set_center_alignment();
     big.set_bg_priority(0);
 
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
-    small.set_center_alignment();
-    small.set_bg_priority(0);
+    bn::sprite_text_generator left(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    left.set_left_alignment();
+    left.set_bg_priority(0);
+
+    bn::sprite_text_generator right(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    right.set_right_alignment();
+    right.set_bg_priority(0);
+
+    bn::sprite_text_generator center(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    center.set_center_alignment();
+    center.set_bg_priority(0);
 
     int seconds = _run_frames / 60;
-    bn::string<24> time("TIME ");
+    bn::string<16> time;
 
     if(seconds >= 3600)
     {
@@ -1880,29 +1923,34 @@ void game::_show_run_stats(const char* title)
         }
     }
 
-    auto line = [](const char* label, int value)
-    {
-        bn::string<24> result(label);
-        result.append(bn::to_string<8>(value));
-        return result;
-    };
-
-    bn::string<24> dex("POKEDEX ");
-    dex.append(bn::to_string<4>(profile::seen_count()));
-    dex.append("/");
+    bn::string<16> dex(bn::to_string<4>(profile::seen_count()));
+    dex.append(" / ");
     dex.append(bn::to_string<4>(int(species_id::mew)));
 
-    bn::vector<bn::sprite_ptr, 48> text;
-    big.generate(0, -60, title, text);
-    small.generate(0, -32, time, text);
-    small.generate(0, -20, line("FLOOR REACHED ", _floor_number), text);
-    small.generate(0, -8, line("POKEMON DEFEATED ", _defeated), text);
-    small.generate(0, 4, line("FORMS USED ", forms), text);
-    small.generate(0, 16, line("SHINIES SEEN ", _shinies), text);
-    small.generate(0, 28, line("JOURNAL PAGES ", _journal_page_count()), text);
-    small.generate(0, 40, line("COINS EARNED ", _coins_earned), text);
-    small.generate(0, 54, dex, text);
-    small.generate(0, 70, "PRESS START", text);
+    bn::string<16> pages(bn::to_string<4>(_journal_page_count()));
+    pages.append(" / ");
+    pages.append(bn::to_string<4>(journal::page_count));
+
+    bn::vector<bn::sprite_ptr, 64> text;
+    big.generate(0, ui::row_y(1) + 2, title, text);
+
+    int y = ui::row_y(4) + 4;
+    auto line = [&](const char* label, const bn::string_view& value)
+    {
+        left.generate(ui::tile_x(2), y, label, text);
+        right.generate(ui::tile_x(28), y, value, text);
+        y += 12;
+    };
+
+    line("TIME", time);
+    line("FLOOR REACHED", bn::to_string<4>(_floor_number));
+    line("POKEMON DEFEATED", bn::to_string<8>(_defeated));
+    line("FORMS USED", bn::to_string<4>(forms));
+    line("SHINIES SEEN", bn::to_string<4>(_shinies));
+    line("JOURNAL PAGES", pages);
+    line("COINS EARNED", bn::to_string<8>(_coins_earned));
+    line("POKEDEX SEEN", dex);
+    center.generate(0, ui::row_y(18) + 4, "PRESS START", text);
     bn::core::update();
 
     while(! bn::keypad::start_pressed())
@@ -1936,59 +1984,67 @@ void game::_open_mart()
 {
     audio::play(bn::sound_items::sfx_menu);
     _set_world_visible(false);
-    _overlay.show_black();
+    _overlay.show_backdrop();
+    _overlay.window(0, 0, 30, 3, window_style::blue);
+    _overlay.window(0, 3, 30, 10, window_style::white);
+    _overlay.window(0, 13, 30, 7, window_style::white);
 
     bn::sprite_text_generator big(common::variable_8x16_sprite_font);
     big.set_center_alignment();
     big.set_bg_priority(0);
 
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    bn::sprite_text_generator small(common::variable_8x8_sprite_font, ui::dark_text_palette());
     small.set_center_alignment();
     small.set_bg_priority(0);
 
-    bn::sprite_text_generator left(common::fixed_8x8_sprite_font);
+    bn::sprite_text_generator left(common::variable_8x8_sprite_font, ui::dark_text_palette());
     left.set_left_alignment();
     left.set_bg_priority(0);
 
-    bn::sprite_text_generator right(common::fixed_8x8_sprite_font);
+    bn::sprite_text_generator right(common::variable_8x8_sprite_font, ui::dark_text_palette());
     right.set_right_alignment();
     right.set_bg_priority(0);
 
     floor_room& room = _floor[_room];
     bn::vector<bn::sprite_ptr, 64> text;
+    bn::vector<bn::sprite_ptr, 3> icons;
     int cursor = 0;
     const char* notice = "";
+
+    for(int slot = 0; slot < 3; ++slot)
+    {
+        bn::sprite_ptr icon = bn::sprite_items::item_icons.create_sprite(ui::tile_x(4) + 4, -24 + slot * 16,
+                                                                         int(room.stock[slot]));
+        icon.set_bg_priority(0);
+        icons.push_back(bn::move(icon));
+    }
 
     auto draw = [&]()
     {
         text.clear();
-        big.generate(0, -66, "POKE MART", text);
+        big.generate(0, ui::row_y(1) + 2, "POKE MART", text);
 
         bn::string<24> coins("COINS ");
         coins.append(bn::to_string<8>(profile::get().coins));
-        small.generate(0, -46, coins, text);
+        right.generate(ui::tile_x(28), ui::row_y(4) + 4, coins, text);
 
         for(int slot = 0; slot < 3; ++slot)
         {
             const item_data& item = items::get(room.stock[slot]);
             int y = -24 + slot * 16;
-            bn::string<24> name(slot == cursor ? "> " : "  ");
-            name.append(item.name);
-            left.generate(-100, y, name, text);
 
-            if(room.sold[slot])
+            if(slot == cursor)
             {
-                right.generate(100, y, "SOLD OUT", text);
+                left.generate(ui::tile_x(2), y, ">", text);
             }
-            else
-            {
-                right.generate(100, y, bn::to_string<8>(item.price), text);
-            }
+
+            left.generate(ui::tile_x(6), y, item.name, text);
+            right.generate(ui::tile_x(28), y, room.sold[slot] ? "SOLD OUT" : bn::to_string<8>(item.price), text);
         }
 
-        small.generate(0, 30, items::get(room.stock[cursor]).description, text);
-        small.generate(0, 46, notice, text);
-        small.generate(0, 70, "A: BUY  B: LEAVE", text);
+        small.generate(0, ui::row_y(14) + 4, items::get(room.stock[cursor]).description, text);
+        small.generate(0, ui::row_y(16) + 2, notice, text);
+        small.generate(0, ui::row_y(18), "A: BUY     B: LEAVE", text);
     };
 
     draw();
@@ -2038,6 +2094,7 @@ void game::_open_mart()
     }
 
     audio::play(bn::sound_items::sfx_menu);
+    icons.clear();
     text.clear();
     _overlay.hide();
     _set_world_visible(true);
@@ -2128,16 +2185,23 @@ void game::_ending()
     _player.set_visible(false);
     _light.reset();
     bn::window::outside().set_show_all();
-    _overlay.show_black();
+    _view.set_visible(false);
+    bn::regular_bg_ptr scene = bn::regular_bg_items::story_bg.create_bg(8, 24);
+    bn::bg_palettes::set_transparent_color(bn::color(2, 2, 5));
+    _overlay.clear();
     set_fade(0);
 
-    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
+    bn::sprite_text_generator big(common::variable_8x16_sprite_font, ui::dark_text_palette());
     big.set_center_alignment();
     big.set_bg_priority(0);
 
-    bn::sprite_text_generator small(common::fixed_8x8_sprite_font);
+    bn::sprite_text_generator small(common::variable_8x8_sprite_font, ui::dark_text_palette());
     small.set_center_alignment();
     small.set_bg_priority(0);
+
+    bn::sprite_text_generator hint(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    hint.set_right_alignment();
+    hint.set_bg_priority(0);
 
     bn::sprite_ptr mew = bn::sprite_items::mew.create_sprite(-24, 30, species_frames::walk);
     bn::sprite_ptr ditto = bn::sprite_items::ditto.create_sprite(24, 34, species_frames::own_walk);
@@ -2168,13 +2232,15 @@ void game::_ending()
     auto show_page = [&](const page& value)
     {
         bn::vector<bn::sprite_ptr, 40> text;
+        _overlay.clear();
+        _overlay.window(0, 0, 30, 9, window_style::white);
 
         for(int line = 0; line < 3; ++line)
         {
-            big.generate(0, -60 + line * 18, value.lines[line], text);
+            big.generate(0, -64 + line * 16, value.lines[line], text);
         }
 
-        small.generate(0, 72, "A: NEXT", text);
+        hint.generate(ui::tile_x(29) - 2, -18, "A: NEXT", text);
         bn::core::update();
 
         wait_for_a(page_min_frames, [&]()
@@ -2224,11 +2290,15 @@ void game::_ending()
     pages.append("/");
     pages.append(bn::to_string<4>(journal::page_count));
 
+    _overlay.clear();
+    _overlay.window(0, 0, 30, 6, window_style::white);
+    _overlay.window(0, 16, 30, 4, window_style::white);
+
     bn::vector<bn::sprite_ptr, 32> text;
-    big.generate(0, -50, "THE END", text);
-    small.generate(0, -30, "THANKS FOR PLAYING!", text);
-    small.generate(0, 60, pages, text);
-    small.generate(0, 72, "PRESS START", text);
+    big.generate(0, -62, "THE END", text);
+    small.generate(0, -46, "THANKS FOR PLAYING!", text);
+    small.generate(0, ui::row_y(17) + 2, pages, text);
+    small.generate(0, ui::row_y(18) + 4, "PRESS START", text);
 
     while(! bn::keypad::start_pressed())
     {
@@ -2241,6 +2311,7 @@ void game::_ending()
     mew.set_visible(false);
     ditto.set_visible(false);
     _show_run_stats("RUN COMPLETE!");
+    bn::bg_palettes::set_transparent_color(bn::nullopt);
 }
 
 void game::_game_over()
@@ -2251,7 +2322,5 @@ void game::_game_over()
     _messages.clear();
     _hud.set_visible(false);
     _player.set_visible(false);
-    bn::bg_palettes::set_fade(bn::color(0, 0, 0), 0.6);
-
     _show_run_stats("DITTO blacked out!");
 }

@@ -204,7 +204,7 @@ def draw_text(pixels, text, top, scale):
         pixels[py][px] = color
 
 
-def build():
+def build(logo=True):
     pixels = [[sky(x, y) for x in range(SIZE)] for y in range(SIZE)]
     draw_stars(pixels)
     draw_moon(pixels, 198, 80, 16)
@@ -214,12 +214,13 @@ def build():
     draw_mountain(pixels)
     draw_stairs(pixels)
     draw_trees(pixels)
-    draw_text(pixels, "DITTO'S", 7, 3)
-    draw_text(pixels, "CLIMB", 34, 3)
+    if logo:
+        draw_text(pixels, "DITTO'S", 7, 3)
+        draw_text(pixels, "CLIMB", 34, 3)
     return pixels
 
 
-def save(pixels):
+def save(pixels, name="title_bg"):
     colors = [SKY[0]]
     for row in pixels:
         for color in row:
@@ -231,8 +232,8 @@ def save(pixels):
     flat = [channel for color in colors for channel in color]
     image.putpalette(flat + [0] * (768 - len(flat)))
     image.putdata([index[color] for row in pixels for color in row])
-    image.save(GRAPHICS / "title_bg.bmp")
-    (GRAPHICS / "title_bg.json").write_text(json.dumps({"type": "regular_bg", "bpp_mode": "bpp_8"}, indent=4) + "\n")
+    image.save(GRAPHICS / f"{name}.bmp")
+    (GRAPHICS / f"{name}.json").write_text(json.dumps({"type": "regular_bg", "bpp_mode": "bpp_8"}, indent=4) + "\n")
     tiles = {tuple(tuple(row[x:x + 8]) for row in pixels[y:y + 8]) for y in range(0, SIZE, 8) for x in range(0, SIZE, 8)}
     return len(colors), len(tiles)
 
@@ -241,6 +242,7 @@ def main():
     pixels = build()
     colors, tiles = save(pixels)
     print(f"title_bg: {colors} colours, {tiles} unique tiles")
+    save(build(logo=False), "story_bg")
     return pixels
 
 

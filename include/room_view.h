@@ -25,6 +25,11 @@ public:
 
     void update();
 
+    void set_visible(bool visible)
+    {
+        _bg.set_visible(visible);
+    }
+
     void set_camera(const bn::camera_ptr& camera);
 
     [[nodiscard]] const bn::regular_bg_ptr& bg() const
