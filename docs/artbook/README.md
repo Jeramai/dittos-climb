@@ -1,7 +1,8 @@
 # Ditto's Climb — art book
 
-Every sprite and tileset in the game, per floor, with a sample room of each floor's tiles. All art is generated placeholder art from
-`tools/gen_assets.py`; a hand-drawn BMP of the same size and palette limit (16 colours) replaces it.
+Every sprite and tileset in the game, per floor, with a sample room of each floor's tiles. All art is generated
+placeholder art: sprites from `tools/gen_assets.py`, room tilesets from `tools/tilesets/<floor>.py` and the title
+from `tools/gen_title.py`. A hand-drawn BMP of the same size and palette limit replaces any of it.
 
 Regenerate this page with `make artbook`.
 

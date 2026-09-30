@@ -371,6 +371,8 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
 {
     _clear_room_objects();
     _room = index;
+    const form* entering_form = _player.active_form();
+    _magikarp_at_entry = entering_form && entering_form->species == species_id::magikarp;
 
     floor_room& value = _floor[index];
     bool doors[4];
@@ -531,7 +533,7 @@ void game::_update_room_state()
 
         const form* current = _player.active_form();
 
-        if(current && current->species == species_id::magikarp)
+        if(current && current->species == species_id::magikarp && _magikarp_at_entry)
         {
             _messages.show("What? MAGIKARP is evolving!");
             _player.evolve(species_id::gyarados);
@@ -1657,6 +1659,7 @@ void game::_change_room(direction side)
     }
 
     _fade(true);
+    _messages.clear();
     _previous_room = _room;
     _enter_room(next, directions_of_floor::opposite(side));
     _fade(false);
@@ -1683,6 +1686,7 @@ void game::_climb_stairs()
 
 void game::_fall_into_pit()
 {
+    _messages.clear();
     _messages.show("DITTO fell down the chasm!");
     audio::play(bn::sound_items::sfx_fall);
     _fade(true);
@@ -1719,6 +1723,11 @@ void game::_clear_room_objects()
 
 void game::_set_world_visible(bool visible)
 {
+    if(! visible)
+    {
+        bn::bg_palettes::set_fade(bn::color(0, 0, 0), 0);
+    }
+
     _hud.set_visible(visible);
     _messages.set_visible(visible);
 }
@@ -1755,15 +1764,10 @@ void game::_pause_map()
     auto show_header = [&]()
     {
         text.clear();
-        big.generate(0, -68, floor_label(_floor_number), text);
-        small.generate(0, -52, held, text);
-        small.generate(0, -43, bag, text);
-        small.generate(0, -34, pages, text);
-
-        if(_journal_mask)
-        {
-            small.generate(0, -25, "A: READ JOURNAL", text);
-        }
+        big.generate(0, -70, floor_label(_floor_number), text);
+        small.generate(0, -55, held, text);
+        small.generate(0, -46, bag, text);
+        small.generate(0, -37, pages, text);
     };
 
     show_header();
@@ -1772,7 +1776,8 @@ void game::_pause_map()
     auto show_prompt = [&]()
     {
         prompt.clear();
-        small.generate(0, 64, confirming ? "A: SAVE AND QUIT" : "START: RESUME", prompt);
+        small.generate(0, 64, confirming ? "A: SAVE AND QUIT" : _journal_mask ? "START: RESUME  A: JOURNAL" : "START: RESUME",
+                       prompt);
         small.generate(0, 74, confirming ? "B: BACK" : "SELECT: SAVE AND QUIT", prompt);
     };
 

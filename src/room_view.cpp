@@ -548,16 +548,22 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
     int bridge_top = -1;
     int bridge_bottom = -2;
 
+    int first_row = _interior_top() + 3;
+    int last_row = _interior_top() + _layout.height - 4 - river_width;
+    int row = first_row + next_seed(seed) % bn::max(last_row - first_row + 1, 1);
+
+    if(row <= _door_row() + 1 && row + river_width > _door_row() - 2)
+    {
+        row = _door_row() + 2 <= last_row ? _door_row() + 2 : _door_row() - 2 - river_width;
+    }
+
+    if(row < first_row)
+    {
+        horizontal = false;
+    }
+
     if(horizontal && _layout.height >= 12)
     {
-        int first = _interior_top() + 3;
-        int last = _interior_top() + _layout.height - 4 - river_width;
-        int row = first + next_seed(seed) % bn::max(last - first + 1, 1);
-
-        if(row <= _door_row() + 1 && row + river_width > _door_row() - 2)
-        {
-            row = _door_row() + 2 <= last ? _door_row() + 2 : _door_row() - 2 - river_width;
-        }
 
         char flow = forward ? room::cells::flow_right : room::cells::flow_left;
         int span = bn::max(_layout.width - bridge_width - 4, 1);
@@ -572,7 +578,9 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
             for(int x = candidate; x < candidate + bridge_width; ++x)
             {
                 open = open && room::get(x, row - 1) == room::cells::floor &&
-                       room::get(x, row + river_width) == room::cells::floor;
+                       room::get(x, row - 2) == room::cells::floor &&
+                       room::get(x, row + river_width) == room::cells::floor &&
+                       room::get(x, row + river_width + 1) == room::cells::floor;
             }
 
             if(open)
@@ -584,8 +592,11 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
 
         for(int x = bridge; x < bridge + bridge_width; ++x)
         {
-            room::set(x, row - 1, room::cells::floor);
-            room::set(x, row + river_width, room::cells::floor);
+            for(int bank = 1; bank <= 2; ++bank)
+            {
+                room::set(x, row - bank, room::cells::floor);
+                room::set(x, row + river_width - 1 + bank, room::cells::floor);
+            }
         }
 
         bridge_left = bridge - 1;
@@ -628,7 +639,9 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
             for(int y = candidate; y < candidate + bridge_width; ++y)
             {
                 open = open && room::get(column - 1, y) == room::cells::floor &&
-                       room::get(column + river_width, y) == room::cells::floor;
+                       room::get(column - 2, y) == room::cells::floor &&
+                       room::get(column + river_width, y) == room::cells::floor &&
+                       room::get(column + river_width + 1, y) == room::cells::floor;
             }
 
             if(open)
@@ -640,8 +653,11 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
 
         for(int y = bridge; y < bridge + bridge_width; ++y)
         {
-            room::set(column - 1, y, room::cells::floor);
-            room::set(column + river_width, y, room::cells::floor);
+            for(int bank = 1; bank <= 2; ++bank)
+            {
+                room::set(column - bank, y, room::cells::floor);
+                room::set(column + river_width - 1 + bank, y, room::cells::floor);
+            }
         }
 
         bridge_left = column - 1;
@@ -663,12 +679,12 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
 
     int width = 4 + next_seed(seed) % 3;
     int height = 3 + next_seed(seed) % 2;
-    int column = _interior_left() + 2 + next_seed(seed) % bn::max(_layout.width - width - 4, 1);
-    int row = _interior_top() + 2 + next_seed(seed) % bn::max(_layout.height - height - 4, 1);
+    int pond_column = _interior_left() + 3 + next_seed(seed) % bn::max(_layout.width - width - 6, 1);
+    int pond_row = _interior_top() + 3 + next_seed(seed) % bn::max(_layout.height - height - 6, 1);
 
-    for(int y = row; y < row + height; ++y)
+    for(int y = pond_row; y < pond_row + height; ++y)
     {
-        for(int x = column; x < column + width; ++x)
+        for(int x = pond_column; x < pond_column + width; ++x)
         {
             bool near_bridge = x >= bridge_left - 1 && x <= bridge_right + 1 && y >= bridge_top - 1 &&
                                y <= bridge_bottom + 1;
@@ -682,7 +698,8 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
 
     if(whirlpools)
     {
-        room::set_whirlpool_center(room::cell_center(column + width / 2, row + height / 2) - bn::fixed_point(4, 4));
+        bn::fixed_point center = room::cell_center(pond_column + width / 2, pond_row + height / 2);
+        room::set_whirlpool_center(center - bn::fixed_point(4, 4));
     }
 }
 

@@ -104,6 +104,7 @@ private:
     bool _won = false;
     bool _boss_defeated = false;
     bool _quit = false;
+    bool _magikarp_at_entry = false;
 
     [[nodiscard]] const floor_room& _current_room() const
     {

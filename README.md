@@ -29,7 +29,7 @@ Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, beca
 | `-DDITTO_TEST_FLOOR=<n>` | Start on floor n (2 Viridian Forest, 3 Rock Tunnel, 4 Underground Lake, 5 Power Plant, 6 Volcano, 7 Seafoam Cave, 8 The Chasm, 9 Rocket Hideout, 10 Fighting Dojo, 11 Pokémon Tower, 12 Dragon's Den, 13 Cerulean Cave) |
 | `-DDITTO_TEST_OVERGROWN` | Every door of the start room is overgrown with bushes |
 | `-DDITTO_TEST_REWARD=<n>` | The start room holds a reward (1 journal page, 2 rare Pokémon, 3 item) |
-| `-DDITTO_TEST_ITEM=<n>` | The item reward (0 Charcoal … 8 Leftovers, 9 Quick Claw, 10 Ether, 11 Rare Candy) |
+| `-DDITTO_TEST_ITEM=<n>` | The item reward (0 Charcoal … 8 Leftovers, 9 Quick Claw, 10 Ether, 11 Rare Candy, 12 Potion) |
 | `-DDITTO_TEST_FALL` | Start on a pit (floors with pits only) |
 | `-DDITTO_TEST_WARP` | Start on a warp pad (floor 13) |
 | `-DDITTO_TEST_ENDING=<pages>` | Go straight to the ending with this many journal pages (13 shows the secret) |
@@ -37,8 +37,8 @@ Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, beca
 | `-DDITTO_TEST_SCOPE` | Start with the Silph Scope |
 | `-DDITTO_TEST_SHINY` | Every wild Pokémon and the test form are shiny |
 | `-DDITTO_TEST_BOSS_HP=<n>` | The boss has n HP (its maximum too, so Mewtwo does not Recover) |
-| `-DDITTO_TEST_DEX` | The Pokédex starts partly filled (seen, used and shiny entries) |
-| `-DDITTO_TEST_MART` | Every floor with items has a Poké Mart, the run starts in it, and a new wallet holds 500 coins |
+| `-DDITTO_TEST_DEX` | The Pokédex starts partly filled (seen, used and shiny entries) and the wallet is set to 500 coins at boot |
+| `-DDITTO_TEST_MART` | Every floor with items has a Poké Mart, the run starts in it, and the wallet is set to 500 coins at boot |
 | `-DDITTO_TEST_PAGES=<n>` | Start with n journal pages (13 unlocks the secret ending) |
 | `-DDITTO_TEST_SPECIES=<species>` | Every wild Pokémon is this species |
 
@@ -56,9 +56,9 @@ make TARGET=test-boss BUILD=build-test-boss USERFLAGS="-DDITTO_TEST_START_KIND=2
 | L | Dodge |
 | R (hold) | Lock aim while moving |
 | Select | Use the item in the bag |
-| Start | Floor map / restart after a black-out |
+| Start | Floor map / continue |
 | R (on the title screen) | Options: music and sound volume, saved with the Pokédex |
-| Select (on the title screen) | Pokédex of the forms Ditto has used, across runs; D-pad moves, L/R turn pages, A shows a shiny |
+| Select (on the title screen) | Pokédex of the species seen and the forms used, across runs; D-pad moves, L/R turn pages, A shows a shiny |
 | A (on the floor map) | Read the collected journal pages; Left/Right turn, B goes back |
 | Select (on the floor map) | Save and quit; A confirms, B goes back |
 

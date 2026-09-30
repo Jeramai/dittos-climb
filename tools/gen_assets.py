@@ -2354,7 +2354,7 @@ OVERLAY_PALETTE = [
 
 
 def room_marker(fill, border, icon=None, icon_color=None):
-    big = [[0] * 16 for _ in range(16)]
+    big = [[1] * 16 for _ in range(16)]
     for y in range(1, 15):
         for x in range(1, 15):
             edge = y in (1, 14) or x in (1, 14)
@@ -2368,7 +2368,7 @@ def room_marker(fill, border, icon=None, icon_color=None):
 
 
 def connector(horizontal):
-    tile = blank(0)
+    tile = blank(1)
     for i in range(8):
         if horizontal:
             tile[3][i] = tile[4][i] = 4

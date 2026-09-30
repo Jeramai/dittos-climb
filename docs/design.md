@@ -31,7 +31,7 @@ the Unknown Dungeon.
 - Base Ditto stands on the outline and presses **B** to Transform. Ditto takes the species' types, stats and its
   two moves.
 - A transformed Ditto keeps its pink outline, so it never looks like an enemy.
-- The first Transform into a species registers it in the Pokédex.
+- Defeating a species registers it in the Pokédex as seen; the first Transform into it marks it as used.
 - Field gates never block the way to the stairs: bushes only grow on doors off the start-to-stairs path, and
   every river has a land bridge. Gated rooms are optional.
 
@@ -108,8 +108,9 @@ shows the wallet and the run stats show the coins earned.
 
 ### Pokédex and run stats
 
-The Pokédex (Select on the title) records every form Ditto has used, and whether it was shiny, across runs,
-with the number of runs, wins and the best floor. It lives at its own place in SRAM, so it survives new runs
+The Pokédex (Select on the title) records, across runs, every species seen (defeated, a boss beaten, a shiny
+sighted, or Mew in the ending) and every form Ditto has used, whether it was shiny, and the number of runs,
+wins and the best floor. It lives at its own place in SRAM, so it survives new runs
 and deleted run saves. A run ends (a black-out or the ending) with its stats: time, floor, Pokémon defeated,
 forms used, shinies seen, journal pages and the Pokédex count.
 
@@ -132,25 +133,18 @@ Some types open paths, like HMs:
 | Type | Ability |
 |---|---|
 | Grass | Cut: clear bushes |
-| Rock | Strength: push boulders |
 | Ground | Dig: the dodge goes under ground and passes under attacks |
 | Water | Surf: swim in deep water |
-| Electric | Charge: power dead switches and doors |
 | Fire | Melt ice blocks |
-| Ice | Freeze water into a bridge |
 | Flying | Fly over pits |
 | Fighting | Rock Smash: break cracked walls |
 | Ghost | Pass through ghost walls |
 | Poison | Immune to gas clouds |
-| Psychic | Use warp pads without the scramble |
 
 ### Pokémon jokes with a purpose
 
 - Magikarp's Splash: *"But nothing happened!"* Stay a Magikarp through a full room and it evolves.
 - Snorlax sleeps on the stairs of floor 1. You need the Poké Flute to wake it.
-- Rare shiny enemies (1 in 64). A shiny form has other colors and does ×1.25 damage.
-- Meowth's Pay Day drops coins. Coins buy items at the Poké Mart (later).
-- Items: Potion, Oran Berry, Rare Candy, Escape Rope, Poké Flute, Silph Scope.
 
 ## Floors
 
@@ -158,19 +152,18 @@ Some types open paths, like HMs:
 |---|---|---|---|---|---|---|
 | 1 | Cinnabar Lab basement | Normal | Tutorial. Lab doors lock until the room is clear. | Rattata, Meowth, Porygon | Snorlax (wake it with the Poké Flute) | — |
 | 2 | Viridian Forest | Grass / Bug | Tall grass hides wild Pokémon until they jump out. Bushes block paths. | Oddish, Caterpie, Beedrill, Paras | Venusaur (Solar Beam charge, Sleep Powder clouds) | — |
-| 3 | Rock Tunnel | Rock / Ground | Darkness: only a light circle around Ditto. Diglett pop out of holes. | Geodude, Diglett, Zubat, Onix | Onix (a long body of segments that chases you) | Grass |
+| 3 | Rock Tunnel | Rock / Ground | Darkness: only a light circle around Ditto. Diglett pop out of holes. | Geodude, Diglett, Zubat | Onix (a long body of segments that chases you) | Grass |
 | 4 | Underground Lake | Water | Deep water that only Water forms can cross. Currents push you. | Magikarp, Poliwag, Staryu, Horsea | Gyarados (a Magikarp evolves in the fight) | Grass |
 | 5 | Power Plant | Electric | Floor plates charge and shock on a timer. Lights flicker. | Pikachu, Voltorb, Magnemite | Zapdos | Ground |
 | 6 | Volcano | Fire | Lava rises and falls. Ember rain from the ceiling. | Vulpix, Ponyta, Growlithe, Magmar | Moltres | Water, Rock, Ground |
-| 7 | Seafoam Ice Cave | Ice | Slippery ice floors and sliding puzzles. | Seel, Jynx, Shellder | Articuno | Fire, Rock |
+| 7 | Seafoam Ice Cave | Ice | Slippery ice floors. Frozen side doors melt for a Fire form. | Seel, Jynx, Shellder | Articuno | Fire, Rock |
 | 8 | The Chasm | Flying | Wind vents push you. A fall into a pit drops you one room back. | Pidgey, Spearow, Aerodactyl | Pidgeot (Gust pushes you around) | Electric, Ice, Rock |
 | 9 | Rocket Hideout | Poison | Spinner arrow tiles. Poison gas clouds. Holds the Silph Scope. | Koffing, Ekans, Grimer | Jessie and James (Arbok, Weezing and a Meowth balloon) | Ground |
-| 10 | Fighting Dojo | Fighting | Arena rooms in waves. No items allowed. | Machop, Mankey | Hitmonlee or Hitmonchan: you fight one, and you can Transform into the other | Flying |
+| 10 | Fighting Dojo | Fighting | Arena rooms in waves. No items allowed. | Machop, Mankey, Machoke | Hitmonlee or Hitmonchan: you fight one, and you can Transform into the other | Flying |
 | 11 | Pokémon Tower | Ghost | Ghosts are invisible without the Silph Scope. Normal forms cannot hit ghosts, and ghosts cannot hurt Normal forms. | Gastly, Haunter, Cubone | Gengar | Ghost |
-| 12 | Dragon's Den | Dragon | Waterfalls and whirlpools. Large open rooms. | Dratini, Dragonair | Dragonite | Ice, Dragon |
+| 12 | Dragon's Den | Dragon | Waterfalls and whirlpools. Large open rooms. | Dratini, Dragonair, Seadra | Dragonite | Ice, Dragon |
 | 13 | Cerulean Cave peak | Psychic | Warp pads scramble where you go. Hypnosis makes the controls slow. | Abra, Drowzee, Kadabra | Mewtwo | Bug, Ghost |
 
-Bonus floors after the end: Steel, Dark and Fairy.
 
 ## Controls
 
@@ -276,4 +269,4 @@ Bonus floors after the end: Steel, Dark and Fairy.
 19. Emerald-style tilesets, animated tiles and shiny Pokémon.
 20. Journal reader, Pokédex across runs, run stats and a title screen.
 21. Poké Mart rooms and a coin wallet across runs.
-22. Next: bonus floors (Steel, Dark, Fairy), shiny Pokémon, the Poké Mart, real art.
+22. Next: real hand-drawn art to replace the generated placeholders.

@@ -3,6 +3,7 @@
 #include "bn_core.h"
 #include "bn_keypad.h"
 #include "bn_bg_palettes.h"
+#include "bn_sprite_palettes.h"
 #include "bn_math.h"
 #include "bn_regular_bg_ptr.h"
 #include "bn_sprite_ptr.h"
@@ -51,6 +52,8 @@ namespace intro
 bool title(bn::random& random, bool can_continue)
 {
     audio::play_music(bn::music_items::title);
+    bn::bg_palettes::set_fade(bn::color(0, 0, 0), 0);
+    bn::sprite_palettes::set_fade(bn::color(0, 0, 0), 0);
     bn::regular_bg_ptr background = bn::regular_bg_items::title_bg.create_bg(8, 48);
     bn::bg_palettes::set_transparent_color(bn::color(2, 2, 5));
 

@@ -435,6 +435,12 @@ bool player::use_item(item_id id, message_box& messages)
             return false;
         }
 
+        if(_form->pp_b >= moves::get(species::get(_form->species).move_b).pp)
+        {
+            messages.show("The PP is already full!");
+            return false;
+        }
+
         _form->pp_b = moves::get(species::get(_form->species).move_b).pp;
         messages.show("DITTO used the ETHER!");
         messages.show("The PP of move B was restored!");
