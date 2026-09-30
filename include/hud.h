@@ -28,6 +28,8 @@ private:
     bn::sprite_ptr _hp_bar;
     bn::vector<bn::sprite_ptr, 24> _text_sprites;
     bn::string<64> _shown_key;
+    bn::optional<bn::sprite_ptr> _held_icon;
+    bn::optional<bn::sprite_ptr> _bag_icon;
     bn::optional<bn::sprite_ptr> _boss_bar;
     bn::vector<bn::sprite_ptr, 4> _boss_text;
 };

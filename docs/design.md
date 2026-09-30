@@ -96,7 +96,9 @@ Ditto (the Gen 2-4 colours), which the save and the ending keep.
 Defeated wild Pokémon drop 1-3 coins, a boss 20 and Mewtwo 50. Coins live in the profile, so they carry over
 between runs and a failed run still pays. About one floor in three (never the Dojo) turns a side room into a Poké
 Mart: no wild Pokémon, a clerk behind a counter, and three different items for 30-150 coins (Potion, Ether, Rare
-Candy, the type boosters, Leftovers, Quick Claw). A bought held item replaces the current one. The pause screen
+Candy, the type boosters, Leftovers, Quick Claw). A bought held item replaces the current one; a Potion, Ether or Rare Candy goes into the one-slot bag
+(Select uses it), and the Mart refuses a second one while the bag is full. The HUD shows the held item and the
+bag item as icons next to the HP bar. The pause screen
 shows the wallet and the run stats show the coins earned.
 
 ### Pokédex and run stats
@@ -175,7 +177,7 @@ Bonus floors after the end: Steel, Dark and Fairy.
 | L | Dodge (per form: a roll, a Dig, a Teleport) |
 | R (hold) | Lock the aim direction |
 | Start | Menu / pause |
-| Select (paused) | Save and quit |
+| Select | Use the bag item (paused: save and quit) |
 
 ## Art
 

@@ -2026,6 +2026,23 @@ def mart_frame():
     return ["".join(row) for row in outline(grid)]
 
 
+ITEM_ICONS = [
+    ["..kkkk..", ".kAAAAk.", "kAAoAAAk", "kAoooAAk", "kAAoAAAk", ".kAAAAk.", "..kkkk..", "........"],
+    ["...kk...", "..kvvk..", ".kvVvvk.", ".kvvvVk.", ".kVvvvk.", "..kvVk..", "...kk...", "........"],
+    ["...k....", "..kwk...", ".kwBwk..", "kwBBBwk.", "kBBwBBk.", "kBBBBBk.", ".kBBBk..", "..kkk..."],
+    ["ss....ss", "nn....uu", "nn....uu", "nn....uu", "nnn..uuu", ".nnnuuu.", "..nnuu..", "........"],
+    ["........", "..kkkk..", ".kssAAk.", "kssAAAAk", "ksAAAAAk", "kAAAAAAk", ".kkkkkk.", "........"],
+    ["........", "........", "...kk...", "..kCCk..", ".kCcCCk.", "kCcCCcCk", "kkkkkkkk", "........"],
+    ["...kk...", "..kwwk..", "..kssk..", ".kswwsk.", "kswwwwsk", "kswwwssk", ".kssssk.", "..kkkk.."],
+    ["........", "kkkkkkkk", "kAAgAAAk", "kkkkkkkk", "..kAk...", "..kAk...", "..kkk...", "........"],
+    ["...Vk...", "..knnk..", ".knnnnk.", ".kcccck.", "..kcck..", ".knnnnk.", "..kkkk..", "........"],
+    ["......kk", ".....kwk", "....kwk.", "...kwk..", "..kwk...", ".kCCk...", "kCCk....", "kkk....."],
+    ["..kkk...", "..kwk...", ".kzzzk..", "kzwzzzk.", "kzzzzZk.", "kzzzzZk.", ".kkkkk..", "........"],
+    ["........", "kk....kk", "kukkkkuk", "kuuwwuuk", "kukkkkuk", "kk....kk", "........", "........"],
+    ["...ss...", "..kssk..", "..kkkk..", ".kzzzzk.", ".kzwzzk.", ".kzzzZk.", ".kzzzZk.", "..kkkk.."],
+]
+
+
 def light_circle():
     size = 64
     grid = [["."] * size for _ in range(size)]
@@ -3960,6 +3977,7 @@ def main():
     save_species("snorlax", snorlax_frame(0, False), snorlax_frame(1, False), 32, [snorlax_frame(0, True)])
     save_sprite_sheet("poke_flute", [POKE_FLUTE], 16)
     save_sprite_sheet("mart", [mart_frame()], 32)
+    save_sprite_sheet("item_icons", ITEM_ICONS, 8)
     save_species("oddish", ODDISH_1, ODDISH_2)
     save_species("caterpie", CATERPIE_1, CATERPIE_2)
     save_species("paras", PARAS_1, PARAS_2)

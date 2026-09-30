@@ -27,6 +27,8 @@ struct player_state
     bool has_held;
     item_id held;
     bool shiny_ditto;
+    bool has_bag;
+    item_id bag;
 };
 
 class player
@@ -73,7 +75,16 @@ public:
         return _held;
     }
 
+    [[nodiscard]] const bn::optional<item_id>& bag_item() const
+    {
+        return _bag;
+    }
+
     [[nodiscard]] bool give_item(item_id id, message_box& messages);
+
+    [[nodiscard]] bool use_item(item_id id, message_box& messages);
+
+    void use_bag(message_box& messages);
 
     [[nodiscard]] player_state state() const;
 
@@ -185,6 +196,7 @@ private:
     int _frame_counter = 0;
     int _bonus_hp = 0;
     bn::optional<item_id> _held;
+    bn::optional<item_id> _bag;
     bool _items_allowed = true;
     bool _forced_struggle = false;
 

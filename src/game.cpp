@@ -405,6 +405,11 @@ void game::_update_play()
 {
     _view.update();
 
+    if(bn::keypad::select_pressed() && _player.bag_item() && ! _player.transforming())
+    {
+        _player.use_bag(_messages);
+    }
+
     if(_near_mart_counter())
     {
         _messages.show("Press A to shop!");
@@ -1725,6 +1730,10 @@ void game::_pause_map()
     bn::string<32> held("HELD: ");
     held.append(_player.held_item() ? items::get(*_player.held_item()).name : "NOTHING");
 
+    bn::string<32> bag("BAG: ");
+    bag.append(_player.bag_item() ? items::get(*_player.bag_item()).name : "EMPTY");
+    bag.append(_player.bag_item() ? "  (SELECT)" : "");
+
     bn::string<32> pages("JOURNAL ");
     pages.append(bn::to_string<4>(_journal_pages));
     pages.append("/");
@@ -1732,17 +1741,18 @@ void game::_pause_map()
     pages.append("  COINS ");
     pages.append(bn::to_string<8>(profile::get().coins));
 
-    bn::vector<bn::sprite_ptr, 40> text;
+    bn::vector<bn::sprite_ptr, 56> text;
     auto show_header = [&]()
     {
         text.clear();
-        big.generate(0, -66, floor_label(_floor_number), text);
-        small.generate(0, -48, held, text);
-        small.generate(0, -38, pages, text);
+        big.generate(0, -68, floor_label(_floor_number), text);
+        small.generate(0, -52, held, text);
+        small.generate(0, -43, bag, text);
+        small.generate(0, -34, pages, text);
 
         if(_journal_mask)
         {
-            small.generate(0, -28, "A: READ JOURNAL", text);
+            small.generate(0, -25, "A: READ JOURNAL", text);
         }
     };
 
@@ -1989,6 +1999,10 @@ void game::_open_mart()
             else if(profile::get().coins < item.price)
             {
                 notice = "You don't have enough coins.";
+            }
+            else if(! items::held(item.kind) && _player.bag_item())
+            {
+                notice = "The BAG is full!";
             }
             else if(! _player.give_item(room.stock[cursor], _messages))
             {

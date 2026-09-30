@@ -1,6 +1,7 @@
 #include "hud.h"
 
 #include "bn_sprite_items_hp_bar.h"
+#include "bn_sprite_items_item_icons.h"
 
 #include "common_fixed_8x8_sprite_font.h"
 
@@ -14,6 +15,26 @@ namespace
     constexpr int line_height = 10;
     constexpr int bar_fill = 28;
     constexpr int boss_y = -50;
+    constexpr int held_icon_x = -14;
+    constexpr int bag_icon_x = -2;
+
+    void set_icon(bn::optional<bn::sprite_ptr>& icon, const bn::optional<item_id>& item, int x)
+    {
+        if(! item)
+        {
+            icon.reset();
+            return;
+        }
+
+        if(! icon)
+        {
+            icon = bn::sprite_items::item_icons.create_sprite(x, top_y, int(*item));
+            icon->set_bg_priority(0);
+            icon->set_z_order(z_order);
+        }
+
+        icon->set_tiles(bn::sprite_items::item_icons.tiles_item(), int(*item));
+    }
 
     int bar_frame(int hp, int max_hp)
     {
@@ -68,6 +89,9 @@ void hud::update(const player& value)
         key.append(value.forced_struggle() ? "S" : "");
     }
 
+    key.append(value.held_item() ? char('a' + int(*value.held_item())) : '-');
+    key.append(value.bag_item() ? char('a' + int(*value.bag_item())) : '-');
+
     if(key == _shown_key)
     {
         return;
@@ -75,6 +99,8 @@ void hud::update(const player& value)
 
     _shown_key = key;
     _text_sprites.clear();
+    set_icon(_held_icon, value.held_item(), held_icon_x);
+    set_icon(_bag_icon, value.bag_item(), bag_icon_x);
 
     _text.set_left_alignment();
     _text.generate(-118, top_y, body.name, _text_sprites);
@@ -126,6 +152,14 @@ void hud::hide_boss()
 void hud::set_visible(bool visible)
 {
     _hp_bar.set_visible(visible);
+
+    for(bn::optional<bn::sprite_ptr>* icon : { &_held_icon, &_bag_icon })
+    {
+        if(*icon)
+        {
+            (*icon)->set_visible(visible);
+        }
+    }
 
     if(_boss_bar)
     {

@@ -340,7 +340,8 @@ void player::apply_status(status_effect effect, message_box& messages)
 player_state player::state() const
 {
     return player_state{ _hp, _bonus_hp, _form.has_value(), _form.value_or(form{ species_id::ditto, 0, 0 }),
-                         _held.has_value(), _held.value_or(item_id::ether), _shiny_ditto };
+                         _held.has_value(), _held.value_or(item_id::ether), _shiny_ditto,
+                         _bag.has_value(), _bag.value_or(item_id::potion) };
 }
 
 void player::restore(const player_state& state)
@@ -350,6 +351,12 @@ void player::restore(const player_state& state)
     _shiny_ditto = state.shiny_ditto;
     _form.reset();
     _held.reset();
+    _bag.reset();
+
+    if(state.has_bag)
+    {
+        _bag = state.bag;
+    }
 
     if(state.has_form)
     {
@@ -373,6 +380,41 @@ bool player::give_item(item_id id, message_box& messages)
 {
     const item_data& item = items::get(id);
     message_box::text message;
+
+    if(items::held(item.kind))
+    {
+        message.append("DITTO is now holding ");
+        message.append(item.name);
+        message.append("!");
+        _held = id;
+        messages.show(message);
+        return true;
+    }
+
+    if(! _bag)
+    {
+        message.append("DITTO put the ");
+        message.append(item.name);
+        message.append(" in the BAG.");
+        _bag = id;
+        messages.show(message);
+        return true;
+    }
+
+    return use_item(id, messages);
+}
+
+void player::use_bag(message_box& messages)
+{
+    if(_bag && use_item(*_bag, messages))
+    {
+        _bag.reset();
+    }
+}
+
+bool player::use_item(item_id id, message_box& messages)
+{
+    const item_data& item = items::get(id);
 
     switch(item.kind)
     {
@@ -412,12 +454,7 @@ bool player::give_item(item_id id, message_box& messages)
         return true;
 
     default:
-        message.append("DITTO is now holding ");
-        message.append(item.name);
-        message.append("!");
-        _held = id;
-        messages.show(message);
-        return true;
+        return false;
     }
 }
 
