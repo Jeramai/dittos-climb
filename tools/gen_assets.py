@@ -146,33 +146,189 @@ RATTATA_2 = RATTATA_BODY + [
     "   kk     kk",
 ]
 
-MEOWTH_BODY = [
-    "",
-    "  kk        kk",
-    " kbck      kcbk",
-    " kbcckkkkkkccbk",
-    "  kccccggcccck",
-    "  kcccgwggccck",
-    "  kccccggcccck",
-    " kcckekcckekcck",
-    "kwkcccccccccckwk",
-    " kcccckbbkcccck",
-    "  kkcccccccckk",
-    "   kCcccccCk",
-    "   kCccccCk",
-]
+def _grid_b(rows):
+    return [row.replace(".", " ").rstrip() for row in rows]
 
-MEOWTH_1 = MEOWTH_BODY + [
-    "   kcckkcck",
-    "   kbbk kbbk",
-    "   kkk  kkk",
-]
 
-MEOWTH_2 = MEOWTH_BODY + [
-    "   kcck kcck",
-    "  kbbk   kbbk",
-    "  kkk     kkk",
-]
+MEOWTH_BODY = _grid_b([
+    "................",
+    "..kk........kk..",
+    ".kbck......kcbk.",
+    ".kbcckkkkkkccbk.",
+    "..kcccckkcccck..",
+    "..kccckggkccck..",
+    ".kcccckGGkcccck.",
+    ".kccwkccccwkcck.",
+    "kwkccccqqcccckwk",
+    ".kkcccckkcccckk.",
+    "..kkcccccccckk..",
+    "...kCccccccCk...",
+    "...kCccccccCkbk.",
+    "...kCCccccCCkkbk",
+])
+
+
+MEOWTH_1 = MEOWTH_BODY + _grid_b([
+    "...kbbk..kbbk...",
+    "...kkk....kkk...",
+])
+
+
+MEOWTH_2 = MEOWTH_BODY + _grid_b([
+    "..kbbk....kbbk..",
+    "..kkk......kkk..",
+])
+
+
+PORYGON_1 = _grid_b([
+    "................",
+    "................",
+    ".......kkkk.....",
+    "......kqqqqk....",
+    "......kqwkqkkk..",
+    "......kqqqqkBBk.",
+    ".....kkqqqqkkkk.",
+    "..kkkqqqqqqk....",
+    ".kBBkqqqqqqqk...",
+    ".kBBBkqqqqqqqk..",
+    "..kkkqqqqqqBBk..",
+    "....kqqkkkBBBk..",
+    "....kBBk..kBBk..",
+    "....kkk....kk...",
+])
+
+
+PORYGON_2 = [""] + PORYGON_1[:-1]
+
+
+ODDISH_TOP = _grid_b([
+    "....k......k....",
+    "...kvk.kk.kvk...",
+    "..kvVvkvvkvVvk..",
+    "..kvVVkvVkVVvk..",
+    "...kvVVVVVVvk...",
+    "....kkVVVVkk....",
+    "....kuuuuuuk....",
+    "...kuuuuuuuuk...",
+    "..kuekuuuuekuk..",
+    "..kuuuuuuuuuuk..",
+    "..kUuuuuuuuuUk..",
+    "...kUuuuuuuUk...",
+    "....kUUUUUUk....",
+])
+
+
+ODDISH_1 = ODDISH_TOP + _grid_b(["....kuk..kuk....", "....kkk..kkk...."])
+
+
+ODDISH_2 = ODDISH_TOP + _grid_b(["...kuk....kuk...", "...kkk....kkk..."])
+
+
+CATERPIE_1 = _grid_b([
+    "................",
+    "................",
+    "................",
+    "............nn..",
+    "...........kn...",
+    "........kkkkk...",
+    ".......kvvvvvk..",
+    ".......kvvvykvk.",
+    "..kkk.kvvvvyyvk.",
+    ".kvvvkkvvvvvvkk.",
+    "kvvvvvkvvvvvvk..",
+    "kvvvvvkvvvvvvk..",
+    "kcvcvckcvcvcvk..",
+    ".kkkkkkkkkkkkk..",
+    "..c..c..c..c....",
+])
+
+
+CATERPIE_2 = CATERPIE_1[:14] + _grid_b(["...c..c..c..c..."])
+
+
+PARAS_TOP = _grid_b([
+    "................",
+    "..kkkk....kkkk..",
+    ".knnynk..knynnk.",
+    "kncnnnnkknnnncnk",
+    "knnnnnnkknnnnnnk",
+    ".kkkyykkkkyykkk.",
+    "..kooooooooook..",
+    ".kooooooooooook.",
+    ".kowkoooooowkok.",
+    ".kooooccccooook.",
+    "..kccookkoocck..",
+    "...kkk....kkk...",
+])
+
+
+PARAS_1 = PARAS_TOP + _grid_b(["..kok.kok.kok...", "..kk..kk..kk...."])
+
+
+PARAS_2 = PARAS_TOP + _grid_b(["...kok.kok.kok..", "...kk..kk..kk..."])
+
+
+BEEDRILL_1 = _grid_b([
+    ".kk..........kk.",
+    "kiik........kiik",
+    "kiiik.kkkk.kiiik",
+    ".kiik.kyyk.kiik.",
+    "..kiikyeeykiik..",
+    "...kkkyyyykkk...",
+    ".kwk..kkkk..kwk.",
+    "kwsk.kyyyyk.kswk",
+    "kssk.kkkkkk.kssk",
+    ".ksk.kyyyyk.ksk.",
+    "..kk.kkkkkk.kk..",
+    ".....kyyyyk.....",
+    "......kkkk......",
+    ".......kwk......",
+    "........k.......",
+])
+
+
+BEEDRILL_2 = _grid_b([
+    "................",
+    "kkk..........kkk",
+    "kiikk.kkkk.kkiik",
+    ".kiiikkyykkiiik.",
+    "..kkikyeeykikk..",
+    "...kkkyyyykkk...",
+]) + BEEDRILL_1[6:]
+
+
+DIGLETT_GROUND = _grid_b([
+    ".kkAAkkkkkkAAkk.",
+    "kAaAAaAAaAAaAAak",
+    ".kkkkkkkkkkkkkk.",
+])
+
+
+DIGLETT_1 = _grid_b([
+    "................",
+    "................",
+    "................",
+    "......kkkk......",
+    ".....kxxxxk.....",
+    "....kxxxxxxk....",
+    "....kxkxxkxk....",
+    "....kxxxxxxk....",
+    "....kxqqqqxk....",
+    "....kxq4qqxk....",
+    "....kbxqqxbk....",
+    "...kkbxxxxbkk...",
+]) + DIGLETT_GROUND
+
+
+DIGLETT_2 = _grid_b([""] * 5) + DIGLETT_1[3:10] + DIGLETT_GROUND
+
+
+DIGLETT_MOUND = _grid_b([""] * 10 + [
+    "......kkkk......",
+    "....kkxbbxkk....",
+    "..kkAxbAAbxAkk..",
+]) + DIGLETT_GROUND
+
 
 SPIT = [
     "",
@@ -214,22 +370,6 @@ COIN = [
     "  kkkk",
 ]
 
-PORYGON_1 = [
-    "",
-    "",
-    "       kkk",
-    "      kqqBk",
-    "  kk  kqwkBk",
-    " kBBkkqqqqBk",
-    " kBBBqqqqqk",
-    "  kkqqqqqBBk",
-    "   kqqqqBBBk",
-    "  kqqkkqBBBk",
-    "  kqk  kBBk",
-    "  kk    kk",
-]
-
-PORYGON_2 = [""] + PORYGON_1[:-1]
 
 TRI = [
     "",
@@ -264,109 +404,6 @@ POKE_FLUTE = [
     "  kkkkkkkkkkkk",
 ]
 
-
-ODDISH_TOP = [
-    "",
-    "   v   v   v",
-    "  vVv vVv vVv",
-    "   vVvVVvVVv",
-    "    vVVVVVv",
-    "     kkkkk",
-    "    kuuuuuk",
-    "   kuuuuuuuk",
-    "   kuekuekuk",
-    "   kuuuuuuuk",
-    "   kUuuuuuUk",
-    "    kUUUUUk",
-]
-
-ODDISH_1 = ODDISH_TOP + ["    kuk kuk", "    kkk kkk"]
-ODDISH_2 = ODDISH_TOP + ["   kuk   kuk", "   kkk   kkk"]
-
-CATERPIE_1 = [
-    "",
-    "",
-    "",
-    "           nn",
-    "          n",
-    "        kkkkk",
-    "       kvvvvvk",
-    "   kkk kvvvwek",
-    "  kvvvkvvvvvvk",
-    " kyvvvvkvvvvvk",
-    " kyyvvvkvvvvk",
-    "  kkvvvvkvvk",
-    "    kkkkkkk",
-    "    c c c c",
-]
-
-CATERPIE_2 = [
-    "",
-    "",
-    "",
-    "           nn",
-    "          n",
-    "        kkkkk",
-    "       kvvvvvk",
-    "    kk kvvvwek",
-    "   kvvkvvvvvvk",
-    "  kyvvvkvvvvvk",
-    "  kyyvvkvvvvk",
-    "   kkvvvkvvk",
-    "     kkkkkk",
-    "     c c c",
-]
-
-PARAS_TOP = [
-    "",
-    "  kkkk  kkkk",
-    " knwnnkknnwnk",
-    " knnnnkknnnnk",
-    "  kkyk  kykk",
-    "   kookkook",
-    "  kooooooook",
-    " kooeooooeook",
-    " kooooooooook",
-    "  kowooooowok",
-    "   kkkkkkkkk",
-]
-
-PARAS_1 = PARAS_TOP + ["  kok kok kok", "  kk  kk  kk"]
-PARAS_2 = PARAS_TOP + ["   kok kok kok", "   kk  kk  kk"]
-
-BEEDRILL_1 = [
-    "",
-    "   ss   ss",
-    "  ssss ssss",
-    "   ssskss",
-    "     kyyk   k",
-    "    kyekyk kwk",
-    "  kkyyyykkkkwk",
-    " kwkkkkyyk  k",
-    "kwk kyykkyk",
-    " k kyyyykkyk",
-    "   kkykkyyk",
-    "    kyyyyk",
-    "     kkkwk",
-    "       kk",
-]
-
-BEEDRILL_2 = [
-    "",
-    "",
-    "  ssss ssss",
-    " sssss sssss",
-    "     kyyk   k",
-    "    kyekyk kwk",
-    "  kkyyyykkkkwk",
-    " kwkkkkyyk  k",
-    "kwk kyykkyk",
-    " k kyyyykkyk",
-    "   kkykkyyk",
-    "    kyyyyk",
-    "     kkkwk",
-    "       kk",
-]
 
 LEAF = [
     "",
@@ -426,76 +463,171 @@ GEODUDE_1 = [
 
 GEODUDE_2 = [""] + GEODUDE_1[:-1]
 
-DIGLETT_1 = [
-    "",
-    "",
-    "",
-    "      kkkk",
-    "     kxxxxk",
-    "    kxxxxxxk",
-    "    kxkxxkxk",
-    "    kxxxxxxk",
-    "    kxxqqxxk",
-    "    kxxqqxxk",
-    "    kxxxxxxk",
-    "  kkkkkkkkkkkk",
-    " kAAbAAbAAbAAk",
-    "kAAbAAAAAAbAAAk",
-    " kkkkkkkkkkkkk",
-]
 
-DIGLETT_2 = [""] * 3 + DIGLETT_1[:3] + DIGLETT_1[5:12] + DIGLETT_1[12:]
+def _clean_c(rows):
+    assert len(rows) <= 16, len(rows)
+    for row in rows:
+        assert len(row) <= 16, (len(row), row)
+    return [row.replace(".", " ").rstrip() for row in rows]
 
-DIGLETT_MOUND = [
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "      kkkk",
-    "    kkAbbAkk",
-    "  kkAbAAAAbAkk",
-    " kAAAAbAAAbAAAk",
-    " kkkkkkkkkkkkkk",
-]
 
-ZUBAT_1 = [
-    "",
-    "",
-    "k             k",
-    "kZk    k k   kZk",
-    "kZZk   kzk  kZZk",
-    " kZZk kzzzk kZZk",
-    " kZzZkzkzkzkZzZk",
-    "  kZzZzzzzzzZzZk",
-    "   kZzzwzwzzZk",
-    "    kkzzzzzkk",
-    "      kzzzk",
-    "      kqkqk",
-    "       k k",
-]
+ZUBAT_1 = _clean_c([
+    "................",
+    "k..............k",
+    "kZk..k....k..kZk",
+    "kZzk.kukkuk.kzZk",
+    "kZqzkuuuuuukzqZk",
+    "kZqqkuuuuuukqqZk",
+    "kZqqkUuuuuUkqqZk",
+    ".kZqkukkkkukqZk.",
+    "..kZkwqqqqwkZk..",
+    "...kkUkkkkUkk...",
+    "......kUUk......",
+    ".....kUkkUk.....",
+    "....kUk..kUk....",
+    "....kk....kk....",
+])
 
-ZUBAT_2 = [
-    "",
-    "",
-    "",
-    "",
-    "        k k",
-    "  kkk  kzk  kkk",
-    " kZZZkkzzzkkZZZk",
-    "kZzZzkzkzkzkZzZk",
-    " kZzZzzzzzzZzZk",
-    "  kkZzzwzwzzZkk",
-    "    kkzzzzzkk",
-    "      kzzzk",
-    "      kqkqk",
-    "       k k",
-]
+
+ZUBAT_2 = [""] + ZUBAT_1[:-1]
+
+
+POLIWAG_1 = _clean_c([
+    "................",
+    "................",
+    "......kkkk......",
+    "....kkBBBBkk....",
+    "...kBiiBBBBBk...",
+    "..kBwwBBBBwwBk..",
+    "..kBwkBqqBkwBk..",
+    ".kBBBBBBBBBBBBk.",
+    ".kBBBwwwwwwBBBk.",
+    ".kBBwwkkkkwwBBk.",
+    ".kBBwkwwwwkwBBk.",
+    ".kBBwkwkkwkwBBk.",
+    ".kBBwwkwwkwwBBk.",
+    "..kBBwwkkwwBBk..",
+    "...kkBBkkBBkk...",
+    "....kk....kk....",
+])
+
+
+POLIWAG_2 = [""] + POLIWAG_1[:-1]
+
+
+STARYU_1 = _clean_c([
+    "................",
+    ".......kk.......",
+    "......kgxk......",
+    "......kgxk......",
+    ".....kgxxbk.....",
+    "kkkkkkgxxbkkkkkk",
+    "kggggxxxxxxbbbbk",
+    ".kgxxxkkkkxxxbk.",
+    "..kgxkynnykxbk..",
+    "...kxkynwykxk...",
+    "...kgxkyykxbk...",
+    "..kgxxxkkxxxbk..",
+    "..kgxbk..kgxbk..",
+    ".kgxbk....kgxbk.",
+    ".kgbk......kgbk.",
+    "kkk..........kkk",
+])
+
+
+STARYU_2 = [""] + STARYU_1[:-1]
+
+
+HORSEA_1 = _clean_c([
+    "................",
+    "........kk.k....",
+    ".......kiikik...",
+    "......kiiiiik...",
+    "..kkkkiwkiiiBk..",
+    ".kiiiiiiiiiBBk..",
+    "..kkkkiiiiiBBkk.",
+    "......kciiiBBkik",
+    ".....kcciiBBkiik",
+    ".....kcciiBBkk..",
+    "......kcciBBk...",
+    "......kkciiBk...",
+    ".......kkiBBk...",
+    "........kiBk.kk.",
+    "........kiikkik.",
+    ".........kkiik..",
+])
+
+
+HORSEA_2 = [""] + HORSEA_1[:-1]
+
+
+PIKACHU_1 = _clean_c([
+    "..k.......k.....",
+    "..kk.....kk.....",
+    "..kyk...kyk.....",
+    "...kyk.kyk......",
+    "...kyykyyk....kk",
+    "..kyyyyyyyk..kyk",
+    ".kyykyyykyyk.kyk",
+    ".kyykyyykyykkyk.",
+    ".knnyykyynnkkyyk",
+    ".kyyyyyyyyykyyk.",
+    "..kyyyyyyyyk.kbk",
+    ".kykyyyyyykykbk.",
+    "..kyyyyyyyykbk..",
+    "...kyyyyyyk.k...",
+    "...kyk..kyk.....",
+    "...kk....kk.....",
+])
+
+
+PIKACHU_2 = [""] + PIKACHU_1[:-1]
+
+
+VOLTORB_1 = _clean_c([
+    "................",
+    ".....kkkkkk.....",
+    "...kknnnnnnkk...",
+    "..knwwnnnnnnnk..",
+    ".knwnnnnnnnnnFk.",
+    ".knkkknnnnkkkFk.",
+    "knnkwwknnkwwknFk",
+    "knnkwkknnkkwknFk",
+    "knnnkknnnnkknnFk",
+    "kkkkkkkkkkkkkkkk",
+    "kwwwwwwwwwwwwwsk",
+    ".kwwwwwwwwwwwsk.",
+    ".kwwwwwwwwwwssk.",
+    "..kwwwwwwwwssk..",
+    "...kkwwwwsskk...",
+    ".....kkkkkk.....",
+])
+
+
+VOLTORB_2 = [""] + VOLTORB_1[:-1]
+
+
+MAGNEMITE_1 = _clean_c([
+    "................",
+    ".......kk.......",
+    ".......kLk......",
+    "......kkkk......",
+    "....kkllllkk....",
+    "kk.kllllllllk.kk",
+    "nLkllwwwwllLkkLu",
+    "kLkllwwkkwllLkLk",
+    "kLkllwwkkwllLkLk",
+    "nLklllwwwlllLkLu",
+    "kk.kllllllllk.kk",
+    "....kLlllllLk...",
+    ".....kkkkkk.....",
+    "....kak..kak....",
+    "....kk....kk....",
+])
+
+
+MAGNEMITE_2 = [""] + MAGNEMITE_1[:-1]
+
 
 ROCK = [
     "",
@@ -517,44 +649,284 @@ SUPERSONIC = [
     "  wwww",
 ]
 
-ONIX_SEGMENT = [
-    "",
-    "     kkkkk",
-    "   kkaaaaakk",
-    "  kaaaaaaaaak",
-    " kaaaAaaaaaaak",
-    " kaaAaaaaaAaak",
-    "kaaaaaaaaaaaaak",
-    "kaaaaaaaaaaAAak",
-    "kaaAAaaaaaaaaak",
-    "kaaaaaaaaAaaaak",
-    " kaaaaaaaaaaak",
-    " kAaaaaAaaaaAk",
-    "  kAAaaaaaAAk",
-    "   kkAAAAAkk",
-    "     kkkkk",
-]
+def _grid_a():
+    return [["."] * 32 for _ in range(32)]
+
+
+def _put_a(grid, x, y, color):
+    x, y = round(x), round(y)
+    if 0 <= x < len(grid[0]) and 0 <= y < len(grid):
+        grid[y][x] = color
+
+
+def _curve_a(grid, points, radius_from, radius_to, color, samples=48):
+    (x0, y0), (x1, y1), (x2, y2) = points
+    for t in range(samples + 1):
+        u = t / samples
+        x = (1 - u) ** 2 * x0 + 2 * (1 - u) * u * x1 + u * u * x2
+        y = (1 - u) ** 2 * y0 + 2 * (1 - u) * u * y1 + u * u * y2
+        r = radius_from + (radius_to - radius_from) * u
+        ellipse(grid, x, y, r, r, color)
+
+
+def _shade_a(grid, base, shade, dx=1, dy=1):
+    size_y, size_x = len(grid), len(grid[0])
+    marks = []
+    for y in range(size_y):
+        for x in range(size_x):
+            if grid[y][x] != base:
+                continue
+            for ox, oy in ((dx, 0), (0, dy)):
+                nx, ny = x + ox, y + oy
+                if not (0 <= nx < size_x and 0 <= ny < size_y) or grid[ny][nx] not in (base, shade):
+                    marks.append((x, y))
+                    break
+    for x, y in marks:
+        grid[y][x] = shade
+
+
+def _rows_a(grid):
+    return ["".join(row) for row in grid]
+
+
+def mewtwo_frame(step, charging):
+    grid = _grid_a()
+    lift = step
+    _curve_a(grid, ((20, 24), (31, 24), (28, 13)), 2.3, 1.1, "z")
+    ellipse(grid, 27.5, 12.5, 1.6, 1.6, "z")
+    ellipse(grid, 12, 28.5 - lift, 2.6, 1.8, "h")
+    ellipse(grid, 20, 28.5 - (1 - lift), 2.6, 1.8, "h")
+    ellipse(grid, 12.3, 24, 3, 3.6, "h")
+    ellipse(grid, 19.7, 24, 3, 3.6, "h")
+    ellipse(grid, 16, 19.5, 4.6, 4.2, "z")
+    ellipse(grid, 16, 13.5, 5.8, 4.2, "h")
+    ellipse(grid, 10.2, 12, 2.2, 2, "h")
+    ellipse(grid, 21.8, 12, 2.2, 2, "h")
+    for side in (-1, 1):
+        _curve_a(grid, ((16 + side * 7, 13), (16 + side * 10, 16), (16 + side * 9.5, 20)), 1.3, 1, "h", 20)
+        hand_x = 16 + side * 9.5
+        ellipse(grid, hand_x, 20.5, 1.4, 1.3, "h")
+        for finger in (-1, 0, 1):
+            _put_a(grid, hand_x + finger, 22.2, "h")
+    _curve_a(grid, ((18.5, 6), (22, 7.5), (21, 11.5)), 0.9, 0.9, "p", 20)
+    ellipse(grid, 16, 6, 4.3, 3.8, "h")
+    polygon(grid, [(12, 5), (12.4, 0.8), (14.6, 3.6)], "h")
+    polygon(grid, [(17.4, 3.6), (19.6, 0.8), (20, 5)], "h")
+    _shade_a(grid, "h", "p")
+    _shade_a(grid, "z", "Z")
+    eye = "w" if charging else "Z"
+    for x0, x1 in ((13, 14), (18, 19)):
+        grid[6][x0] = grid[6][x1] = eye
+        grid[7][x0] = grid[7][x1] = "k"
+    grid[5][13] = grid[5][19] = "k"
+    grid[5][14] = grid[5][18] = "p"
+    grid[9][15] = grid[9][16] = grid[9][17] = "p"
+    result = outline(grid)
+    if charging:
+        glow = [row[:] for row in result]
+        for y in range(32):
+            for x in range(32):
+                if result[y][x] != ".":
+                    continue
+                if any(0 <= x + ox < 32 and 0 <= y + oy < 32 and result[y + oy][x + ox] == "k"
+                       for ox, oy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                    glow[y][x] = "d"
+        result = glow
+    return _rows_a(result)
 
 
 def onix_frame(step, charging):
-    grid = [["."] * 32 for _ in range(32)]
-    ellipse(grid, 16, 18, 13, 11, "a")
-    ellipse(grid, 16, 22, 10, 6, "A")
-    ellipse(grid, 16, 17, 11, 8, "a")
-    for x in range(10, 23):
-        grid[4 + (x % 3)][x] = "a"
-    for y in range(2, 9):
-        grid[y][16] = "a"
-        grid[y][17] = "A"
+    grid = _grid_a()
+    jaw = step
+    polygon(grid, [(13.5, 9), (16, 0.5), (19, 9)], "a")
+    polygon(grid, [(16, 1.5), (17.2, 4), (19, 9), (16.4, 9)], "A")
+    ellipse(grid, 16, 25 + jaw, 8.5, 4.2, "a")
+    ellipse(grid, 16, 13.5, 10.5, 7.5, "a")
+    ellipse(grid, 7.5, 16, 3.5, 3.2, "a")
+    ellipse(grid, 24.5, 16, 3.5, 3.2, "a")
+    ellipse(grid, 16, 21 + jaw * 0.5, 7, 3 + jaw * 0.5, "k")
+    for x in range(10, 23, 3):
+        polygon(grid, [(x - 1, 18.2), (x + 1, 18.2), (x, 20.2)], "w")
+        polygon(grid, [(x + 0.5, 24 + jaw), (x + 2.5, 24 + jaw), (x + 1.5, 22 + jaw)], "w")
+    _shade_a(grid, "a", "A")
+    for cx, cy, rx, ry in ((16, 13.5, 10.5, 7.5), (7.5, 16, 3.5, 3.2), (24.5, 16, 3.5, 3.2), (16, 25 + jaw, 8.5, 4.2)):
+        for y in range(32):
+            for x in range(32):
+                if grid[y][x] == "a" and ((x - cx + rx * 0.45) / rx) ** 2 + ((y - cy + ry * 0.45) / ry) ** 2 <= 0.12:
+                    grid[y][x] = "s"
+    for x in range(8, 25):
+        if grid[9][x] == "a" and x % 5 == 1:
+            grid[9][x] = grid[10][x] = "A"
+    for y, xs in ((12, (6, 26)), (14, (11, 21))):
+        for x in xs:
+            _put_a(grid, x, y, "A")
     eye = "w" if charging else "k"
-    for x in (10, 11, 21, 22):
-        grid[15][x] = eye
-    grid[14][10] = grid[14][22] = "k"
-    for x in range(11, 22):
-        grid[23 + step][x] = "k"
-    for x, y in ((8, 12), (24, 12), (13, 26), (19, 26)):
+    for side in (-1, 1):
+        cx = 16 + side * 5
+        for i in range(3):
+            _put_a(grid, cx + side * (i - 1), 13 + (i if side < 0 else 2 - i) * 0.34, "k")
+            _put_a(grid, cx + side * (i - 1), 14, eye if i == 1 else "k")
+    return _rows_a(outline(grid))
+
+
+def _onix_segment_grid_a():
+    grid = [["."] * 16 for _ in range(16)]
+    ellipse(grid, 7.5, 8, 6.8, 6.3, "a")
+    _shade_a(grid, "a", "A")
+    for y in range(16):
+        for x in range(16):
+            if grid[y][x] == "a" and ((x - 5.5) / 3) ** 2 + ((y - 5.5) / 2.6) ** 2 <= 1:
+                grid[y][x] = "s"
+    for x, y in ((9, 4), (10, 5), (10, 6), (11, 7), (4, 10), (5, 10), (6, 11), (8, 9)):
         grid[y][x] = "A"
-    return ["".join(row) for row in outline(grid)]
+    return [row[:] for row in outline(grid)]
+
+
+
+
+def snorlax_frame(step, asleep):
+    grid = _grid_a()
+    foot = 1 if step else 0
+    for side in (-1, 1):
+        ellipse(grid, 16 + side * 13, 18, 2.6, 4, "T")
+    ellipse(grid, 16, 19, 13.5, 10.5, "T")
+    ellipse(grid, 16, 21, 9.5, 8, "c")
+    ellipse(grid, 16, 9.5, 9.5, 6.8, "T")
+    ellipse(grid, 16, 11, 6.8, 4.6, "c")
+    for ear_x in (8, 24):
+        polygon(grid, [(ear_x - 2.5, 5.5), (ear_x, 1.2), (ear_x + 2.5, 5.5)], "T")
+    ellipse(grid, 8, 28 - foot, 5, 3.4, "c")
+    ellipse(grid, 24, 28 - (1 - foot), 5, 3.4, "c")
+    _shade_a(grid, "T", "t")
+    _shade_a(grid, "c", "C")
+    if asleep:
+        for x in (11, 12, 13, 19, 20, 21):
+            grid[10][x] = "t"
+        grid[9][11] = grid[9][13] = grid[9][19] = grid[9][21] = "c"
+        grid[11][11] = grid[11][13] = grid[11][19] = grid[11][21] = "c"
+        grid[9][10] = grid[9][14] = grid[9][18] = grid[9][22] = "t"
+        ellipse(grid, 16, 13.5, 1.6, 1.1, "t")
+        grid[13][17] = "w"
+    else:
+        for x in (11, 12, 13, 19, 20, 21):
+            grid[8][x] = "t"
+        for x in (12, 13, 19, 20):
+            grid[10][x] = "k"
+        grid[9][12] = grid[9][19] = "k"
+        grid[9][13] = grid[9][20] = "w"
+        for x in range(13, 20):
+            grid[13][x] = "t"
+        grid[12][13] = grid[12][19] = "w"
+    for side, offset in ((-1, foot), (1, 1 - foot)):
+        cx = 16 + side * 8
+        ellipse(grid, cx, 28 - offset, 2, 1.4, "b")
+        for dx in (-3, 0, 3):
+            _put_a(grid, cx + dx, 25.5 - offset, "b")
+    for y in (20, 22):
+        _put_a(grid, 2 if y == 20 else 3, y, "w")
+        _put_a(grid, 30 if y == 20 else 29, y, "w")
+    result = outline(grid)
+    if asleep:
+        for x, y in ((26, 1), (27, 1), (28, 1), (28, 2), (27, 3), (26, 4), (27, 4), (28, 4)):
+            result[y][x] = "w"
+        for x, y in ((29, 6), (30, 6), (30, 7), (29, 8), (30, 8)):
+            result[y][x] = "w"
+    return _rows_a(result)
+
+
+def venusaur_frame(step, charging):
+    grid = _grid_a()
+    for side, offset in ((-1, step), (1, 1 - step)):
+        ellipse(grid, 16 + side * 8.5, 28 - offset, 3.6, 2.6, "j")
+    ellipse(grid, 16, 21.5, 12.5, 7.5, "j")
+    for side in (-1, 1):
+        polygon(grid, [(16, 13), (16 + side * 15, 10), (16 + side * 12, 16)], "v")
+        polygon(grid, [(16, 14), (16 + side * 13, 17), (16 + side * 8, 19)], "v")
+    ellipse(grid, 16, 17, 2.4, 3, "b")
+    for angle in range(0, 360, 60):
+        rad = math.radians(angle + 30)
+        ellipse(grid, 16 + math.cos(rad) * 6.5, 9 + math.sin(rad) * 3.6, 4.2, 2.6, "q")
+    ellipse(grid, 16, 9, 3.4, 2.2, "w" if charging else "y")
+    ellipse(grid, 16, 24, 8.5, 4.5, "j")
+    _shade_a(grid, "j", "J")
+    _shade_a(grid, "v", "V")
+    _shade_a(grid, "q", "n")
+    for x, y in ((9, 22), (23, 22), (12, 25), (20, 25), (6, 19), (26, 19)):
+        grid[y][x] = grid[y][x + 1] = "J"
+    for side in (-1, 1):
+        cx = 16 + side * 5
+        grid[21][cx] = "e"
+        grid[20][cx] = "w" if charging else "e"
+        grid[20][cx - side] = "k"
+    for x in range(13, 20):
+        grid[25][x] = "J"
+    for side, offset in ((-1, step), (1, 1 - step)):
+        for dx in (-2, 0, 2):
+            _put_a(grid, 16 + side * 8.5 + dx, 30 - offset, "w")
+    return _rows_a(outline(grid))
+
+
+def gyarados_frame(step, charging):
+    grid = _grid_a()
+    sway = step
+    _curve_a(grid, ((16, 18), (1, 26 + sway), (16, 28.5)), 3.2, 3, "u")
+    _curve_a(grid, ((16, 28.5), (29, 30), (28, 20 - sway)), 3, 1.6, "u")
+    polygon(grid, [(26, 21 - sway), (31, 15 - sway), (31, 23 - sway)], "i")
+    _curve_a(grid, ((13, 20), (4, 26 + sway), (15, 27)), 1.1, 1.1, "c")
+    _curve_a(grid, ((17, 27.5), (26, 28.5), (26, 22 - sway)), 1, 0.8, "c")
+    ellipse(grid, 16, 11, 9, 7, "u")
+    for x, top in ((9, 2), (12, 0), (16, 0), (20, 0), (23, 2)):
+        polygon(grid, [(x - 1.4, 6), (x, top), (x + 1.4, 6)], "i")
+    _shade_a(grid, "u", "U")
+    ellipse(grid, 16, 14.5, 5.8, 3.4, "B" if charging else "k")
+    for x in (12, 14, 18, 20):
+        polygon(grid, [(x - 0.8, 11.6), (x + 0.8, 11.6), (x, 13.4)], "w")
+    for x in (13, 16, 19):
+        polygon(grid, [(x - 0.8, 17.6), (x + 0.8, 17.6), (x, 15.8)], "w")
+    for side in (-1, 1):
+        cx = 16 + side * 4.5
+        _put_a(grid, cx, 8, "e")
+        _put_a(grid, cx + side, 8, "e")
+        _put_a(grid, cx - side, 7, "k")
+        _put_a(grid, cx, 7, "k")
+        for i in range(5):
+            _put_a(grid, 16 + side * (7 + i), 13 + i * 0.6, "w")
+    return _rows_a(outline(grid))
+
+
+def weezing_frame(step, charging):
+    grid = _grid_a()
+    bob = step
+    ellipse(grid, 23, 7 + bob, 3.6, 3.2, "z")
+    ellipse(grid, 22, 20 - bob, 7.2, 6.8, "z")
+    ellipse(grid, 11, 13 + bob, 9.2, 8.8, "z")
+    for cx, cy in ((6, 5 + bob), (13, 4 + bob), (18, 13 - bob), (26, 14 - bob), (25, 3 + bob)):
+        ellipse(grid, cx, cy, 1.8, 1.4, "z")
+    _shade_a(grid, "z", "Z")
+    for cx, cy in ((6, 5 + bob), (13, 4 + bob), (26, 14 - bob), (25, 3 + bob)):
+        _put_a(grid, cx, cy - 0.4, "Z")
+    ellipse(grid, 11, 17 + bob, 3.2, 2.4, "c")
+    for dx, dy in ((-3, -2), (3, -2), (-3, 2), (3, 2)):
+        _put_a(grid, 11 + dx, 17 + bob + dy, "c")
+    _put_a(grid, 10, 16.6 + bob, "k")
+    _put_a(grid, 12, 16.6 + bob, "k")
+    eye = "w" if charging else "k"
+    for cx, cy, spread in ((11, 10 + bob, 3), (22, 17 - bob, 2.5)):
+        _put_a(grid, cx - spread, cy, eye)
+        _put_a(grid, cx + spread, cy, eye)
+        _put_a(grid, cx - spread - 1, cy - 1, "k")
+        _put_a(grid, cx + spread + 1, cy - 1, "k")
+    for x in range(19, 26):
+        _put_a(grid, x, 21.5 - bob, "k")
+    for x in (20, 22, 24):
+        _put_a(grid, x, 22.5 - bob, "w")
+    for x in range(7, 16):
+        _put_a(grid, x, 21 + bob if x in (7, 15) else 21.5 + bob, "k")
+    result = outline(grid)
+    for x, y in ((5, 1), (6, 0), (14, 0), (26, 0), (29, 10), (30, 11)):
+        if 0 <= y + bob < 32:
+            result[y + bob if y + bob < 32 else y][x] = "s"
+    return _rows_a(result)
 
 
 MAGIKARP_1 = [
@@ -577,66 +949,6 @@ MAGIKARP_1 = [row.replace(".", " ") for row in MAGIKARP_1]
 
 MAGIKARP_2 = [""] + MAGIKARP_1[:-1]
 
-POLIWAG_1 = [
-    "",
-    "",
-    "",
-    "      kkkk",
-    "    kkuuuukk",
-    "   kuuuuuuuuk",
-    "  kuwkuuuuwkuk",
-    "  kuwwkkkkwwuk",
-    "  kuuwwwwwwuuk",
-    "  kuuwwkkwwuuk",
-    "  kuuwwkwwwuuk",
-    "   kuuwwwwuuk",
-    "    kkuuuukkk",
-    "     kk  kiiik",
-    "          kkk",
-]
-
-POLIWAG_2 = [""] + POLIWAG_1[:-1]
-
-STARYU_1 = [
-    "",
-    "       kk",
-    "      kxxk",
-    "      kxxk",
-    "     kxxxxk",
-    "kkkkkkxxxxkkkkkk",
-    "kxxxxxxnnxxxxxxk",
-    " kxxxxnwnnxxxxk",
-    "  kxxxxnnxxxxk",
-    "   kxxxxxxxxk",
-    "  kxxxxkkxxxxk",
-    "  kxxxk  kxxxk",
-    " kxxxk    kxxxk",
-    " kxxk      kxxk",
-    " kkk        kkk",
-]
-
-STARYU_2 = [""] + STARYU_1[:-1]
-
-HORSEA_1 = [
-    "",
-    "      kkk",
-    "     kBBBk",
-    "  kkkBBwkBk",
-    " kBBBBBBBBk",
-    "  kkkkBBBBk",
-    "      kBBBk",
-    "     kBByBkk",
-    "    kBByyBkwk",
-    "    kBByyBkwk",
-    "     kBByBkk",
-    "      kBBBk",
-    "       kBBk",
-    "    kk kBk",
-    "     kkBk",
-    "       k",
-]
-
-HORSEA_2 = [""] + HORSEA_1[:-1]
 
 BUBBLE = [
     "",
@@ -681,86 +993,6 @@ DRAGON_FIRE = [
     "  kkkk",
 ]
 
-
-PIKACHU_1 = [
-    "",
-    " kk          kk",
-    " kkk        kkk",
-    "  kyk      kyk",
-    "  kyyk kkk kyyk",
-    "   kyykyyykyyk   kk",
-    "    kyyyyyyyk   kyk",
-    "   kyykyyykyyk kyyk",
-    "   kynyyyyynyk kyk",
-    "   kyyyykyyyyk kk",
-    "    kyyyyyyyk kyk",
-    "   kyxyyyyyxyk k",
-    "   kyyyyyyyyykk",
-    "    kyk   kyk",
-    "    kkk   kkk",
-]
-
-PIKACHU_2 = [
-    "",
-    "  kk        kk",
-    "  kkk      kkk",
-    "   kyk    kyk",
-    "   kyyk kkkyyk",
-    "    kyykyyykyk   kk",
-    "    kyyyyyyyk   kyk",
-    "   kyykyyykyyk kyyk",
-    "   kynyyyyynyk kyk",
-    "   kyyyykyyyyk kk",
-    "    kyyyyyyyk kyk",
-    "   kyxyyyyyxyk k",
-    "   kyyyyyyyyykk",
-    "   kyk     kyk",
-    "   kkk     kkk",
-]
-
-PIKACHU_1 = [row[:16] for row in PIKACHU_1]
-PIKACHU_2 = [row[:16] for row in PIKACHU_2]
-
-VOLTORB_1 = [
-    "",
-    "",
-    "     kkkkkk",
-    "   kknnnnnnkk",
-    "  knnhnnnnnnnk",
-    " knnnnnnnnnnnnk",
-    " knkkknnnnkkknk",
-    "kkkwwkkkkkkwwkkk",
-    "kwwkkwwwwwwkkwwk",
-    "kwwwwwwwwwwwwwwk",
-    " kwwwkkkkkkwwwk",
-    " kwwwwwwwwwwwwk",
-    "  kwwwwwwwwwwk",
-    "   kkwwwwwwkk",
-    "     kkkkkk",
-]
-
-VOLTORB_2 = [""] + VOLTORB_1[:-1]
-
-MAGNEMITE_1 = [
-    "",
-    "       kk",
-    "       ks",
-    "      kkkk",
-    "     kssssk",
-    "kkk kssssssk kkk",
-    "kBkkssskkssskkBk",
-    "kBBksskwwksskBBk",
-    "kkkksskwkksskkkk",
-    "kBBksssskssskBBk",
-    "kBkkssssssssskBk",
-    "kkk kssssssk kkk",
-    "      kssssk",
-    "    kk kkkk kk",
-    "    ks      sk",
-    "     k      k",
-]
-
-MAGNEMITE_2 = [""] + MAGNEMITE_1[:-1]
 
 SPARK = [
     "",
@@ -814,40 +1046,325 @@ MACHOP_TOP = [
 MACHOP_1 = MACHOP_TOP + ["    kLLk  kLLk", "    kkkk  kkkk"]
 MACHOP_2 = MACHOP_TOP + ["   kLLk    kLLk", "   kkkk    kkkk"]
 
-CHARMANDER_TOP = [
+CHARMANDER_1 = [
     "",
-    "     kkkk",
-    "    koooook",
-    "   kooookook",
-    "   koookwkok",
-    "   kooooooook   n",
-    "    koooooook  nyn",
-    "     kkooook   nyn",
-    "    koocccok   kok",
-    "   kookccccok kook",
-    "   kok ccccokooook",
-    "       kcccooookk",
+    "     kkk",
+    "   kkoookk   kk",
+    "  koooooook knnk",
+    "  kwkoooook knyn",
+    " kowkooooookknyn",
+    " koooooooFokknyk",
+    " kkkooooFFk kok",
+    "  koooooFokkkok",
+    "   kkoooookoook",
+    "  koooccoooook",
+    " kokoccccFook",
+    "  kkoccccFFk",
+    "    kooccFFk",
+    "    kooooFFk",
+    "     kkkkkk",
 ]
 
-CHARMANDER_1 = [row[:16] for row in CHARMANDER_TOP + ["      koook kok", "      kkkk  kk"]]
-CHARMANDER_2 = [row[:16] for row in CHARMANDER_TOP + ["     koook  kok", "     kkkk   kk"]]
 
-BULBASAUR_TOP = [
+CHARMANDER_2 = [
     "",
-    "      kkkk",
-    "     kvVvvk",
-    "    kvVvvVvk",
-    "   kvvVvvVvvk",
-    "  kjjkvvvvkjjk",
-    " kjjjjkkkkjjjjk",
-    " kjjejjjjjejjjk",
-    " kjjjjjjjjjjjjk",
-    "  kjjjkkkkjjjk",
-    "   kjjjjjjjjk",
+    "     kkk",
+    "   kkoookk   kk",
+    "  koooooook knnk",
+    "  kwkoooook knyn",
+    " kowkooooookknyn",
+    " koooooooFokknyk",
+    " kkkooooFFk kok",
+    "  koooooFokkkok",
+    "   kkoooookoook",
+    "  koooccoooook",
+    " kokoccccFook",
+    "  kkoccccFFk",
+    "   koocccoFFk",
+    "   koooookFFk",
+    "    kkkkk kk",
 ]
 
-BULBASAUR_1 = BULBASAUR_TOP + ["   kJk kk kJk", "   kkk    kkk"]
-BULBASAUR_2 = BULBASAUR_TOP + ["  kJk  kk  kJk", "  kkk      kkk"]
+
+BULBASAUR_1 = [
+    "",
+    "       kkkkkk",
+    "      kvvVvvvk",
+    "     kvvVvVvVvk",
+    "  kk kvVVvvVvvk",
+    " kjjkvvjvvVvVvvk",
+    "  kkjjjjvvvvvvk",
+    "  kjjjjjjjvvvvk",
+    " kjwejjjjjjjvk",
+    " kjwejjjjjjjjk",
+    " kjjjjjjjJjJjjk",
+    " kkkkjJjjjJjJk",
+    "  kjjjjjjJJjk",
+    "  kjjkjjjJJk",
+    "  kwjkkkkwJk",
+    "   kk    kk",
+]
+
+
+BULBASAUR_2 = [
+    "",
+    "       kkkkkk",
+    "      kvvVvvvk",
+    "     kvvVvVvVvk",
+    "  kk kvVVvvVvvk",
+    " kjjkvvjvvVvVvvk",
+    "  kkjjjjvvvvvvk",
+    "  kjjjjjjjvvvvk",
+    " kjwejjjjjjjvk",
+    " kjwejjjjjjjjk",
+    " kjjjjjjjJjJjjk",
+    " kkkkjJjjjJjJk",
+    " kjjjjjjjjJJk",
+    " kjjkkjjjjJJk",
+    " kwjk kkkkwJk",
+    "  kk      kk",
+]
+
+
+PONYTA_1 = [
+    "    kyk",
+    "   kknyk",
+    "  kccnnyk",
+    "   kkkonyk",
+    " kkccckonyk",
+    "kccwccckonk  kk",
+    "kkcUccckkonkknyk",
+    " kkccccccccconnk",
+    "   kccccccccconn",
+    "   kcccccccCccon",
+    "    kccCccCcckkk",
+    "    kccCccccCk",
+    "    kckCkkckCk",
+    "    kckCkkckCk",
+    "    kAkAkkAkAk",
+    "     k k  k k",
+]
+
+
+PONYTA_2 = [
+    "    kyk",
+    "   kknyk",
+    "  kccnnyk",
+    "   kkkonyk",
+    " kkccckonyk",
+    "kccwccckonk  kk",
+    "kkcUccckkonkknyk",
+    " kkccccccccconnk",
+    "   kccccccccconn",
+    "   kcccccccCccon",
+    "    kccCccCcckkk",
+    "     kCccccCk",
+    "     kCkkkkCk",
+    "     kCk  kCk",
+    "     kAk  kAk",
+    "      k    k",
+]
+
+
+MAGMAR_1 = [
+    "     k kk k",
+    "    knkyyknk",
+    "    knkooonk",
+    "     koooook",
+    "    kokoookok",
+    "    kowoyoook",
+    "    kkynknykk",
+    "   knoooyooknk",
+    "  kokoooooookok",
+    "  kokooyyyookok",
+    " kokkoyyyyyokkok",
+    " kkkkoyyyyykkkkk",
+    "  k kkoyyyokk k",
+    "    kooooook",
+    "    kyokkoyk",
+    "     kk  kk",
+]
+
+
+MAGMAR_2 = [
+    "     k kk k",
+    "    knkyyknk",
+    "    knkooonk",
+    "     koooook",
+    "    kokoookok",
+    "    kowoyoook",
+    "    kkynknykk",
+    "   knoooyooknk",
+    "  kokoooooookok",
+    "  kokooyyyookok",
+    " kokkoyyyyyokkok",
+    " kkkkoyyyyykkkkk",
+    "  k kkoyyyokk k",
+    "   kookoooook",
+    "   kyokkkkoyk",
+    "    kk    kk",
+]
+
+
+SQUIRTLE_1 = [
+    "",
+    "    kkkkk",
+    "   kiiiiik",
+    "  kiiiii1ik",
+    "  kwkiiii1k",
+    " kiwkiiii1ik",
+    "  kiiiiiiikk",
+    " kkkkiii1ibbk",
+    "  kkiiiiixxxbkkk",
+    "   kkkccccbxbk11",
+    "  kikcCCCccxxiik",
+    "   kiccccccbbiik",
+    "    kkCCCcxxbkk",
+    "    kiiccb11k",
+    "    kiikkk11k",
+    "     kk   kk",
+]
+
+
+SQUIRTLE_2 = [
+    "",
+    "    kkkkk",
+    "   kiiiiik",
+    "  kiiiii1ik",
+    "  kwkiiii1k",
+    " kiwkiiii1ik",
+    "  kiiiiiiikk",
+    " kkkkiii1ibbk",
+    "  kkiiiiixxxbkkk",
+    "   kkkccccbxbk11",
+    "  kikcCCCccxxiik",
+    "   kiccccccbbiik",
+    "    kkCCCcxxbkk",
+    "   kiikccbb11k",
+    "   kiikkkkk11k",
+    "    kk     kk",
+]
+
+
+JYNX_1 = [
+    "     kkkkkkk",
+    "    kyyyyyyyk",
+    "   kyyyyyygyyk",
+    "   kygyyyyyyyk",
+    "  kyykZZZZZkyyk",
+    "  kyyZZwZwZZyyk",
+    "  kyyZZZZZZZyyk",
+    "  kyyZZZZZZZyyk",
+    "   kynZq4qZnyk",
+    "  kynnnnZnnnyk",
+    "  kyyenyyyennyk",
+    "  knnnnnnnnnnyk",
+    "  knnnennnnenk",
+    " knnnnnnennnnnk",
+    " knnnnnnnnnnnnk",
+    "  kkkkZZkZZkkk",
+]
+
+
+JYNX_2 = [
+    "     kkkkkkk",
+    "    kyyyyyyyk",
+    "   kyyyyyygyyk",
+    "   kygyyyyyyyk",
+    "  kyykZZZZZkyyk",
+    "  kyyZZwZwZZyyk",
+    "  kyyZZZZZZZyyk",
+    "  kyyZZZZZZZyyk",
+    "   kynZq4qZnyk",
+    "  kynnnnZnnnyk",
+    "  kyyenyyyennyk",
+    "  knnnnnnnnnnyk",
+    "  knnnennnnenk",
+    " knnnnnnennnnnk",
+    " knnnnnnnnnnnnk",
+    "  kkkkkZZZkkkk",
+]
+
+
+SHELLDER_1 = [
+    "     kkkkkk",
+    "   kkzzzzzzk",
+    "  kZhzzZzzzZk",
+    "  khzzzZzzzZzk",
+    " kzZzzzZzzzZzzk",
+    " kzzZzzzZzzzZzk",
+    "kzzzZzzzZzzzZzk",
+    "kzzzZzzzZzzzZzzk",
+    "kzzzzzzzkzzzzzzk",
+    " kkkkkwssswkkkk",
+    "kzzzkkksqskkkzzk",
+    " kzzzzkkkqqzzzk",
+    " kzzZzzzZzzzZzk",
+    "  kzZzzzZzzzZk",
+    "   kkkkkkkkkk",
+    "",
+]
+
+
+SHELLDER_2 = [
+    "   kkzzzzzzk",
+    "  kZhzzZzzzZk",
+    "  khzzzZzzzZzk",
+    " kzZzzzZzzzZzzk",
+    " kzzZzzzZzzzZzk",
+    "kzzzZzzzZzzzZzk",
+    "kzzzZzzzZzzzZzzk",
+    "kzzzzzzzzzzzzzzk",
+    " kkkkkwssswkkkk",
+    " kkkkkkssskkkkk",
+    "kzzzzkksqskkzzzk",
+    " kzzzzzzzqqzzzk",
+    " kzzZzzzZzzzZzk",
+    "  kzZzzzZzzzZk",
+    "   kkkkkkkkkk",
+    "",
+]
+
+
+OMANYTE_1 = [
+    "",
+    "     kkkkkkk",
+    "    kwi11111kk",
+    "   kwi111i111ik",
+    "   ki11iiiii11k",
+    "  kii1ii111ii11k",
+    "  kii1ii1i11i11k",
+    "  kii1ii111ii11k",
+    "  kii1ciiiii11ik",
+    "   kwccwci111ik",
+    "  kckcckcc11iik",
+    "  kccccccciikk",
+    "   kccccCCkk",
+    "  kckccckck",
+    "  kckkcckkck",
+    " kck kck  k",
+]
+
+
+OMANYTE_2 = [
+    "",
+    "     kkkkkkk",
+    "    kwi11111kk",
+    "   kwi111i111ik",
+    "   ki11iiiii11k",
+    "  kii1ii111ii11k",
+    "  kii1ii1i11i11k",
+    "  kii1ii111ii11k",
+    "  kii1ciiiii11ik",
+    "   kwccwci111ik",
+    "  kckcckcc11iik",
+    "  kccccccciikk",
+    "   kccccCCkk",
+    "  kckccckck",
+    " kckkcckkck",
+    "  k  kck kck",
+]
+
 
 SANDSHREW_TOP = [
     "",
@@ -931,23 +1448,6 @@ VULPIX_TOP = [
 VULPIX_1 = VULPIX_TOP + ["    kbk  kbk", "    kk   kk"]
 VULPIX_2 = VULPIX_TOP + ["   kbk    kbk", "   kk     kk"]
 
-PONYTA_TOP = [
-    "",
-    "        kyk",
-    "      kyonyk",
-    "     kyonnook",
-    "  kk kccyonok",
-    " kcckccccyok",
-    " kcekccccck",
-    "  kkkccccck   kyk",
-    "     kcccccckyonk",
-    "    kccccccccony",
-    "    kcccccccckk",
-    "    kcck  kcck",
-]
-
-PONYTA_1 = [row[:16] for row in PONYTA_TOP + ["    kbbk  kbbk", "    kkk   kkk"]]
-PONYTA_2 = [row[:16] for row in PONYTA_TOP + ["   kbbk    kbbk", "   kkk     kkk"]]
 
 GROWLITHE_TOP = [
     "",
@@ -967,42 +1467,6 @@ GROWLITHE_TOP = [
 
 GROWLITHE_1 = GROWLITHE_TOP + ["   kook  kook", "   kkk   kkk"]
 GROWLITHE_2 = GROWLITHE_TOP + ["  kook    kook", "  kkk     kkk"]
-
-MAGMAR_TOP = [
-    "",
-    "     knk  knk",
-    "    knyk knyk",
-    "    knnnknnnk",
-    "   knnwnnnwnk",
-    "   knnnyynnnk",
-    "  kknnnnnnnnkk",
-    " knnknyyyynknnk",
-    " knk kyyyyk knk",
-    "  k  knyynk  k",
-    "     knnnnk",
-    "    knnkknnk",
-]
-
-MAGMAR_1 = MAGMAR_TOP + ["    kyk  kyk", "    kkk  kkk"]
-MAGMAR_2 = MAGMAR_TOP + ["   kyk    kyk", "   kkk    kkk"]
-
-SQUIRTLE_TOP = [
-    "",
-    "     kkkk",
-    "    kiiiik",
-    "   kiiwkiik",
-    "   kiikkiik",
-    "    kiiiik",
-    "  kkkbbbbkkk",
-    " kiikbccbkiik",
-    "  kkbccccbkk  kk",
-    "   kbccccbk  kiik",
-    "   kbbbbbbk kiik",
-    "    kiiiiikkik",
-]
-
-SQUIRTLE_1 = [row[:16] for row in SQUIRTLE_TOP + ["   kiik kiik", "   kkk  kkk"]]
-SQUIRTLE_2 = [row[:16] for row in SQUIRTLE_TOP + ["  kiik   kiik", "  kkk    kkk"]]
 
 
 SEEL_TOP = [
@@ -1120,61 +1584,6 @@ EXEGGCUTE_1 = [
 
 EXEGGCUTE_2 = [""] + EXEGGCUTE_1[:-1]
 
-JYNX_TOP = [
-    "",
-    "    kkkkkk",
-    "   kyyyyyyk",
-    "  kyyyyyyyyk",
-    "  kyzzzzzzyk",
-    "  kyzkzzkzyk",
-    "  kyzznnzzyk",
-    "  kyyzzzzyyk",
-    " kyykmmmmkyyk",
-    "  kkmmmmmmkk",
-    "   kmmmmmmk",
-    "  kmmmmmmmmk",
-]
-
-JYNX_1 = JYNX_TOP + ["  kmmmmmmmmk", "   kkkkkkkk"]
-JYNX_2 = JYNX_TOP + [" kmmmmmmmmmmk", "  kkkkkkkkkk"]
-
-SHELLDER_1 = [
-    "",
-    "",
-    "      kkkk",
-    "    kkzzzzkk",
-    "   kzZzzzzZzk",
-    "  kzZzzZZzzZzk",
-    "  kzzkkkkkkzzk",
-    " kzzkwwkkwwkzzk",
-    " kzzkwkkkkwkzzk",
-    " kzzkkqqqqkkzzk",
-    "  kzZkqqqqkZzk",
-    "  kzzZzzzzZzzk",
-    "   kkzzzzzzkk",
-    "     kkkkkk",
-]
-
-SHELLDER_2 = [""] + SHELLDER_1[:-1]
-
-OMANYTE_1 = [
-    "",
-    "",
-    "     kkkkk",
-    "   kkiiiiikk",
-    "  kiiBBBBiiik",
-    " kiiBkkkkBiiik",
-    " kiBkiiiikBiik",
-    " kiBkiBBikBiik",
-    " kiiBkkkiBiik",
-    "  kiiBBBBiik",
-    "  kkkkkkkkkk",
-    " kcckcckcckk",
-    " kckkckkckk",
-    "  k  k  k",
-]
-
-OMANYTE_2 = [""] + OMANYTE_1[:-1]
 
 ICE_SHARD = [
     "",
@@ -1199,55 +1608,143 @@ HEART = [
 
 PIDGEY_TOP = [
     "",
-    "",
-    "      kkkk",
-    "     kbbbbk",
-    "    kbbwkbbk",
-    "   kkbbkkbbk",
-    "  kyykbbbbbkkk",
-    "   kkcccbbbbbbk",
-    "    kccccbbbbbk",
-    "    kccccbbbbk",
-    "     kccccbkk",
+    "      kkk",
+    "     kCxxk",
+    "    kkCCxkk",
+    "   kccxxxxxk",
+    "  kcwkcxxxxxk",
+    " kAkkccxxxbxk",
+    "kAAkcccxxxbbxk",
+    " kkcccccxbbbxk",
+    "  kccccccbbbxk",
+    "  kcccccxbbbbk",
+    "   kcccxxbbbkkk",
+    "    kkkxxxkkxxk",
+    "       kkkk kk",
 ]
 
-PIDGEY_1 = PIDGEY_TOP + ["      kykyk", "      kk kk"]
-PIDGEY_2 = PIDGEY_TOP + ["     kyk kyk", "     kk   kk"]
+
+PIDGEY_1 = PIDGEY_TOP + ["      kqk kqk", "      kk  kk"]
+
+
+PIDGEY_2 = PIDGEY_TOP + ["     kqk   kqk", "     kk    kk"]
+
 
 SPEAROW_TOP = [
-    "",
-    "      kkk",
-    "     kxxxk",
-    "    kxxwkxk",
-    "   kkxxkkxk",
-    "  kyyykxxxxk kk",
-    "   kkkcxxxxkknk",
-    "    kccxnnnnnnk",
-    "    kcccnnnnnk",
-    "     kcccxnkk",
-    "      kkkkk",
+    "    k k k",
+    "   kbkbkbk",
+    "   kbxbxbxk",
+    "  kxxxxxxxxk",
+    "  kxkkxxxxxk",
+    " kCkwkxxxxxxk",
+    "kCCCkxxxxcxxk",
+    " kkkccxqqqqxk",
+    "   kccxqqnqqqk",
+    "   kcccqqnnqqk",
+    "   kccccqqnnqk",
+    "    kcccxqqnqkk",
+    "     kkxxxkkbbk",
+    "       kkkk kk",
 ]
 
-SPEAROW_1 = SPEAROW_TOP + ["      kykyk", "      kk kk"]
-SPEAROW_2 = SPEAROW_TOP + ["     kyk kyk", "     kk   kk"]
+
+SPEAROW_1 = SPEAROW_TOP + ["      kCk kCk", "      kk  kk"]
+
+
+SPEAROW_2 = SPEAROW_TOP + ["     kCk   kCk", "     kk    kk"]
+
 
 KABUTO_1 = [
     "",
     "",
-    "",
     "     kkkkkk",
-    "   kkxxxxxxkk",
-    "  kxxbxxxxbxxk",
-    " kxxxxbbbbxxxxk",
-    " kxxxxxxxxxxxxk",
-    " kkxkyykkyykxkk",
-    "  kxkyykkyykxk",
+    "   kkCCxxxxkk",
+    "  kCCxxxxxxxxk",
+    " kCxxxxbbxxxxxk",
+    " kxxxxbxxbxxxxk",
+    "kxxxxbxxxxbxxxxk",
+    "kbxxxxxxxxxxxxbk",
+    "kbbbbbbbbbbbbbbk",
+    " kkkkkkkkkkkkkk",
+    " kbkyGkkkkyGkbk",
+    "  kkyykkkkyykk",
     "   kkkkkkkkkk",
-    "   kxk kk kxk",
+    "   kbk kk kbk",
     "   kk      kk",
 ]
 
+
 KABUTO_2 = [""] + KABUTO_1[:-1]
+
+
+KOFFING_1 = [
+    "",
+    "  kk   kk   kk",
+    " kzzk kzzk kzzk",
+    "  kkkkzzzzkkkk",
+    "  kzzzzzzzzzzk",
+    " kzhkkzzzzkkzzk",
+    " kzzzwkzzzkwzZk",
+    "kzzzzkkzzzkkzZZk",
+    "kzzzzzzzzzzzzZZk",
+    "kzzzzzcccczzzZZk",
+    "kzzzzckcckczzZZk",
+    " kzzzzcccczzZZk",
+    " kzzzczcczczZZk",
+    "  kkZZZZZZZZkk",
+    "    kkkkkkkk",
+]
+
+
+KOFFING_2 = [""] + KOFFING_1[:-1]
+
+
+EKANS_TOP = [
+    "",
+    "     kkkk",
+    "    kzzzzk",
+    "   kzzwkzzk",
+    "   kzzkkzzzk",
+    "   kzzzzzzzk",
+    "    kknnkzzk",
+    "     kyyyykk",
+    "      kzzk",
+    "     kzzk    kk",
+    "    kzZk   kkGk",
+    "   kzzZk  kzZkk",
+    "   kzyyzkkzzZk",
+    "  kzzzzzzzzzZk",
+]
+
+
+EKANS_1 = EKANS_TOP + ["  kZzyyzzyyzZk", "   kkkkkkkkkk"]
+
+
+EKANS_2 = EKANS_TOP + [" kZzyyzzyyzzZk", "  kkkkkkkkkkk"]
+
+
+GRIMER_TOP = [
+    "",
+    "",
+    "      kkkk",
+    "     kddddk",
+    "    kdhddddk",
+    "   kdhddddddk",
+    "  kddwkddwkddk",
+    "  kddkkddkkddk",
+    " kdddddddddddRk",
+    " kddkkkkkkkkdRk",
+    " kddkqqqqqqkdRk",
+    "kdddkkkkkkkkdRRk",
+    "kdddddddddddRRk",
+]
+
+
+GRIMER_1 = GRIMER_TOP + ["kddRddddddRdRRdk", "kRRRRRRRRRRRRRRk", " kkkkkkkkkkkkkk"]
+
+
+GRIMER_2 = GRIMER_TOP + ["kdRddddRddddRRdk", "kRRRRRRRRRRRRRRk", " kkkkkkkkkkkkkk"]
+
 
 FEATHER = [
     "",
@@ -1259,60 +1756,6 @@ FEATHER = [
     " kkk",
 ]
 
-
-KOFFING_1 = [
-    "",
-    "   k  kk  k",
-    "  kzk kzk kzk",
-    "   kkzzzzkkk",
-    "  kzzzzzzzzk",
-    " kzzwkzzzwkzk",
-    " kzzkkzzzkkzzk",
-    "kzzzzzzzzzzzzk",
-    "kzzzzwwwwzzzzk",
-    "kzzzzwkkwzzzzk",
-    " kzzzzwwzzzzk",
-    " kzzzzzzzzzzk",
-    "  kkzzzzzzkk",
-    "    kkkkkk",
-]
-
-KOFFING_2 = [""] + KOFFING_1[:-1]
-
-EKANS_TOP = [
-    "",
-    "",
-    "     kkkk",
-    "    kzzzzk",
-    "   kzzwkzzk",
-    "   kzzzzzzk",
-    "    kkyzzkk",
-    "      kzzk",
-    "     kzzk   kkk",
-    "    kzzk   kzzzk",
-    "   kzyzk  kzzyzk",
-    "   kzzzzkkzzzzk",
-]
-
-EKANS_1 = EKANS_TOP + ["    kzzzzzzzzk", "     kkkkkkkk"]
-EKANS_2 = EKANS_TOP + ["   kzzzzzzzzzk", "    kkkkkkkkk"]
-
-GRIMER_TOP = [
-    "",
-    "",
-    "",
-    "      kkkk",
-    "     kmmmmk",
-    "    kmmmmmmk",
-    "   kmwkmmwkmk",
-    "   kmkkmmkkmk",
-    "  kmmmmmmmmmmk",
-    "  kmmmkkkkmmmk",
-    " kmmmmmmmmmmmmk",
-]
-
-GRIMER_1 = GRIMER_TOP + [" kmmpmmmmmmpmmk", "kmmmmmmmmmmmmmmk", " kkkkkkkkkkkkkk"]
-GRIMER_2 = GRIMER_TOP + ["kmmpmmmmmmmmpmmk", "kmmmmmmmmmmmmmmk", "kkkkkkkkkkkkkkkk"]
 
 SILPH_SCOPE = [
     "",
@@ -1384,93 +1827,153 @@ MACHOKE_2 = MACHOKE_TOP + ["  kOPk    kPOk", "  kkkk    kkkk"]
 
 FARFETCHD_TOP = [
     "",
-    "        vk",
-    "   kkk  vVk",
-    "  kbbbk vVk",
-    " kbbwkbk vVk",
-    " kbbbbbbkvVk",
-    "kyykbbbbbkVk",
-    " kkkcccbbbbk",
-    "   kcccbbbbbk",
-    "   kccccbbbbk",
-    "    kcccbbkk",
+    " kk",
+    "kvVk     kkkk",
+    "kvVk    kbbbbk",
+    " kvk   kbbbbbbk",
+    " kvVk  kbkkbbbkk",
+    " kvVk  kbwkbbkyk",
+    "  kvk kbbbbbkkyk",
+    "  kvVkkbccbbbkk",
+    "   kwkbccccbbbk",
+    "   kwkbcccccbbbk",
+    "    kkbcccccbbbk",
+    "     kbbcccbbbk",
+    "      kkbbbbkk",
 ]
 
-FARFETCHD_1 = FARFETCHD_TOP + ["     kykyk", "     kk kk"]
-FARFETCHD_2 = FARFETCHD_TOP + ["    kyk kyk", "    kk   kk"]
+
+FARFETCHD_1 = FARFETCHD_TOP + ["      kgk kgk", "      kk  kk"]
+
+
+FARFETCHD_2 = FARFETCHD_TOP + ["     kgk   kgk", "     kk    kk"]
 
 
 GASTLY_1 = [
     "",
-    "   z   zz   z",
-    "  zpz zppz zpz",
-    " zppzzkkkkzzppz",
-    "  zpkkkkkkkkpz",
-    " zpkkwwkkwwkkpz",
-    " zpkkwkkkkwkkpz",
-    "zppkkkkkkkkkkppz",
-    " zpkkknnnnkkkpz",
-    " zpkkkkwwkkkkpz",
-    "  zpkkkkkkkkpz",
-    " zppzkkkkkkzppz",
-    "  zpz zzzz zpz",
+    "   z  zzz   z",
+    "  zpz zpz  zpz",
+    " zpzzzkkkkzzzpz",
+    "  zzkkkkkkkkzz",
+    " zpkkwwkkkwwkkz",
+    " zpkwwkkkkkwwkpz",
+    "zpzkkkkkkkkkkzpz",
+    " zpkkwnnnnnwkkpz",
+    " zpkkkwnnnwkkkpz",
+    "  zzkkkkkkkkkzz",
+    " zpzzkkkkkkkzzpz",
+    "  zpz zzzzz zpz",
     "   z        z",
 ]
 
-GASTLY_2 = [
-    "",
-    "",
-    "  z   zz   z",
-    " zpzzkkkkzzpz",
-    "  zpkkkkkkkkpz",
-    " zpkkwwkkwwkkpz",
-    " zpkkwkkkkwkkpz",
-    "zppkkkkkkkkkkppz",
-    "zppkkknnnnkkkppz",
-    " zpkkkkwwkkkkpz",
-    "  zpkkkkkkkkpz",
-    " zppzkkkkkkzppz",
-    "  zpzzzzzzzzpz",
-    "   z        z",
-]
+
+GASTLY_2 = [""] + GASTLY_1[:-1]
+
 
 HAUNTER_1 = [
     "",
-    "   k  kkkk  k",
-    "  kzk kzzzzkzk",
-    "  kzzkzzzzzzzk",
-    "   kzzwwzzwwzk",
-    "   kzzwnzzwnzk",
-    "kk  kzzzzzzzzk  kk",
-    "kzk kznnnnnnzk kzk",
-    " kzkkzzwzwzzzkkzk",
-    "  kzzzzzzzzzzzk",
-    "     kzzzzzzk",
-    "      kzzzzk",
-    "       kzzk",
-    "        kk",
+    "   k        k",
+    "   kk kkkk kk",
+    "   kzkzzzzkzk",
+    "  kzzzzzzzzzzk",
+    "  kzwwwzzwwwzk",
+    "  kzwkwzzwkwzk",
+    "  kzzzzzzzzzzk",
+    "  kzkknnnnkkzk",
+    "   kznwnnwnzk",
+    "k k kznnnnzk k k",
+    "kZk  kzzzzk  kZk",
+    "kZZk  kzzk  kZZk",
+    " kk    kk    kk",
 ]
 
-HAUNTER_1 = [row[:16] for row in HAUNTER_1]
+
 HAUNTER_2 = [""] + HAUNTER_1[:-1]
+
 
 CUBONE_TOP = [
     "",
-    "   kk    kk",
-    "  kwwk  kwwk",
+    "  kk      kk",
+    "  kwk    kwk",
     "  kwwkkkkwwk",
-    "  kwwwwwwwwk",
-    "  kwkkwwkkwk",
-    "  kwkkwwkkwk",
-    "   kwwkkwwk",
-    "    kbbbbk   kk",
+    " kwwwwwwwwwwk",
+    " kwkkwwwwkkwk",
+    " kwkkwwwwkkwk",
+    " kswwwwwwwwsk kk",
+    "  ksbbbbbbsk kwk",
     "   kbbccbbk kwk",
     "  kbbccccbbkwk",
-    "  kbbccccbbkk",
+    "  kbkccccbkwk",
+    "  kbbccccbwk",
+    "   kbbbbbwwk",
 ]
 
+
 CUBONE_1 = CUBONE_TOP + ["   kbbk kbbk", "   kkk  kkk"]
+
+
 CUBONE_2 = CUBONE_TOP + ["  kbbk   kbbk", "  kkk    kkk"]
+
+
+ABRA_TOP = [
+    "",
+    "  kk        kk",
+    "  kyk      kyk",
+    "  kyykkkkkkyyk",
+    "   kyyyyyyyyk",
+    "  kyyyyyyyyyyk",
+    "  kykkyyyykkyk",
+    "  kyyyyGGyyyyk",
+    "   kyyGyyGyyk",
+    "  kbbkyyyykbbk",
+    " kbxbbkyykbbxbk",
+    " kbbbbkkkkbbbbk",
+    "  kkkyyyyyykkk",
+    "    kyyyyyyk",
+]
+
+
+ABRA_1 = ABRA_TOP + ["   kyyk  kyyk", "   kkkk  kkkk"]
+
+
+ABRA_2 = ABRA_TOP + ["  kyyk    kyyk", "  kkkk    kkkk"]
+
+
+VENOMOTH_1 = [
+    "",
+    "    k      k",
+    "     k    k",
+    " kk   kkkk   kk",
+    "kzzk kzzzzk kzzk",
+    "kzhzkkz11zkkzhzk",
+    "kzzhzkzzzzkzhzzk",
+    " kzzzzkzzkzzzzk",
+    "  kzhzkzzkzhzk",
+    " kzzzzkZZkzzzzk",
+    "kzhzk kZk  kzhzk",
+    "kzzzk  kZk  kzzk",
+    " kkk   kZk   kk",
+    "       kk",
+]
+
+
+VENOMOTH_2 = [
+    "",
+    "",
+    "    k      k",
+    "     k    k",
+    "      kkkk",
+    " kkk kzzzzk kkk",
+    "kzzzkkz11zkkzzzk",
+    "kzhzzkzzzzkzzhzk",
+    "kzzhzzkzzkzzhzzk",
+    " kzzzzkzzkzzzzk",
+    "  kzhzkZZkzhzk",
+    " kzzzk kZk kzzk",
+    " kkk   kZk   kk",
+    "       kk",
+]
+
 
 SHADOW_BALL = [
     "",
@@ -1577,23 +2080,6 @@ LAPRAS_1 = LAPRAS_TOP + [" kiik     kiik", "  kk       kk"]
 
 LAPRAS_2 = LAPRAS_TOP + ["kiik       kiik", " kk         kk"]
 
-ABRA_TOP = [
-    "",
-    "   kk    kk",
-    "  kyyk  kyyk",
-    "  kyyykkyyyk",
-    "  kyyyyyyyyk",
-    "  kykkyykkyk",
-    "  kyyyyyyyyk",
-    "   kyyxxyyk",
-    "  kbbkyykbbk",
-    " kbbbkkkkbbbk",
-    "  kkyyyyyykk",
-    "   kyyyyyyk",
-]
-
-ABRA_1 = ABRA_TOP + ["   kyk  kyk", "   kkk  kkk"]
-ABRA_2 = ABRA_TOP + ["  kyk    kyk", "  kkk    kkk"]
 
 KADABRA_TOP = [
     "",
@@ -1632,36 +2118,6 @@ DROWZEE_TOP = [
 
 DROWZEE_1 = DROWZEE_TOP + ["   kbxk  kxbk", "   kkkk  kkkk"]
 DROWZEE_2 = DROWZEE_TOP + ["  kbxk    kxbk", "  kkkk    kkkk"]
-
-VENOMOTH_1 = [
-    "",
-    " kk  k  k  kk",
-    "kzzk kk kk kzzk",
-    "kzhzk kkk kzhzk",
-    "kzzzzkzzzkzzzzk",
-    " kzhzzkekzzhzk",
-    " kzzzzzzzzzzzk",
-    "  kzzkzzzkzzk",
-    " kzhzzkzkzzhzk",
-    "kzzzzk kzk kzzzk",
-    "kzhzk  kzk  kzhk",
-    " kkk   kk   kkk",
-]
-
-VENOMOTH_2 = [
-    "",
-    "",
-    "     k  k",
-    "  kk  kk  kk",
-    " kzzkkkkkkzzk",
-    "kzhzzkzzzkzzhzk",
-    "kzzzzkekzzzzzzk",
-    " kzzzzzzzzzzzk",
-    "  kkzzzzzzzkk",
-    " kzhzzkzkzzhzk",
-    " kzzzk kzk kzzk",
-    "  kkk  kk  kkk",
-]
 
 
 def moltres_frame(step, charging):
@@ -1804,32 +2260,6 @@ def hitmon_frame(step, charging, kicker):
     return ["".join(row) for row in outline(grid)]
 
 
-def mewtwo_frame(step, charging):
-    grid = [["."] * 32 for _ in range(32)]
-    ellipse(grid, 16, 16, 6, 8, "h")
-    ellipse(grid, 16, 21, 5, 4, "z")
-    ellipse(grid, 16, 6, 5, 4.5, "h")
-    for x in (11, 12, 20, 21):
-        grid[2][x] = grid[3][x] = "h"
-    for y in range(8, 11):
-        grid[y][16] = "p"
-    grid[6][14] = grid[6][18] = "w" if charging else "z"
-    for side in (-1, 1):
-        for i in range(6):
-            grid[12 + i][16 + side * (7 + i // 2)] = "h"
-        ellipse(grid, 16 + side * 11, 19, 1.5, 1.5, "h")
-    for i in range(12):
-        x = 22 + i // 2 - step
-        y = 22 + (i // 3)
-        if x < 32 and y < 32:
-            grid[y][x] = "z"
-            grid[y][min(x + 1, 31)] = "z"
-    for x in (13, 14, 18, 19):
-        for y in range(24, 31):
-            grid[y][x] = "h"
-    return ["".join(row) for row in outline(grid)]
-
-
 def arbok_frame(step, charging):
     grid = [["."] * 32 for _ in range(32)]
     for i in range(10):
@@ -1850,22 +2280,6 @@ def arbok_frame(step, charging):
     for x in range(14, 19):
         grid[7][x] = "k"
     grid[8][16] = "n"
-    return ["".join(row) for row in outline(grid)]
-
-
-def weezing_frame(step, charging):
-    grid = [["."] * 32 for _ in range(32)]
-    ellipse(grid, 11, 12 + step, 9, 8.5, "z")
-    ellipse(grid, 22, 20 - step, 7, 6.5, "z")
-    ellipse(grid, 22, 8, 3.5, 3, "z")
-    for cx, cy, r in ((11, 12 + step, 9), (22, 20 - step, 7)):
-        grid[cy - 2][cx - 3] = grid[cy - 2][cx + 2] = "w" if charging else "k"
-        for x in range(cx - 3, cx + 3):
-            grid[cy + 3][x] = "k"
-        for dx in (-r // 2, r // 2):
-            grid[cy - r + 1][cx + dx] = "y"
-    ellipse(grid, 11, 15 + step, 3, 1.5, "w")
-    ellipse(grid, 22, 22 - step, 2.5, 1.2, "w")
     return ["".join(row) for row in outline(grid)]
 
 
@@ -1970,29 +2384,6 @@ def zapdos_frame(step, charging):
     return ["".join(row) for row in outline(grid)]
 
 
-def gyarados_frame(step, charging):
-    grid = [["."] * 32 for _ in range(32)]
-    ellipse(grid, 16, 24 + step, 13, 6, "u")
-    ellipse(grid, 16, 25 + step, 9, 3, "c")
-    ellipse(grid, 4, 20, 3, 2, "w")
-    ellipse(grid, 28, 20, 3, 2, "w")
-    ellipse(grid, 16, 11, 10, 7.5, "u")
-    for x in range(10, 23, 3):
-        for y in range(1, 5):
-            if abs(x - 16) // 2 + y > 1:
-                grid[y][x] = "w"
-    ellipse(grid, 16, 15, 5.5, 2.5, "B" if charging else "k")
-    for x in (12, 14, 18, 20):
-        grid[13][x] = "w"
-    grid[8][11] = grid[8][12] = "e"
-    grid[8][20] = grid[8][21] = "e"
-    for x in (10, 11, 12, 13):
-        grid[6][x] = "w"
-    for x in (19, 20, 21, 22):
-        grid[6][x] = "w"
-    return ["".join(row) for row in outline(grid)]
-
-
 def mart_frame():
     grid = [["."] * 32 for _ in range(32)]
     ellipse(grid, 16, 15, 6.5, 4, "u")
@@ -2054,26 +2445,6 @@ def cloud_frame(fill, shade):
     for cx, cy in ((6, 7), (10, 9), (8, 12)):
         grid[cy][cx] = shade
     return ["".join(row) for row in grid]
-
-
-def venusaur_frame(step, charging):
-    grid = [["."] * 32 for _ in range(32)]
-    ellipse(grid, 8, 28 - step, 4, 3, "J")
-    ellipse(grid, 24, 28 - (1 - step), 4, 3, "J")
-    ellipse(grid, 16, 22, 13, 7.5, "j")
-    ellipse(grid, 5, 15, 5, 3, "v")
-    ellipse(grid, 27, 15, 5, 3, "v")
-    for y in range(10, 17):
-        grid[y][15] = grid[y][16] = "b"
-    ellipse(grid, 16, 9, 12, 4.5, "q")
-    ellipse(grid, 16, 9, 4, 2.5, "w" if charging else "y")
-    for x in range(8, 25, 4):
-        grid[9][x] = "d"
-    grid[20][10] = grid[20][11] = "e"
-    grid[20][21] = grid[20][22] = "e"
-    for x in range(12, 21):
-        grid[24][x] = "J"
-    return ["".join(row) for row in outline(grid)]
 
 
 def ellipse(grid, cx, cy, rx, ry, color):
@@ -2144,45 +2515,6 @@ def mew_frame(step):
     return (rows + ["." * 32] * 32)[:32]
 
 
-def snorlax_frame(step, asleep):
-    grid = [["."] * 32 for _ in range(32)]
-    foot = 1 if step else 0
-    ellipse(grid, 8.5, 27.5 - foot, 5, 3.5, "c")
-    ellipse(grid, 23.5, 27.5 - (1 - foot), 5, 3.5, "c")
-    ellipse(grid, 16, 18.5, 13.5, 10.5, "T")
-    ellipse(grid, 16, 20.5, 9.5, 8, "c")
-    ellipse(grid, 16, 9, 9.5, 6.5, "T")
-    ellipse(grid, 16, 10, 6.5, 4.5, "c")
-    for ear_x in (8, 23):
-        for y in range(2, 6):
-            for x in range(ear_x - (y - 2) // 2, ear_x + 2 + (y - 2) // 2):
-                grid[y][x] = "T"
-    for x in range(11, 14):
-        grid[9][x] = "t"
-    for x in range(18, 21):
-        grid[9][x] = "t"
-    if asleep:
-        for x in range(14, 18):
-            grid[12][x] = "t"
-        grid[11][15] = grid[11][16] = "w"
-    else:
-        for x in range(13, 19):
-            grid[12][x] = "t"
-        grid[11][13] = grid[11][18] = "w"
-    for x in (6, 8, 10):
-        grid[29 - foot][x] = "b"
-    for x in (21, 23, 25):
-        grid[29 - (1 - foot)][x] = "b"
-    for x in (2, 29):
-        for y in range(16, 21):
-            grid[y][x] = "T"
-    result = outline(grid)
-    if asleep:
-        for x, y in ((26, 1), (27, 1), (28, 1), (28, 2), (27, 3), (26, 4), (27, 4), (28, 4)):
-            result[y][x] = "w"
-    return ["".join(row) for row in result]
-
-
 SLASH = [
     "",
     "",
@@ -2250,10 +2582,10 @@ SHINY_HUE_SHIFT = {
 SHINY_COLORS = {
     "mew": {"7": (192, 224, 248), "8": (128, 176, 232), "9": (64, 104, 176)},
     "ditto": {"m": (40, 64, 136), "d": (80, 120, 200), "p": (120, 168, 232), "h": (200, 224, 248)},
-    "onix": {"a": (216, 184, 72), "A": (160, 128, 40)},
-    "zubat": {"z": (128, 192, 96), "Z": (64, 128, 64)},
+    "onix": {"a": (216, 184, 72), "A": (160, 128, 40), "s": (240, 216, 120)},
+    "zubat": {"u": (128, 192, 96), "U": (64, 128, 64), "z": (184, 216, 136), "Z": (96, 152, 80)},
     "dragonite": {"o": (152, 176, 80)},
-    "mewtwo": {"h": (232, 236, 228), "p": (200, 208, 200), "z": (120, 192, 96)},
+    "mewtwo": {"h": (232, 236, 228), "p": (200, 208, 200), "z": (120, 192, 96), "Z": (72, 144, 64)},
 }
 
 
@@ -2434,6 +2766,7 @@ OVERLAY_TILES = [
     connector(False),
     *backdrop_tiles(),
     *[tile for style in ("white", "paper", "blue", "dark") for tile in window_tiles(*WINDOW_STYLES[style])],
+    *room_marker(9, 5),
 ]
 
 
@@ -2521,6 +2854,9 @@ def save_tile_strip(name, tiles, palette):
             for x in range(8):
                 pixels[y][index * 8 + x] = tile[y][x]
     save_indexed(name, pixels, palette, {"type": "regular_bg_tiles", "bpp_mode": "bpp_4"})
+
+
+ONIX_SEGMENT = ["".join(row).replace(".", " ") for row in _onix_segment_grid_a()]
 
 
 def main():

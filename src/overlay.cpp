@@ -31,6 +31,7 @@ namespace
         constexpr int backdrop = 20;
         constexpr int windows = 24;
         constexpr int window_tiles = 9;
+        constexpr int boss = 60;
     }
 
     alignas(int) bn::regular_bg_map_cell map_cells[columns * rows];
@@ -99,7 +100,7 @@ void overlay::window(int x, int y, int width, int height, window_style style)
     _bg.set_visible(true);
 }
 
-void overlay::map(const floor_map& floor, int current_room, int x, int y, int width, int height)
+void overlay::map(const floor_map& floor, int current_room, bool boss_alive, int x, int y, int width, int height)
 {
     int min_x = floor_map::grid_size;
     int min_y = floor_map::grid_size;
@@ -133,6 +134,10 @@ void overlay::map(const floor_map& floor, int current_room, int x, int y, int wi
         if(index == current_room)
         {
             first_tile = tiles::current;
+        }
+        else if(value.kind == room_kind::stairs && boss_alive)
+        {
+            first_tile = tiles::boss;
         }
         else if(value.visited)
         {

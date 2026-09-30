@@ -289,7 +289,7 @@ void onix_boss::_update_sprites()
     bool flash = _flash_frames || (_state == state::windup && (_state_frames / 3) % 2);
     int head_frame = flash ? species_frames::white :
                      _state == state::charging ? species_frames::charging : species_frames::walk;
-    bool visible = _state != state::emerging || (_state_frames / 3) % 2;
+    bool visible = _state != state::emerging || (_state_frames / 3) % 2 == 0;
 
     _head.set_tiles(bn::sprite_items::onix.tiles_item(), head_frame);
     _head.set_position(_position);

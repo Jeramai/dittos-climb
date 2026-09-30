@@ -51,6 +51,8 @@ namespace
     constexpr int spawn_delay_frames = 30;
     constexpr int page_min_frames = 45;
     constexpr int boss_coins = 20;
+    constexpr int boss_challenge_distance = 24;
+    constexpr int boss_room_spawn_offset = 40;
     constexpr int mewtwo_coins = 50;
     constexpr int defeat_min_frames = 60;
     constexpr int shake_frames = 10;
@@ -386,11 +388,12 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
     }
 
     bool boss_room = value.kind == room_kind::stairs && _theme().boss != boss_kind::none && ! _boss_defeated;
-    _locked = (value.kind == room_kind::combat && ! value.cleared) ||
-              (boss_room && _theme().boss != boss_kind::snorlax);
+    _locked = value.kind == room_kind::combat && ! value.cleared;
+    _boss_waiting = false;
+    audio::play_floor_music(_floor_number);
     _view.build(value, doors, _locked, _theme(), _floor_number * 977 + index * 131 + 7);
-    _player.set_position(entered_from ? _view.entry_position(*entered_from) :
-                                        _view.open_spot_near(_view.interior_center()));
+    bn::fixed_point spawn = _view.interior_center() + bn::fixed_point(0, boss_room ? boss_room_spawn_offset : 0);
+    _player.set_position(entered_from ? _view.entry_position(*entered_from) : _view.open_spot_near(spawn));
     value.visited = true;
 
     if(value.kind == room_kind::combat && _locked)
@@ -610,7 +613,11 @@ void game::_handle_player_attacks()
 
         if(_boss && _boss->contains(shot.position, shot.half_size))
         {
-            if(_boss->vulnerable())
+            if(_boss_waiting)
+            {
+                _start_boss_fight();
+            }
+            else if(_boss->vulnerable())
             {
                 hit_result result = _boss->take_hit(shot.hit);
                 _after_player_hit(shot.hit, result, nullptr);
@@ -655,7 +662,13 @@ void game::_handle_player_attacks()
         }
     }
 
-    if(_player.area_active() && _boss && _boss->vulnerable() &&
+    if(_player.area_active() && _boss && _boss_waiting &&
+       _boss->contains(_player.position(), _player.area_half_size()))
+    {
+        _start_boss_fight();
+    }
+
+    if(_player.area_active() && _boss && ! _boss_waiting && _boss->vulnerable() &&
        _boss->contains(_player.position(), _player.area_half_size()) && _boss->hit_by_area(_player.area_serial()))
     {
         hit_result result = _boss->take_hit(_player.area_attack());
@@ -718,90 +731,160 @@ void game::_spawn_outline(species_id id, const bn::fixed_point& position, bool s
 
 void game::_spawn_boss()
 {
-    audio::play(bn::sound_items::sfx_boss);
-    audio::play_music(_theme().boss == boss_kind::mewtwo ? bn::music_items::final_boss : bn::music_items::boss);
     bn::fixed_point position = _view.interior_center() - bn::fixed_point(0, 12);
 
-    if(_theme().boss == boss_kind::snorlax)
+    switch(_theme().boss)
     {
+
+    case boss_kind::snorlax:
         _boss.reset(new snorlax_boss(position, _camera));
-        _messages.show("A SNORLAX sleeps on the stairs!");
-    }
-    else if(_theme().boss == boss_kind::venusaur)
-    {
+        break;
+
+    case boss_kind::venusaur:
         _boss.reset(new venusaur_boss(position, _camera));
-        _messages.show("A wild VENUSAUR blocks the stairs!");
-    }
-    else if(_theme().boss == boss_kind::onix)
-    {
+        break;
+
+    case boss_kind::onix:
         _boss.reset(new onix_boss(position, _camera));
-        _messages.show("The ground is shaking...");
-        _messages.show("A wild ONIX burst out!");
-    }
-    else if(_theme().boss == boss_kind::gyarados)
-    {
+        break;
+
+    case boss_kind::gyarados:
         _boss.reset(new gyarados_boss(position, _camera));
-        _messages.show("A MAGIKARP is splashing around...");
-    }
-    else if(_theme().boss == boss_kind::zapdos)
-    {
+        break;
+
+    case boss_kind::zapdos:
         _boss.reset(new zapdos_boss(position, _camera));
-        _messages.show("ZAPDOS appeared in a flash!");
-    }
-    else if(_theme().boss == boss_kind::moltres)
-    {
+        break;
+
+    case boss_kind::moltres:
         _boss.reset(new moltres_boss(position, _camera));
-        _messages.show("MOLTRES rose from the magma!");
-    }
-    else if(_theme().boss == boss_kind::articuno)
-    {
+        break;
+
+    case boss_kind::articuno:
         _boss.reset(new articuno_boss(position, _camera));
-        _messages.show("A freezing wind... ARTICUNO appeared!");
-    }
-    else if(_theme().boss == boss_kind::pidgeot)
-    {
+        break;
+
+    case boss_kind::pidgeot:
         _boss.reset(new pidgeot_boss(position, _camera));
-        _messages.show("PIDGEOT swooped down from above!");
-    }
-    else if(_theme().boss == boss_kind::dragonite)
-    {
+        break;
+
+    case boss_kind::dragonite:
         _boss.reset(new dragonite_boss(position, _camera));
-        _messages.show("A wild DRAGONITE descends!");
-    }
-    else if(_theme().boss == boss_kind::mewtwo)
-    {
+        break;
+
+    case boss_kind::mewtwo:
         _boss.reset(new mewtwo_boss(position, _camera));
-        _messages.show("MEWTWO: So you are the other clone.");
-        _messages.show("MEWTWO: There can be only one of us!");
-    }
-    else if(_theme().boss == boss_kind::gengar)
-    {
+        break;
+
+    case boss_kind::gengar:
         _boss.reset(new gengar_boss(position, _camera));
-        _messages.show("A GENGAR rose from the shadows!");
-    }
-    else if(_theme().boss == boss_kind::hitmon)
-    {
-        bool kicker = _random.get_int(2);
-        _boss.reset(new hitmon_boss(position, _camera, kicker));
-        _messages.show(kicker ? "The DOJO MASTER sent out HITMONLEE!" : "The DOJO MASTER sent out HITMONCHAN!");
-    }
-    else
-    {
+        break;
+
+    case boss_kind::hitmon:
+        _boss.reset(new hitmon_boss(position, _camera, _random.get_int(2)));
+        break;
+
+    default:
         _boss.reset(new team_rocket_boss(position, _camera));
-        _messages.show("JESSIE: Prepare for trouble!");
-        _messages.show("JAMES: Make it double!");
-        _messages.show("MEOWTH: Meowth, that's right!");
+        break;
     }
 
     #ifdef DITTO_TEST_BOSS_HP
         _boss->set_test_hp(DITTO_TEST_BOSS_HP);
     #endif
+
+    if(_theme().boss == boss_kind::snorlax)
+    {
+        _messages.show("A SNORLAX sleeps on the stairs!");
+        return;
+    }
+
+    _boss_waiting = true;
+    show_name_message(_messages, "", _boss->name(), " is waiting...");
+    _messages.show("Get close to challenge it!");
+}
+
+void game::_start_boss_fight()
+{
+    _boss_waiting = false;
+    _locked = true;
+    _view.set_locked(true);
+    _messages.clear();
+    audio::play(bn::sound_items::sfx_boss);
+    audio::play(bn::sound_items::sfx_door_lock);
+    audio::play_music(_theme().boss == boss_kind::mewtwo ? bn::music_items::final_boss : bn::music_items::boss);
+
+    switch(_theme().boss)
+    {
+
+    case boss_kind::venusaur:
+        _messages.show("A wild VENUSAUR blocks the stairs!");
+        break;
+
+    case boss_kind::onix:
+        _messages.show("The ground is shaking...");
+        _messages.show("A wild ONIX burst out!");
+        break;
+
+    case boss_kind::gyarados:
+        _messages.show("A MAGIKARP is splashing around...");
+        break;
+
+    case boss_kind::zapdos:
+        _messages.show("ZAPDOS appeared in a flash!");
+        break;
+
+    case boss_kind::moltres:
+        _messages.show("MOLTRES rose from the magma!");
+        break;
+
+    case boss_kind::articuno:
+        _messages.show("A freezing wind... ARTICUNO appeared!");
+        break;
+
+    case boss_kind::pidgeot:
+        _messages.show("PIDGEOT swooped down from above!");
+        break;
+
+    case boss_kind::dragonite:
+        _messages.show("A wild DRAGONITE descends!");
+        break;
+
+    case boss_kind::mewtwo:
+        _messages.show("MEWTWO: So you are the other clone.");
+        _messages.show("MEWTWO: There can be only one of us!");
+        break;
+
+    case boss_kind::gengar:
+        _messages.show("A GENGAR rose from the shadows!");
+        break;
+
+    case boss_kind::hitmon:
+        show_name_message(_messages, "The DOJO MASTER sent out ", _boss->name(), "!");
+        break;
+
+    default:
+        _messages.show("JESSIE: Prepare for trouble!");
+        _messages.show("JAMES: Make it double!");
+        _messages.show("MEOWTH: Meowth, that's right!");
+        break;
+    }
 }
 
 void game::_update_boss()
 {
     if(! _boss)
     {
+        return;
+    }
+
+    if(_boss_waiting)
+    {
+        if(within(_boss->position(), _player.position(), boss_challenge_distance, boss_challenge_distance))
+        {
+            _start_boss_fight();
+        }
+
         return;
     }
 
@@ -824,6 +907,8 @@ void game::_update_boss()
                 _boss->wake(_messages);
                 _locked = true;
                 _view.set_locked(true);
+                audio::play(bn::sound_items::sfx_boss);
+                audio::play_music(bn::music_items::boss);
             }
             else
             {
@@ -1769,7 +1854,7 @@ void game::_pause_map()
         _overlay.window(0, 3, 17, 13, window_style::dark);
         _overlay.window(17, 3, 13, 13, window_style::white);
         _overlay.window(0, 16, 30, 4, window_style::white);
-        _overlay.map(_floor, _room, 1, 4, 15, 11);
+        _overlay.map(_floor, _room, _theme().boss != boss_kind::none && ! _boss_defeated, 1, 4, 15, 11);
 
         text.clear();
         icons.clear();

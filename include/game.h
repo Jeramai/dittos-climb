@@ -105,6 +105,7 @@ private:
     bool _boss_defeated = false;
     bool _quit = false;
     bool _magikarp_at_entry = false;
+    bool _boss_waiting = false;
 
     [[nodiscard]] const floor_room& _current_room() const
     {
@@ -131,6 +132,8 @@ private:
     void _update_boss();
 
     void _spawn_boss();
+
+    void _start_boss_fight();
 
     void _handle_cut();
 

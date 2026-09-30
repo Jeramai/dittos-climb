@@ -210,7 +210,7 @@ void zapdos_boss::_update_sprite()
         marker.set_visible((_thunder_frames / 3) % 2 == 0);
     }
 
-    bool visible = _state != state::intro || (_state_frames / 3) % 2;
+    bool visible = _state != state::intro || (_state_frames / 3) % 2 == 0;
     _sprite.set_tiles(bn::sprite_items::zapdos.tiles_item(), frame);
     _sprite.set_position(_position);
     _sprite.set_z_order(-_position.y().round_integer() - 8);

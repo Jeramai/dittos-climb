@@ -163,7 +163,7 @@ void mewtwo_boss::_update_sprite()
         frame = species_frames::charging;
     }
 
-    bool visible = ! _intro_frames || (_intro_frames / 3) % 2;
+    bool visible = ! _intro_frames || (_intro_frames / 3) % 2 == 0;
     _sprite.set_tiles(bn::sprite_items::mewtwo.tiles_item(), frame);
     _sprite.set_position(_position);
     _sprite.set_z_order(-_position.y().round_integer() - 8);

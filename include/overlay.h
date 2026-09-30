@@ -31,7 +31,7 @@ public:
 
     void window(int x, int y, int width, int height, window_style style);
 
-    void map(const floor_map& floor, int current_room, int x, int y, int width, int height);
+    void map(const floor_map& floor, int current_room, bool boss_alive, int x, int y, int width, int height);
 
     void hide();
 

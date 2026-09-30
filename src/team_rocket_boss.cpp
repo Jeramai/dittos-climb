@@ -190,7 +190,7 @@ void team_rocket_boss::_update_sprites()
     bool flash = _flash_frames || (_windup_frames && (_windup_frames / 3) % 2);
     int arbok_frame = flash ? species_frames::white : species_frames::walk + (_frame_counter / 14) % 2;
     int weezing_frame = _flash_frames ? species_frames::white : species_frames::walk + (_frame_counter / 20) % 2;
-    bool visible = ! _intro_frames || (_intro_frames / 3) % 2;
+    bool visible = ! _intro_frames || (_intro_frames / 3) % 2 == 0;
 
     _arbok.set_tiles(bn::sprite_items::arbok.tiles_item(), arbok_frame);
     _arbok.set_position(_position);

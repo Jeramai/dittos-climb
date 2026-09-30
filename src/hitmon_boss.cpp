@@ -257,7 +257,7 @@ void hitmon_boss::_update_sprite()
     }
 
     bn::fixed shake = _state == state::stunned ? bn::fixed((_state_frames / 2) % 2 ? 1 : -1) : bn::fixed(0);
-    bool visible = _state != state::intro || (_state_frames / 3) % 2;
+    bool visible = _state != state::intro || (_state_frames / 3) % 2 == 0;
     _sprite.set_tiles(item(_kicker).tiles_item(), frame);
     _sprite.set_position(_position + bn::fixed_point(shake, 0));
     _sprite.set_z_order(-_position.y().round_integer() - 8);

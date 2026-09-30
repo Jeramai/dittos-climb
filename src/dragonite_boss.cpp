@@ -218,7 +218,7 @@ void dragonite_boss::_update_sprite()
     }
 
     bn::fixed shake = _state == state::tired ? bn::fixed((_state_frames / 4) % 2 ? 1 : 0) : bn::fixed(0);
-    bool visible = _state != state::intro || (_state_frames / 3) % 2;
+    bool visible = _state != state::intro || (_state_frames / 3) % 2 == 0;
 
     for(bn::sprite_ptr& marker : _beam_markers)
     {

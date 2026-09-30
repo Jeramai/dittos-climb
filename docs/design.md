@@ -146,6 +146,13 @@ Some types open paths, like HMs:
 - Magikarp's Splash: *"But nothing happened!"* Stay a Magikarp through a full room and it evolves.
 - Snorlax sleeps on the stairs of floor 1. You need the Poké Flute to wake it.
 
+### Boss rooms
+
+A boss waits in the stairs room with the doors open and the floor music playing ("MEWTWO is waiting... Get close
+to challenge it!"). The fight starts when Ditto walks up to it or hits it: the doors lock, the boss music starts
+and the intro plays. So Ditto can look, leave to prepare, and come back. The pause map marks the stairs room red
+while its boss is alive. Snorlax still sleeps until the Poké Flute wakes it, and its music starts then.
+
 ## Floors
 
 | # | Place | Type | Floor mechanic | Wild Pokémon | Boss | Counter forms |
