@@ -157,7 +157,6 @@ room_view::room_view() :
 void room_view::build(const floor_room& value, const bool doors[4], bool locked, const floor_theme& theme, int seed)
 {
     _set_theme(theme);
-    _kind = value.kind;
 
     switch(value.kind)
     {
@@ -348,7 +347,7 @@ bn::fixed_point room_view::random_floor_position(bn::random& random) const
         }
     }
 
-    return interior_center();
+    return open_spot_near(interior_center());
 }
 
 bn::optional<bn::fixed_point> room_view::random_grass_position(bn::random& random) const
@@ -544,6 +543,10 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
     unsigned seed = unsigned(initial_seed);
     bool horizontal = next_seed(seed) % 2 && ! whirlpools;
     bool forward = next_seed(seed) % 2 || whirlpools;
+    int bridge_left = -1;
+    int bridge_right = -2;
+    int bridge_top = -1;
+    int bridge_bottom = -2;
 
     if(horizontal && _layout.height >= 12)
     {
@@ -557,7 +560,38 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
         }
 
         char flow = forward ? room::cells::flow_right : room::cells::flow_left;
-        int bridge = _interior_left() + 2 + next_seed(seed) % bn::max(_layout.width - bridge_width - 4, 1);
+        int span = bn::max(_layout.width - bridge_width - 4, 1);
+        int start = next_seed(seed) % span;
+        int bridge = _interior_left() + 2 + start;
+
+        for(int attempt = 0; attempt < span; ++attempt)
+        {
+            int candidate = _interior_left() + 2 + (start + attempt) % span;
+            bool open = true;
+
+            for(int x = candidate; x < candidate + bridge_width; ++x)
+            {
+                open = open && room::get(x, row - 1) == room::cells::floor &&
+                       room::get(x, row + river_width) == room::cells::floor;
+            }
+
+            if(open)
+            {
+                bridge = candidate;
+                break;
+            }
+        }
+
+        for(int x = bridge; x < bridge + bridge_width; ++x)
+        {
+            room::set(x, row - 1, room::cells::floor);
+            room::set(x, row + river_width, room::cells::floor);
+        }
+
+        bridge_left = bridge - 1;
+        bridge_right = bridge + bridge_width;
+        bridge_top = row - 1;
+        bridge_bottom = row + river_width;
 
         for(int y = row; y < row + river_width; ++y)
         {
@@ -582,7 +616,38 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
         }
 
         char flow = whirlpools ? room::cells::waterfall : forward ? room::cells::flow_down : room::cells::flow_up;
-        int bridge = _interior_top() + 2 + next_seed(seed) % bn::max(_layout.height - bridge_width - 4, 1);
+        int span = bn::max(_layout.height - bridge_width - 4, 1);
+        int start = next_seed(seed) % span;
+        int bridge = _interior_top() + 2 + start;
+
+        for(int attempt = 0; attempt < span; ++attempt)
+        {
+            int candidate = _interior_top() + 2 + (start + attempt) % span;
+            bool open = true;
+
+            for(int y = candidate; y < candidate + bridge_width; ++y)
+            {
+                open = open && room::get(column - 1, y) == room::cells::floor &&
+                       room::get(column + river_width, y) == room::cells::floor;
+            }
+
+            if(open)
+            {
+                bridge = candidate;
+                break;
+            }
+        }
+
+        for(int y = bridge; y < bridge + bridge_width; ++y)
+        {
+            room::set(column - 1, y, room::cells::floor);
+            room::set(column + river_width, y, room::cells::floor);
+        }
+
+        bridge_left = column - 1;
+        bridge_right = column + river_width;
+        bridge_top = bridge - 1;
+        bridge_bottom = bridge + bridge_width;
 
         for(int x = column; x < column + river_width; ++x)
         {
@@ -605,7 +670,10 @@ void room_view::_plant_water(int initial_seed, bool whirlpools)
     {
         for(int x = column; x < column + width; ++x)
         {
-            if(room::get(x, y) == room::cells::floor)
+            bool near_bridge = x >= bridge_left - 1 && x <= bridge_right + 1 && y >= bridge_top - 1 &&
+                               y <= bridge_bottom + 1;
+
+            if(room::get(x, y) == room::cells::floor && ! near_bridge)
             {
                 room::set(x, y, whirlpools ? room::cells::whirlpool : room::cells::water);
             }

@@ -402,7 +402,7 @@ bool player::give_item(item_id id, message_box& messages)
 
     if(! _bag)
     {
-        message.append("DITTO put the ");
+        message.append("Put the ");
         message.append(item.name);
         message.append(" in the BAG.");
         _bag = id;
@@ -556,6 +556,11 @@ void player::_faint_form(message_box& messages)
     messages.show("DITTO lost its shape!");
     audio::play(bn::sound_items::sfx_faint);
     _form.reset();
+    _charge_frames = 0;
+    _dash_frames = 0;
+    _area_frames = 0;
+    _digging = false;
+    _self_destructing = false;
     _switch_flash_frames = switch_flash_frames;
 }
 
@@ -602,6 +607,7 @@ void player::set_position(const bn::fixed_point& position)
     _slide = bn::fixed_point();
     _dodge_frames = 0;
     _area_frames = 0;
+    _self_destructing = false;
     _update_sprite(false);
 }
 
@@ -733,7 +739,7 @@ void player::_use_move(bool move_a, player_projectiles& projectiles, message_box
     case move_pattern::beam:
         _charge_frames = beam_charge_frames;
         _charge_attack = hit;
-        messages.show("DITTO is taking in sunlight!");
+        messages.show(move == move_id::solar_beam ? "DITTO is taking in sunlight!" : "DITTO is charging up!");
         break;
 
     case move_pattern::wave:
@@ -925,7 +931,9 @@ void player::_update_sprite_item(bool moving)
 
     if(_digging)
     {
-        _sprite.set_item(*body().sprite, species_frames::mound);
+        const bn::sprite_item& item = *body().sprite;
+        bool has_mound = item.tiles_item().graphics_count() > species_frames::mound;
+        _sprite.set_item(item, has_mound ? species_frames::mound : species_frames::own_walk);
         _sprite.set_visible(true);
         return;
     }

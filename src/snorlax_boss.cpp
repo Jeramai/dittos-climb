@@ -1,5 +1,6 @@
 #include "snorlax_boss.h"
 
+#include "room.h"
 #include "bn_math.h"
 
 #include "bn_sprite_items_projectiles.h"
@@ -105,6 +106,12 @@ void snorlax_boss::update(const bn::fixed_point& target, enemy_projectiles& proj
             _state_frames = windup_frames;
             _jump_start = _position;
             _jump_target = target;
+
+            if(room::area_is_blocked(target.x() - 10, target.y() - 10, target.x() + 10, target.y() + 10, false, false))
+            {
+                bn::optional<bn::fixed_point> spot = room::nearest_standable(target, false);
+                _jump_target = spot ? *spot : _position;
+            }
 
             bn::sprite_ptr marker = bn::sprite_items::projectiles.create_sprite(target, projectile_frames::impact);
             marker.set_camera(_camera);

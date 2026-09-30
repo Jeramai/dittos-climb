@@ -84,5 +84,6 @@ artbook:
 audio:
 	$(PYTHON) tools/gen_audio.py
 
-run: $(TARGET).gba
+run:
+	$(MAKE)
 	open -a mGBA $(TARGET).gba

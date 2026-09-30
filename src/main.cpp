@@ -22,18 +22,15 @@ int main()
 
     while(true)
     {
-        bool back_to_title;
-
         {
             bn::optional<save_data> saved = resume ? save::load() : bn::nullopt;
             save::erase();
 
             game current(random, saved ? &*saved : nullptr);
             current.run();
-            back_to_title = current.won() || current.quit();
         }
 
         bn::core::update();
-        resume = back_to_title && intro::title(random, save::exists());
+        resume = intro::title(random, save::exists());
     }
 }

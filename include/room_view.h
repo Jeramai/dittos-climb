@@ -58,7 +58,6 @@ private:
     bn::optional<bn::camera_ptr> _camera;
     const floor_theme* _theme;
     room_layout _layout;
-    room_kind _kind = room_kind::start;
     bool _doors[4] = {};
     int _left = 0;
     int _top = 0;

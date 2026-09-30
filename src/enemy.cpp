@@ -142,7 +142,7 @@ void enemy::update(const bn::fixed_point& target, enemy_projectiles& projectiles
     {
 
     case state::spawning:
-        _sprite.set_visible((_state_frames / 3) % 2);
+        _sprite.set_visible((_state_frames / 3) % 2 && _in_light && ! _unseen);
 
         if(! --_state_frames)
         {

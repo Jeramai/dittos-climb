@@ -91,6 +91,19 @@ namespace
         return bn::abs(delta.x()) < half_width && bn::abs(delta.y()) < half_height;
     }
 
+    template<typename Frame>
+    void wait_for_a(int min_frames, const Frame& frame)
+    {
+        bool released = false;
+
+        for(int wait = 0; ! (released && wait >= min_frames && bn::keypad::a_pressed()); ++wait)
+        {
+            released = released || ! bn::keypad::a_held();
+            frame();
+            bn::core::update();
+        }
+    }
+
     void show_name_message(message_box& messages, const char* prefix, const char* name, const char* suffix)
     {
         message_box::text message(prefix);
@@ -134,19 +147,17 @@ game::game(bn::random& random, const save_data* saved) :
     #endif
 
     #ifdef DITTO_TEST_PAGES
-        _journal_pages = DITTO_TEST_PAGES;
         _journal_mask = (1 << DITTO_TEST_PAGES) - 1;
     #endif
 
     #ifdef DITTO_TEST_ENDING
-        _journal_pages = DITTO_TEST_ENDING;
+        _journal_mask = (1 << DITTO_TEST_ENDING) - 1;
         _won = true;
     #endif
 
     if(saved)
     {
         _floor_number = saved->floor_number;
-        _journal_pages = saved->journal_pages;
         _journal_mask = saved->journal_mask;
         _run_frames = saved->run_frames;
         _defeated = saved->defeated;
@@ -730,7 +741,7 @@ void game::_spawn_boss()
     else if(_theme().boss == boss_kind::zapdos)
     {
         _boss.reset(new zapdos_boss(position, _camera));
-        _messages.show("ZAPDOS appeared in a flash of lightning!");
+        _messages.show("ZAPDOS appeared in a flash!");
     }
     else if(_theme().boss == boss_kind::moltres)
     {
@@ -789,7 +800,10 @@ void game::_update_boss()
         return;
     }
 
-    _boss->update(_player.position(), _enemy_projectiles, _random, _messages);
+    if(! _boss->dead())
+    {
+        _boss->update(_player.position(), _enemy_projectiles, _random, _messages);
+    }
 
     if(_boss->asleep())
     {
@@ -852,6 +866,7 @@ void game::_update_boss()
         _wait_for_a(defeat_min_frames);
         ++_defeated;
         _add_coins(mewtwo_coins);
+        profile::register_seen(_boss->species(), false);
         profile::register_seen(_boss->outline_species(), false);
         _won = true;
         return;
@@ -864,6 +879,7 @@ void game::_update_boss()
         _boss->announce_defeat(_messages);
         _spawn_effect(_boss->position());
         _spawn_outline(_boss->outline_species(), _boss->position());
+        profile::register_seen(_boss->species(), false);
         profile::register_seen(_boss->outline_species(), false);
 
         if(bn::optional<species_id> extra = _boss->extra_outline())
@@ -1315,7 +1331,6 @@ void game::_collect_reward()
     {
         _reward_pickup.reset();
         value.reward_taken = true;
-        ++_journal_pages;
         _journal_mask |= 1 << (_floor_number - 1);
         audio::play(bn::sound_items::sfx_key_item);
         _show_journal_page(_floor_number - 1);
@@ -1562,7 +1577,9 @@ void game::_spawn_enemies()
 
     floor_room& current_room = _floor[_room];
 
-    if(current_room.reward == room_reward::rare && ! current_room.reward_taken && ! _enemies.empty())
+    bool first_wave = _waves_left == _theme().waves - 1;
+
+    if(current_room.reward == room_reward::rare && ! current_room.reward_taken && first_wave && ! _enemies.empty())
     {
         bn::fixed_point position = _enemies.back().position();
         _enemies.pop_back();
@@ -1728,7 +1745,7 @@ void game::_pause_map()
     bag.append(_player.bag_item() ? "  (SELECT)" : "");
 
     bn::string<32> pages("JOURNAL ");
-    pages.append(bn::to_string<4>(_journal_pages));
+    pages.append(bn::to_string<4>(_journal_page_count()));
     pages.append("/");
     pages.append(bn::to_string<4>(journal::page_count));
     pages.append("  COINS ");
@@ -1877,7 +1894,7 @@ void game::_show_run_stats(const char* title)
     small.generate(0, -8, line("POKEMON DEFEATED ", _defeated), text);
     small.generate(0, 4, line("FORMS USED ", forms), text);
     small.generate(0, 16, line("SHINIES SEEN ", _shinies), text);
-    small.generate(0, 28, line("JOURNAL PAGES ", _journal_pages), text);
+    small.generate(0, 28, line("JOURNAL PAGES ", _journal_page_count()), text);
     small.generate(0, 40, line("COINS EARNED ", _coins_earned), text);
     small.generate(0, 54, dex, text);
     small.generate(0, 70, "PRESS START", text);
@@ -2024,19 +2041,9 @@ void game::_open_mart()
 
 void game::_wait_for_a(int min_frames)
 {
-    bool released = false;
-
-    for(int frame = 0; ; ++frame)
+    wait_for_a(min_frames, []()
     {
-        released = released || ! bn::keypad::a_held();
-
-        if(released && frame >= min_frames && bn::keypad::a_pressed())
-        {
-            return;
-        }
-
-        bn::core::update();
-    }
+    });
 }
 
 void game::_save_and_quit()
@@ -2044,7 +2051,6 @@ void game::_save_and_quit()
     save_data data;
     data.floor_number = _floor_number;
     data.room = _room;
-    data.journal_pages = _journal_pages;
     data.journal_mask = _journal_mask;
     data.run_frames = _run_frames;
     data.defeated = _defeated;
@@ -2166,16 +2172,12 @@ void game::_ending()
         small.generate(0, 72, "A: NEXT", text);
         bn::core::update();
 
-        bool released = false;
-
-        for(int wait = 0; ! (released && wait >= page_min_frames && bn::keypad::a_pressed()); ++wait)
+        wait_for_a(page_min_frames, [&]()
         {
-            released = released || ! bn::keypad::a_held();
             ++frame_counter;
             mew.set_y(30 + bn::degrees_lut_sin((frame_counter * 4) % 360) * 3);
             mew.set_tiles(bn::sprite_items::mew.tiles_item(), species_frames::walk + (frame_counter / 20) % 2);
-            bn::core::update();
-        }
+        });
     };
 
     auto transform_ditto = [&](const bn::sprite_item& target, const char* message)
@@ -2200,7 +2202,7 @@ void game::_ending()
 
     transform_ditto(bn::sprite_items::mewtwo, "...and TRANSFORMED into MEWTWO!");
 
-    if(_journal_pages >= journal::page_count)
+    if(_journal_page_count() >= journal::page_count)
     {
         set_ditto_item(bn::sprite_items::ditto, species_frames::own_walk);
 
@@ -2213,7 +2215,7 @@ void game::_ending()
     }
 
     bn::string<32> pages("JOURNAL ");
-    pages.append(bn::to_string<4>(_journal_pages));
+    pages.append(bn::to_string<4>(_journal_page_count()));
     pages.append("/");
     pages.append(bn::to_string<4>(journal::page_count));
 

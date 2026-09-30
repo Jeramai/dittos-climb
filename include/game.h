@@ -89,7 +89,6 @@ private:
     int _plate_serial = -1000;
     int _flicker_timer = 400;
     int _flicker_frames = 0;
-    int _journal_pages = 0;
     int _journal_mask = 0;
     int _run_frames = 0;
     int _defeated = 0;
@@ -197,6 +196,18 @@ private:
     void _save_and_quit();
 
     void _wait_for_a(int min_frames);
+
+    [[nodiscard]] int _journal_page_count() const
+    {
+        int count = 0;
+
+        for(int mask = _journal_mask; mask; mask &= mask - 1)
+        {
+            ++count;
+        }
+
+        return count;
+    }
 
     void _register_form(species_id id, bool shiny);
 

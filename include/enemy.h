@@ -85,7 +85,7 @@ public:
 
     [[nodiscard]] bool take_shiny_sighting()
     {
-        bool result = _shiny && ! _shiny_seen && _sprite.visible();
+        bool result = _shiny && ! _shiny_seen && _state != state::spawning && _sprite.visible();
         _shiny_seen = _shiny_seen || result;
         return result;
     }

@@ -11,7 +11,6 @@ struct save_data
     unsigned magic;
     int floor_number;
     int room;
-    int journal_pages;
     int journal_mask;
     int run_frames;
     int defeated;

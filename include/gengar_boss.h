@@ -20,6 +20,11 @@ public:
         return _state != state::intro && _state != state::faded;
     }
 
+    [[nodiscard]] bool contains(const bn::fixed_point& point, int half_size) const final
+    {
+        return _state != state::faded && boss::contains(point, half_size);
+    }
+
     void set_revealed(bool revealed) final
     {
         _revealed = revealed;
