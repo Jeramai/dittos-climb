@@ -5,8 +5,39 @@
 
 namespace
 {
-    constexpr unsigned profile_magic = 0x44435033;
+    constexpr unsigned profile_magic = 0x44435034;
+    constexpr unsigned coins_profile_magic = 0x44435033;
     constexpr int sram_offset = 4096;
+
+    struct coins_profile
+    {
+        unsigned magic;
+        unsigned seen[profile::form_words];
+        unsigned forms[profile::form_words];
+        unsigned shiny_forms[profile::form_words];
+        int runs;
+        int wins;
+        int best_floor;
+        int coins;
+    };
+
+    profile::data upgraded(const coins_profile& old)
+    {
+        profile::data result = {};
+
+        for(int word = 0; word < profile::form_words; ++word)
+        {
+            result.seen[word] = old.seen[word];
+            result.forms[word] = old.forms[word];
+            result.shiny_forms[word] = old.shiny_forms[word];
+        }
+
+        result.runs = old.runs;
+        result.wins = old.wins;
+        result.best_floor = old.best_floor;
+        result.coins = old.coins;
+        return result;
+    }
 
     profile::data current;
     bool loaded = false;
@@ -19,8 +50,12 @@ namespace
 
             if(current.magic != profile_magic)
             {
-                current = profile::data();
+                coins_profile old;
+                bn::sram::read_offset(old, sram_offset);
+                current = old.magic == coins_profile_magic ? upgraded(old) : profile::data();
                 current.magic = profile_magic;
+                current.music_level = profile::max_level;
+                current.sound_level = profile::max_level;
             }
 
             #ifdef DITTO_TEST_MART
@@ -169,6 +204,13 @@ void record_win()
 void add_coins(int amount)
 {
     loaded_data().coins = bn::min(loaded_data().coins + amount, 99999);
+    write();
+}
+
+void set_levels(int music_level, int sound_level)
+{
+    loaded_data().music_level = music_level;
+    loaded_data().sound_level = sound_level;
     write();
 }
 

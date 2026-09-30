@@ -8,9 +8,18 @@
 
 namespace
 {
-    constexpr bn::fixed music_volume = 0.45;
-    constexpr bn::fixed sound_volume = 0.7;
-    constexpr bn::fixed quiet_volume = 0.35;
+    constexpr bn::fixed full_music_volume = 0.45;
+    constexpr bn::fixed full_sound_volume = 0.7;
+    constexpr bn::fixed full_quiet_volume = 0.35;
+    constexpr int max_level = 10;
+
+    int music_level = max_level;
+    int sound_level = max_level;
+
+    bn::fixed music_volume()
+    {
+        return full_music_volume * music_level / max_level;
+    }
 
     constexpr const bn::music_item* floor_music[] = {
         &bn::music_items::lab, &bn::music_items::forest, &bn::music_items::cave, &bn::music_items::lake,
@@ -34,7 +43,7 @@ void play_music(const bn::music_item& item)
         return;
     }
 
-    item.play(music_volume);
+    item.play(music_volume());
 }
 
 void play_floor_music(int floor_number)
@@ -52,12 +61,29 @@ void stop_music()
 
 void play(const bn::sound_item& item)
 {
-    item.play(sound_volume);
+    if(sound_level)
+    {
+        item.play(full_sound_volume * sound_level / max_level);
+    }
 }
 
 void play_quiet(const bn::sound_item& item)
 {
-    item.play(quiet_volume);
+    if(sound_level)
+    {
+        item.play(full_quiet_volume * sound_level / max_level);
+    }
+}
+
+void set_levels(int music, int sound)
+{
+    music_level = bn::clamp(music, 0, max_level);
+    sound_level = bn::clamp(sound, 0, max_level);
+
+    if(bn::music::playing())
+    {
+        bn::music::set_volume(music_volume());
+    }
 }
 
 }

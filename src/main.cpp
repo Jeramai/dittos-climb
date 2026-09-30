@@ -2,13 +2,16 @@
 #include "bn_random.h"
 
 #include "game.h"
+#include "audio.h"
 #include "intro.h"
+#include "profile.h"
 #include "save.h"
 
 int main()
 {
     bn::core::init();
     bn::random random;
+    audio::set_levels(profile::get().music_level, profile::get().sound_level);
 
     bool resume = intro::title(random, save::exists());
 

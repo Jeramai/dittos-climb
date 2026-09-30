@@ -6,6 +6,7 @@
 namespace profile
 {
     constexpr int form_words = 3;
+    constexpr int max_level = 10;
 
     struct data
     {
@@ -17,6 +18,8 @@ namespace profile
         int wins;
         int best_floor;
         int coins;
+        int music_level;
+        int sound_level;
     };
 
     [[nodiscard]] const data& get();
@@ -44,6 +47,8 @@ namespace profile
     void add_coins(int amount);
 
     [[nodiscard]] bool spend_coins(int amount);
+
+    void set_levels(int music_level, int sound_level);
 }
 
 #endif

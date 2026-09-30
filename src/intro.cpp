@@ -18,7 +18,9 @@
 #include "common_variable_8x16_sprite_font.h"
 
 #include "audio.h"
+#include "options.h"
 #include "pokedex.h"
+#include "profile.h"
 #include "species.h"
 
 namespace
@@ -66,7 +68,7 @@ bool title(bn::random& random, bool can_continue)
         small.generate(0, 40, "PRESS START", text);
     }
 
-    small.generate(0, 66, "SELECT: POKEDEX", text);
+    small.generate(0, 66, "SELECT: POKEDEX  R: OPTIONS", text);
 
     bn::sprite_ptr ditto = bn::sprite_items::ditto.create_sprite(0, 0, species_frames::own_walk);
     ditto.set_scale(2);
@@ -83,7 +85,9 @@ bool title(bn::random& random, bool can_continue)
             break;
         }
 
-        if(bn::keypad::select_pressed())
+        bool open_pokedex = bn::keypad::select_pressed();
+
+        if(open_pokedex || bn::keypad::r_pressed())
         {
             audio::play(bn::sound_items::sfx_menu);
             ditto.set_visible(false);
@@ -95,7 +99,15 @@ bool title(bn::random& random, bool can_continue)
                 sprite.set_visible(false);
             }
 
-            pokedex::show();
+            if(open_pokedex)
+            {
+                pokedex::show();
+            }
+            else
+            {
+                options::show();
+            }
+
             ditto.set_visible(true);
             background.set_visible(true);
             bn::bg_palettes::set_transparent_color(bn::color(2, 2, 5));

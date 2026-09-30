@@ -91,6 +91,11 @@ colours of its target. The Mew in the ending rolls 1 in 8192 too.
 Ditto itself is the player, so the roll happens once per new run: at 1 in 8192 the run starts as a blue shiny
 Ditto (the Gen 2-4 colours), which the save and the ending keep.
 
+### Options
+
+R on the title opens the options: music and sound volume in ten steps each, saved in the profile with the
+Pokédex. The profile upgrades older layouts in place, so an update keeps the Pokédex and the coins.
+
 ### Poké Mart and coins
 
 Defeated wild Pokémon drop 1-3 coins, a boss 20 and Mewtwo 50. Coins live in the profile, so they carry over

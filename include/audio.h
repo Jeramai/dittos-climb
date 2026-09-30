@@ -15,6 +15,8 @@ namespace audio
     void play(const bn::sound_item& item);
 
     void play_quiet(const bn::sound_item& item);
+
+    void set_levels(int music_level, int sound_level);
 }
 
 #endif
