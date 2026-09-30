@@ -60,6 +60,7 @@ SHARED_SHEETS = [
     ("wave", 32, "Struggle effort lines"),
     ("pickups", 16, "Item ball, journal page, Silph Scope"),
     ("poke_flute", 16, "Poké Flute"),
+    ("mart", 32, "Poké Mart clerk and counter"),
     ("light", 64, "Light circle mask (dark floors)"),
 ]
 
@@ -188,6 +189,24 @@ def room_sprites(theme, sprite_by_id):
     return [("ditto", 3)] + wild[:4]
 
 
+def title_image():
+    image = Image.open(GRAPHICS / "title_bg.bmp").convert("RGBA").crop((0, 0, 240, 160))
+    ditto = sheet_frames("ditto", 16)[3].resize((32, 32), Image.NEAREST)
+    image.alpha_composite(ditto, (104, 64))
+    image.resize((480, 320), Image.NEAREST).save(IMAGES / "title.png")
+    return "title.png"
+
+
+def item_rows():
+    names = re.findall(r'\{ "([^"]+)", item_kind::(\w+), pokemon_type::\w+, (\d+), "([^"]+)" \}', read("src/items.cpp"))
+    frames = sheet_frames("item_icons", 8)
+    rows = ["| Icon | Item | Price | Effect |", "|---|---|---|---|"]
+    for index, (name, kind, price, description) in enumerate(names):
+        image = save_strip([frames[index]], f"item_{index}.png")
+        rows.append(f"| ![{name}](images/{image}) | **{name}** | {price} | {description} |")
+    return rows
+
+
 def main():
     IMAGES.mkdir(parents=True, exist_ok=True)
     for old in IMAGES.glob("*.png"):
@@ -206,6 +225,8 @@ def main():
         "`tools/gen_assets.py`; a hand-drawn BMP of the same size and palette limit (16 colours) replaces it.",
         "",
         "Regenerate this page with `make artbook`.",
+        "",
+        f"![title screen](images/{title_image()})",
         "",
         "Sprite strips show: walk 1, walk 2, player form (pink outline), and the special frame (asleep, charging,",
         "mound) when the Pokémon has one.",
@@ -232,6 +253,9 @@ def main():
         shiny = shiny_image(name)
         if shiny:
             lines += [f"**Shiny {name.title()}** (1 in 8192)", "", f"![shiny {name}](images/{shiny})", ""]
+
+    lines += ["## Items", "", "Held items show as the first icon next to the HP bar; Potions, Ethers and Rare Candies go into the",
+              "one-slot bag (the second icon) and Select uses them. Prices are for the Poké Mart.", "", *item_rows(), ""]
 
     hp_frames = sheet_frames("hp_bar", 8)
     lines += ["**HP bar** (green, yellow, red at full)", "",

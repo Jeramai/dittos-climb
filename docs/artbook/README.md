@@ -5,6 +5,8 @@ Every sprite and tileset in the game, per floor, with a sample room of each floo
 
 Regenerate this page with `make artbook`.
 
+![title screen](images/title.png)
+
 Sprite strips show: walk 1, walk 2, player form (pink outline), and the special frame (asleep, charging,
 mound) when the Pokémon has one.
 
@@ -248,9 +250,34 @@ Warp pads send Ditto to their partner. Abra and Kadabra teleport.
 
 ![poke_flute](images/shared_poke_flute.png)
 
+**Poké Mart clerk and counter**
+
+![mart](images/shared_mart.png)
+
 **Light circle mask (dark floors)**
 
 ![light](images/shared_light.png)
+
+## Items
+
+Held items show as the first icon next to the HP bar; Potions, Ethers and Rare Candies go into the
+one-slot bag (the second icon) and Select uses them. Prices are for the Poké Mart.
+
+| Icon | Item | Price | Effect |
+|---|---|---|---|
+| ![CHARCOAL](images/item_0.png) | **CHARCOAL** | 60 | Held: boosts FIRE moves. |
+| ![MIRACLE SEED](images/item_1.png) | **MIRACLE SEED** | 60 | Held: boosts GRASS moves. |
+| ![MYSTIC WATER](images/item_2.png) | **MYSTIC WATER** | 60 | Held: boosts WATER moves. |
+| ![MAGNET](images/item_3.png) | **MAGNET** | 60 | Held: boosts ELECTRIC moves. |
+| ![HARD STONE](images/item_4.png) | **HARD STONE** | 60 | Held: boosts ROCK moves. |
+| ![SOFT SAND](images/item_5.png) | **SOFT SAND** | 60 | Held: boosts GROUND moves. |
+| ![SILVERPOWDER](images/item_6.png) | **SILVERPOWDER** | 60 | Held: boosts BUG moves. |
+| ![BLACK BELT](images/item_7.png) | **BLACK BELT** | 60 | Held: boosts FIGHTING moves. |
+| ![LEFTOVERS](images/item_8.png) | **LEFTOVERS** | 150 | Held: slowly restores HP. |
+| ![QUICK CLAW](images/item_9.png) | **QUICK CLAW** | 100 | Held: moves recharge faster. |
+| ![ETHER](images/item_10.png) | **ETHER** | 40 | Restores the PP of move B. |
+| ![RARE CANDY](images/item_11.png) | **RARE CANDY** | 120 | Raises DITTO's max HP. |
+| ![POTION](images/item_12.png) | **POTION** | 30 | Restores half of the HP. |
 
 **HP bar** (green, yellow, red at full)
 
