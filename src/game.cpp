@@ -2294,6 +2294,7 @@ void game::_ending()
     auto set_ditto_item = [&](const bn::sprite_item& item, int frame)
     {
         ditto.set_item(item, frame);
+        ditto.set_horizontal_flip(&item == &bn::sprite_items::mew);
 
         if(shiny_ditto && &item == &bn::sprite_items::ditto)
         {
@@ -2302,7 +2303,6 @@ void game::_ending()
     };
     set_ditto_item(bn::sprite_items::ditto, species_frames::own_walk);
     mew.set_bg_priority(0);
-    mew.set_horizontal_flip(true);
 
     bool shiny_mew = shiny::roll(_random);
     profile::register_seen(species_id::mew, shiny_mew);
