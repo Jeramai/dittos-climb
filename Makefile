@@ -72,7 +72,7 @@ endif
 #---------------------------------------------------------------------------------------------------------------------
 include $(LIBBUTANOABS)/butano.mak
 
-.PHONY: assets artbook audio run
+.PHONY: assets artbook audio run release
 
 assets:
 	$(PYTHON) tools/gen_assets.py
@@ -87,3 +87,10 @@ audio:
 run:
 	$(MAKE)
 	open -a mGBA $(TARGET).gba
+
+release:
+	@test -n "$(VERSION)" || { echo "Usage: make release VERSION=1.2.0"; exit 1; }
+	@git diff --quiet && git diff --cached --quiet || { echo "Commit your changes first."; exit 1; }
+	@git fetch -q origin main && test "$$(git rev-parse HEAD)" = "$$(git rev-parse origin/main)" || { echo "Push main first."; exit 1; }
+	$(MAKE)
+	gh release create v$(VERSION) $(TARGET).gba --repo Jeramai/dittos-climb --target main --title "Ditto's Climb $(VERSION)" --generate-notes

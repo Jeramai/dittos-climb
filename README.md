@@ -13,6 +13,9 @@ make -j8
 make run
 ```
 
+`make release VERSION=1.2.0` builds the ROM and publishes it as a GitHub release (the repo is private, so only
+people with access can download it). The latest ROM is always on the repo's Releases page.
+
 `make assets` regenerates the placeholder art from `tools/gen_assets.py`. `make artbook` rebuilds the
 [art book](docs/artbook/README.md), a page with every sprite and tileset per floor. `make audio` regenerates
 the original chiptune music (ProTracker MODs, one per floor plus title, boss, final boss and ending) and the
