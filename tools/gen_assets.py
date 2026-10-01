@@ -1328,41 +1328,41 @@ SHELLDER_2 = [
 
 OMANYTE_1 = [
     "",
-    "     kkkkkkk",
-    "    kwi11111kk",
-    "   kwi111i111ik",
-    "   ki11iiiii11k",
-    "  kii1ii111ii11k",
-    "  kii1ii1i11i11k",
-    "  kii1ii111ii11k",
-    "  kii1ciiiii11ik",
-    "   kwccwci111ik",
-    "  kckcckcc11iik",
-    "  kccccccciikk",
-    "   kccccCCkk",
-    "  kckccckck",
-    "  kckkcckkck",
-    " kck kck  k",
+    "    kkkkkkk",
+    "  kk11111iwk",
+    " ki111i111iwk",
+    " k11iiiii11ik",
+    "k11ii111ii1iik",
+    "k11i11i1ii1iik",
+    "k11ii111ii1iik",
+    "ki11iiiiic1iik",
+    " ki111icwccwk",
+    " kii11cckcckck",
+    "  kkiiccccccck",
+    "    kkCCcccck",
+    "     kckccckck",
+    "    kckkcckkck",
+    "     k  kck kck",
 ]
 
 
 OMANYTE_2 = [
     "",
-    "     kkkkkkk",
-    "    kwi11111kk",
-    "   kwi111i111ik",
-    "   ki11iiiii11k",
-    "  kii1ii111ii11k",
-    "  kii1ii1i11i11k",
-    "  kii1ii111ii11k",
-    "  kii1ciiiii11ik",
-    "   kwccwci111ik",
-    "  kckcckcc11iik",
-    "  kccccccciikk",
-    "   kccccCCkk",
-    "  kckccckck",
-    " kckkcckkck",
-    "  k  kck kck",
+    "    kkkkkkk",
+    "  kk11111iwk",
+    " ki111i111iwk",
+    " k11iiiii11ik",
+    "k11ii111ii1iik",
+    "k11i11i1ii1iik",
+    "k11ii111ii1iik",
+    "ki11iiiiic1iik",
+    " ki111icwccwk",
+    " kii11cckcckck",
+    "  kkiiccccccck",
+    "    kkCCcccck",
+    "     kckccckck",
+    "     kckkcckkck",
+    "    kck kck  k",
 ]
 
 
@@ -1701,26 +1701,26 @@ KOFFING_2 = [""] + KOFFING_1[:-1]
 
 EKANS_TOP = [
     "",
-    "     kkkk",
-    "    kzzzzk",
-    "   kzzwkzzk",
-    "   kzzkkzzzk",
-    "   kzzzzzzzk",
-    "    kknnkzzk",
-    "     kyyyykk",
+    "       kkkk",
+    "      kzzzzk",
+    "     kzzkwzzk",
+    "    kzzzkkzzk",
+    "    kzzzzzzzk",
+    "    kzzknnkk",
+    "    kkyyyyk",
     "      kzzk",
-    "     kzzk    kk",
-    "    kzZk   kkGk",
-    "   kzzZk  kzZkk",
-    "   kzyyzkkzzZk",
-    "  kzzzzzzzzzZk",
+    " kk    kzzk",
+    " kGkk   kZzk",
+    " kkZzk  kZzzk",
+    "  kZzzkkzyyzk",
+    "  kZzzzzzzzzzk",
 ]
 
 
 EKANS_1 = EKANS_TOP + ["  kZzyyzzyyzZk", "   kkkkkkkkkk"]
 
 
-EKANS_2 = EKANS_TOP + [" kZzyyzzyyzzZk", "  kkkkkkkkkkk"]
+EKANS_2 = EKANS_TOP + ["  kZzzyyzzyyzZk", "   kkkkkkkkkkk"]
 
 
 GRIMER_TOP = [
@@ -2083,22 +2083,22 @@ LAPRAS_2 = LAPRAS_TOP + ["kiik       kiik", " kk         kk"]
 
 KADABRA_TOP = [
     "",
-    " kk      kk",
-    " kyk    kyk   kk",
-    " kyykkkkyyk  ksk",
-    "  kyynnyyk   ksk",
-    "  kykyykyk    kk",
-    "  kyyyyyyk   ksk",
-    " kbkyyyykbk  ksk",
-    "kbkkbbbbkkbk kyk",
-    "kk kbbyybbkkkyyk",
-    "   kbyyyybkkkk",
-    "   kyyyyyyk",
-    "    kyyyyk",
+    "     kk      kk",
+    "kk   kyk    kyk",
+    "ksk  kyykkkkyyk",
+    "ksk   kyynnyyk",
+    "kk    kykyykyk",
+    "ksk   kyyyyyyk",
+    "ksk  kbkyyyykbk",
+    "kyk kbkkbbbbkkbk",
+    "kyykkkbbyybbk kk",
+    "  kkkkbyyyybk",
+    "     kyyyyyyk",
+    "      kyyyyk",
 ]
 
-KADABRA_1 = KADABRA_TOP + ["   kyk  kyk", "   kkk  kkk"]
-KADABRA_2 = KADABRA_TOP + ["  kyk    kyk", "  kkk    kkk"]
+KADABRA_1 = KADABRA_TOP + ["     kyk  kyk", "     kkk  kkk"]
+KADABRA_2 = KADABRA_TOP + ["    kyk    kyk", "    kkk    kkk"]
 
 DROWZEE_TOP = [
     "",
