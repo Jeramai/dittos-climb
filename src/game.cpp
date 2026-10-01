@@ -19,10 +19,12 @@
 #include "bn_regular_bg_items_story_bg.h"
 #include "bn_sprite_items_item_icons.h"
 #include "bn_sprite_items_mart.h"
+#include "bn_sprite_items_particles.h"
 #include "bn_sprite_items_pickups.h"
 #include "bn_sprite_items_poke_flute.h"
 #include "bn_sprite_items_projectiles.h"
 
+#include "common_fixed_8x8_sprite_font.h"
 #include "common_variable_8x16_sprite_font.h"
 #include "common_variable_8x8_sprite_font.h"
 
@@ -51,6 +53,16 @@ namespace
     constexpr int spawn_delay_frames = 30;
     constexpr int page_min_frames = 45;
     constexpr int boss_coins = 20;
+    constexpr int hit_stop_frames = 2;
+    constexpr int super_hit_stop_frames = 4;
+    constexpr int hurt_stop_frames = 3;
+    constexpr int damage_number_frames = 28;
+    constexpr int boss_card_frames = 130;
+    constexpr int credit_page_frames = 150;
+    constexpr int credit_skip_frames = 20;
+    constexpr int boss_card_skip_frames = 30;
+    constexpr int boss_card_start_x = 150;
+    constexpr int boss_card_slide_speed = 10;
     constexpr int boss_challenge_distance = 24;
     constexpr int boss_room_spawn_offset = 40;
     constexpr int mewtwo_coins = 50;
@@ -106,6 +118,90 @@ namespace
             released = released || ! bn::keypad::a_held();
             frame();
             bn::core::update();
+        }
+    }
+
+    enum class particle_motion
+    {
+        fall,
+        rise,
+        drift,
+        blink,
+        streak,
+    };
+
+    struct floor_particles
+    {
+        int frame;
+        particle_motion motion;
+        int interval;
+    };
+
+    constexpr floor_particles particles_by_floor[] = {
+        { 3, particle_motion::drift, 40 },
+        { 0, particle_motion::fall, 22 },
+        { 3, particle_motion::drift, 30 },
+        { 4, particle_motion::rise, 28 },
+        { 5, particle_motion::blink, 18 },
+        { 2, particle_motion::fall, 14 },
+        { 1, particle_motion::fall, 10 },
+        { 6, particle_motion::streak, 12 },
+        { 3, particle_motion::drift, 36 },
+        { 7, particle_motion::fall, 20 },
+        { 8, particle_motion::rise, 30 },
+        { 4, particle_motion::rise, 24 },
+        { 9, particle_motion::blink, 16 },
+    };
+
+    const bn::sound_item& hit_sound(pokemon_type type)
+    {
+        switch(type)
+        {
+
+        case pokemon_type::fire:
+            return bn::sound_items::sfx_hit_fire;
+
+        case pokemon_type::water:
+            return bn::sound_items::sfx_hit_water;
+
+        case pokemon_type::electric:
+            return bn::sound_items::sfx_hit_electric;
+
+        case pokemon_type::grass:
+            return bn::sound_items::sfx_hit_grass;
+
+        case pokemon_type::ice:
+            return bn::sound_items::sfx_hit_ice;
+
+        case pokemon_type::fighting:
+            return bn::sound_items::sfx_hit_fighting;
+
+        case pokemon_type::poison:
+            return bn::sound_items::sfx_hit_poison;
+
+        case pokemon_type::ground:
+            return bn::sound_items::sfx_hit_ground;
+
+        case pokemon_type::flying:
+            return bn::sound_items::sfx_hit_flying;
+
+        case pokemon_type::psychic:
+            return bn::sound_items::sfx_hit_psychic;
+
+        case pokemon_type::bug:
+            return bn::sound_items::sfx_hit_bug;
+
+        case pokemon_type::rock:
+            return bn::sound_items::sfx_hit_rock;
+
+        case pokemon_type::ghost:
+            return bn::sound_items::sfx_hit_ghost;
+
+        case pokemon_type::dragon:
+            return bn::sound_items::sfx_hit_dragon;
+
+        default:
+            return bn::sound_items::sfx_hit;
         }
     }
 
@@ -212,7 +308,15 @@ void game::run()
             }
         }
 
-        _update_play();
+        if(_hit_stop)
+        {
+            --_hit_stop;
+        }
+        else
+        {
+            _update_play();
+        }
+
         ++_run_frames;
         _random.update();
         bn::core::update();
@@ -423,6 +527,8 @@ void game::_enter_room(int index, bn::optional<direction> entered_from)
 void game::_update_play()
 {
     _view.update();
+    _update_damage_numbers();
+    _update_particles();
 
     if(bn::keypad::select_pressed() && _player.bag_item() && ! _player.transforming())
     {
@@ -527,7 +633,7 @@ void game::_update_room_state()
         _floor[_room].cleared = true;
         _view.set_locked(false);
         _messages.show(_theme().unlock_message);
-        audio::play(bn::sound_items::sfx_door_open);
+        audio::play(bn::sound_items::sfx_room_clear);
 
         if(_floor[_room].reward == room_reward::rare)
         {
@@ -605,7 +711,7 @@ void game::_handle_player_attacks()
             if(value.active() && value.contains(shot.position, shot.half_size))
             {
                 hit_result result = value.take_hit(shot.hit);
-                _after_player_hit(shot.hit, result, &value);
+                _after_player_hit(shot.hit, result, &value, value.position());
                 _spawn_effect(shot.position);
                 return true;
             }
@@ -620,7 +726,7 @@ void game::_handle_player_attacks()
             else if(_boss->vulnerable())
             {
                 hit_result result = _boss->take_hit(shot.hit);
-                _after_player_hit(shot.hit, result, nullptr);
+                _after_player_hit(shot.hit, result, nullptr, _boss->position());
             }
             else if(_boss->asleep())
             {
@@ -650,7 +756,7 @@ void game::_handle_player_attacks()
                value.hit_by_area(serial))
             {
                 hit_result result = value.take_hit(_player.area_attack());
-                _after_player_hit(_player.area_attack(), result, &value);
+                _after_player_hit(_player.area_attack(), result, &value, value.position());
                 _spawn_effect(value.position());
 
                 if(_player.area_attack().move == move_id::struggle && serial != _last_recoil_serial)
@@ -672,7 +778,7 @@ void game::_handle_player_attacks()
        _boss->contains(_player.position(), _player.area_half_size()) && _boss->hit_by_area(_player.area_serial()))
     {
         hit_result result = _boss->take_hit(_player.area_attack());
-        _after_player_hit(_player.area_attack(), result, nullptr);
+        _after_player_hit(_player.area_attack(), result, nullptr, _boss->position());
         _spawn_effect(_boss->position());
         int serial = _player.area_serial();
 
@@ -804,8 +910,60 @@ void game::_spawn_boss()
     _messages.show("Get close to challenge it!");
 }
 
+void game::_show_boss_card()
+{
+    _set_world_visible(false);
+    _overlay.show_backdrop();
+    _overlay.window(0, 0, 30, 4, window_style::blue);
+    _overlay.window(0, 14, 30, 6, window_style::white);
+
+    bool magikarp = _theme().boss == boss_kind::gyarados;
+    const species_data& data = species::get(magikarp ? species_id::magikarp : _boss->species());
+    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
+    big.set_center_alignment();
+    big.set_bg_priority(0);
+
+    bn::sprite_text_generator name(common::variable_8x16_sprite_font, ui::dark_text_palette());
+    name.set_center_alignment();
+    name.set_bg_priority(0);
+
+    bn::sprite_text_generator small(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    small.set_center_alignment();
+    small.set_bg_priority(0);
+
+    bn::string<24> type_line(types::name(data.type_1));
+
+    if(data.type_2 != pokemon_type::none)
+    {
+        type_line.append(" / ");
+        type_line.append(types::name(data.type_2));
+    }
+
+    bn::vector<bn::sprite_ptr, 24> text;
+    big.generate(0, ui::row_y(1) + 6, "VS", text);
+    name.generate(0, ui::row_y(15) + 6, magikarp ? data.name : _boss->name(), text);
+    small.generate(0, ui::row_y(17) + 4, type_line, text);
+
+    bn::sprite_ptr portrait = data.sprite->create_sprite(boss_card_start_x, -12, species_frames::walk);
+    portrait.set_bg_priority(0);
+    portrait.set_scale(data.sprite->shape_size().width() > 16 ? 2 : 3);
+
+    for(int frame = 0; frame < boss_card_frames && ! (frame > boss_card_skip_frames && bn::keypad::a_pressed()); ++frame)
+    {
+        bn::fixed x = bn::max(bn::fixed(0), portrait.x() - boss_card_slide_speed);
+        portrait.set_x(x);
+        portrait.set_tiles(data.sprite->tiles_item(), species_frames::walk + (frame / 16) % 2);
+        bn::core::update();
+    }
+
+    text.clear();
+    _overlay.hide();
+    _set_world_visible(true);
+}
+
 void game::_start_boss_fight()
 {
+    _show_boss_card();
     _boss_waiting = false;
     _locked = true;
     _view.set_locked(true);
@@ -1331,7 +1489,7 @@ status_effect game::_roll_status(move_id move)
     return data.status;
 }
 
-void game::_after_player_hit(const attack& hit, const hit_result& result, enemy* target)
+void game::_after_player_hit(const attack& hit, const hit_result& result, enemy* target, const bn::fixed_point& where)
 {
     _messages.show(combat::effectiveness_message(result.effectiveness));
 
@@ -1343,14 +1501,26 @@ void game::_after_player_hit(const attack& hit, const hit_result& result, enemy*
     {
         audio::play(bn::sound_items::sfx_weak);
     }
-    else if(result.effectiveness)
+
+    if(result.effectiveness)
     {
-        audio::play_quiet(bn::sound_items::sfx_hit);
+        audio::play_quiet(hit_sound(hit.type));
     }
 
     if(! result.effectiveness)
     {
         return;
+    }
+
+    if(result.damage)
+    {
+        _spawn_damage_number(where, result.damage, result.effectiveness);
+        _hit_stop = bn::max(_hit_stop, result.effectiveness > types::neutral ? super_hit_stop_frames : hit_stop_frames);
+
+        if(target)
+        {
+            target->knock_back(_player.position());
+        }
     }
 
     if(target)
@@ -1362,6 +1532,120 @@ void game::_after_player_hit(const attack& hit, const hit_result& result, enemy*
     {
         _player.heal(bn::max(result.damage / 2, 1));
     }
+}
+
+void game::_spawn_damage_number(const bn::fixed_point& where, int damage, int effectiveness)
+{
+    if(_damage_numbers.full())
+    {
+        _damage_numbers.erase(_damage_numbers.begin());
+    }
+
+    bn::sprite_text_generator generator(common::fixed_8x8_sprite_font, ui::number_palette(effectiveness));
+    generator.set_center_alignment();
+    damage_number number{ {}, damage_number_frames };
+    generator.generate(where.x(), where.y() - 14, bn::to_string<4>(bn::min(damage, 999)), number.sprites);
+
+    for(bn::sprite_ptr& sprite : number.sprites)
+    {
+        sprite.set_camera(_camera);
+        sprite.set_z_order(-1000);
+    }
+
+    _damage_numbers.push_back(bn::move(number));
+}
+
+void game::_update_damage_numbers()
+{
+    for(damage_number& number : _damage_numbers)
+    {
+        --number.frames;
+
+        for(bn::sprite_ptr& sprite : number.sprites)
+        {
+            if(number.frames % 2 == 0)
+            {
+                sprite.set_y(sprite.y() - 1);
+            }
+
+            sprite.set_visible(number.frames > 8 || number.frames % 2);
+        }
+    }
+
+    bn::erase_if(_damage_numbers, [](const damage_number& number)
+    {
+        return number.frames <= 0;
+    });
+}
+
+void game::_update_particles()
+{
+    const floor_particles& config = particles_by_floor[bn::min(_floor_number, 13) - 1];
+
+    if(++_particle_timer >= config.interval && ! _particles.full())
+    {
+        _particle_timer = 0;
+        int x = _random.get_int(240) - 120;
+        int y = _random.get_int(160) - 80;
+        bn::fixed_point velocity;
+        int frames = 120 + _random.get_int(60);
+
+        switch(config.motion)
+        {
+
+        case particle_motion::fall:
+            y = -84;
+            velocity = bn::fixed_point(bn::fixed(_random.get_int(5) - 2) / 8, bn::fixed(4 + _random.get_int(4)) / 8);
+            break;
+
+        case particle_motion::rise:
+            y = 84;
+            velocity = bn::fixed_point(bn::fixed(_random.get_int(3) - 1) / 8, -bn::fixed(3 + _random.get_int(3)) / 8);
+            break;
+
+        case particle_motion::drift:
+            velocity = bn::fixed_point(bn::fixed(_random.get_int(5) - 2) / 16, bn::fixed(_random.get_int(5) - 2) / 16);
+            break;
+
+        case particle_motion::blink:
+            frames = 24 + _random.get_int(24);
+            break;
+
+        default:
+            x = -124;
+            velocity = bn::fixed_point(4 + bn::fixed(_random.get_int(8)) / 4, 0);
+            frames = 70;
+            break;
+        }
+
+        bn::sprite_ptr sprite = bn::sprite_items::particles.create_sprite(x, y, config.frame);
+        sprite.set_z_order(-500);
+        _particles.push_back(particle{ bn::move(sprite), velocity, frames });
+    }
+
+    for(particle& value : _particles)
+    {
+        --value.frames;
+        bn::fixed_point position = value.sprite.position() + value.velocity;
+
+        if(config.motion == particle_motion::fall)
+        {
+            position.set_x(position.x() + bn::degrees_lut_sin((value.frames * 6) % 360) / 4);
+        }
+
+        value.sprite.set_position(position);
+
+        if(config.motion == particle_motion::blink)
+        {
+            value.sprite.set_visible((value.frames / 4) % 2);
+        }
+    }
+
+    bn::erase_if(_particles, [](const particle& value)
+    {
+        bn::fixed_point position = value.sprite.position();
+        return value.frames <= 0 || position.y() > 88 || position.y() < -88 || position.x() > 128;
+    });
 }
 
 void game::_update_flute()
@@ -1577,6 +1861,7 @@ void game::_handle_enemy_attacks()
         if(result.damage)
         {
             audio::play(bn::sound_items::sfx_hurt);
+            _hit_stop = bn::max(_hit_stop, hurt_stop_frames);
         }
 
         if(result.effectiveness)
@@ -1800,6 +2085,8 @@ void game::_clear_room_objects()
     _player_projectiles.clear();
     _enemy_projectiles.clear();
     _effects.clear();
+    _damage_numbers.clear();
+    _particles.clear();
     _enemies.clear();
     _outlines.clear();
     _boss.reset();
@@ -2233,6 +2520,70 @@ void game::_save_and_quit()
     set_fade(0);
 }
 
+void game::_show_credits()
+{
+    struct credit
+    {
+        const char* heading;
+        const char* lines[3];
+    };
+
+    constexpr credit credits[] = {
+        { "DITTO'S CLIMB", { "A POKEMON ROGUELIKE", "FOR THE GAME BOY ADVANCE", "" } },
+        { "DESIGN AND DIRECTION", { "JERAMAI", "", "" } },
+        { "CODE, PIXEL ART AND CHIPTUNES", { "CLAUDE", "", "" } },
+        { "ENGINE", { "BUTANO", "BY GVALIENTE", "" } },
+        { "TOOLS", { "DEVKITARM, MAXMOD", "AND MGBA", "" } },
+        { "POKEMON BELONGS TO", { "NINTENDO, CREATURES", "AND GAME FREAK", "A PRIVATE FAN GAME" } },
+        { "THANK YOU", { "FOR PLAYING!", "", "" } },
+    };
+
+    bn::sprite_text_generator heading(common::variable_8x16_sprite_font, ui::dark_text_palette());
+    heading.set_center_alignment();
+    heading.set_bg_priority(0);
+
+    bn::sprite_text_generator line(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    line.set_center_alignment();
+    line.set_bg_priority(0);
+    bn::core::update();
+
+    for(const credit& page : credits)
+    {
+        _overlay.clear();
+        _overlay.window(1, 6, 28, 8, window_style::white);
+
+        bn::vector<bn::sprite_ptr, 32> text;
+        heading.generate(0, ui::row_y(8) - 2, page.heading, text);
+
+        for(int index = 0; index < 3; ++index)
+        {
+            line.generate(0, ui::row_y(10) - 2 + index * 10, page.lines[index], text);
+        }
+
+        bool released = false;
+
+        for(int frame = 0; frame < credit_page_frames; ++frame)
+        {
+            released = released || ! bn::keypad::a_held();
+
+            if(bn::keypad::start_pressed())
+            {
+                _overlay.clear();
+                return;
+            }
+
+            if(released && frame > credit_skip_frames && bn::keypad::a_pressed())
+            {
+                break;
+            }
+
+            bn::core::update();
+        }
+    }
+
+    _overlay.clear();
+}
+
 void game::_ending()
 {
     profile::record_win();
@@ -2395,6 +2746,7 @@ void game::_ending()
     text.clear();
     mew.set_visible(false);
     ditto.set_visible(false);
+    _show_credits();
     _show_run_stats("RUN COMPLETE!");
     bn::bg_palettes::set_transparent_color(bn::nullopt);
 }

@@ -6,6 +6,8 @@
 
 namespace
 {
+    constexpr int knockback_steps = 3;
+    constexpr bn::fixed knockback_step = 2;
     constexpr int melee_range = 30;
     constexpr int dash_range = 90;
     constexpr int shot_range = 150;
@@ -471,6 +473,16 @@ void enemy::_execute(enemy_projectiles& projectiles, bn::random& random)
 
     default:
         break;
+    }
+}
+
+void enemy::knock_back(const bn::fixed_point& from)
+{
+    bn::fixed_point push = directions::toward(from, _position) * knockback_step;
+
+    for(int step = 0; step < knockback_steps; ++step)
+    {
+        _walk(push);
     }
 }
 

@@ -146,6 +146,17 @@ Some types open paths, like HMs:
 - Magikarp's Splash: *"But nothing happened!"* Stay a Magikarp through a full room and it evolves.
 - Snorlax sleeps on the stairs of floor 1. You need the Poké Flute to wake it.
 
+### Game feel
+
+- Hits freeze the action briefly (2 frames, 4 for a super-effective hit, 3 when Ditto is hurt), knock wild
+  Pokémon back, and show a rising damage number: red for super effective, gray for not very effective.
+- Each move type has its own hit sound, and a cleared room plays a short jingle.
+- A boss fight opens with a "VS" card: the boss slides in with its name and types (the Gyarados fight shows a
+  Magikarp, to keep the joke).
+- Every floor has ambient particles: dust, leaves, bubbles, sparks, ash, snow, wind streaks, cherry petals,
+  wisps and crystal sparkles.
+- The ending rolls credits before the run stats.
+
 ### Boss rooms
 
 A boss waits in the stairs room with the doors open and the floor music playing ("MEWTWO is waiting... Get close

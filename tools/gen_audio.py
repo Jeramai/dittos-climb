@@ -313,6 +313,86 @@ def write_wav(name, samples):
         output.writeframes(bytes(int((value + 1) * 127.5) for value in samples))
 
 
+def sine_sweep(start, end, length, volume=0.5, vibrato=0.0, rate=0.0):
+    samples = []
+    phase = 0.0
+    for index in range(int(RATE * length)):
+        t = index / RATE
+        frequency = start + (end - start) * (t / length) + vibrato * math.sin(2 * math.pi * rate * t)
+        phase += frequency / RATE
+        samples.append(math.sin(2 * math.pi * phase) * volume * envelope(t, length))
+    return samples
+
+
+def smooth(samples, width):
+    result = []
+    total = 0.0
+    for index, value in enumerate(samples):
+        total += value
+        if index >= width:
+            total -= samples[index - width]
+        result.append(total / width)
+    return result
+
+
+def crackle(length, volume, density, seed):
+    rng = random.Random(seed)
+    samples = [0.0] * int(RATE * length)
+    for index in range(len(samples)):
+        if rng.random() < density:
+            pop = rng.uniform(0.5, 1.0) * rng.choice((-1, 1))
+            for offset in range(min(6, len(samples) - index)):
+                samples[index + offset] += pop * volume * (1 - offset / 6) * envelope(index / RATE, length)
+    return samples
+
+
+def bubbles(length, volume, count, seed):
+    rng = random.Random(seed)
+    samples = [0.0] * int(RATE * length)
+    for _ in range(count):
+        start = rng.randrange(0, max(1, len(samples) - int(RATE * 0.03)))
+        bubble = sine_sweep(rng.uniform(300, 500), rng.uniform(900, 1300), 0.03, volume)
+        for offset, value in enumerate(bubble):
+            if start + offset < len(samples):
+                samples[start + offset] += value
+    return samples
+
+
+def limit(samples, peak=0.8):
+    loudest = max(abs(value) for value in samples) or 1.0
+    scale = min(1.0, peak / loudest)
+    return [value * scale for value in samples]
+
+
+def typed_hit_effects():
+    return {
+        "sfx_hit_fire": limit(mix(crackle(0.14, 0.7, 0.05, 11), smooth(noise(0.14, 0.5, 18, 12), 3))),
+        "sfx_hit_water": limit(mix(smooth(noise(0.16, 0.6, 16, 13), 4), bubbles(0.16, 0.25, 4, 14))),
+        "sfx_hit_electric": limit([square(70, index / RATE) * square(1800, index / RATE) * 0.6 *
+                                   envelope(index / RATE, 0.12) for index in range(int(RATE * 0.12))]),
+        "sfx_hit_grass": limit(mix(noise(0.1, 0.45, 30, 15), tone_sweep(1600, 2400, 0.06, volume=0.2))),
+        "sfx_hit_ice": limit(mix(sine_sweep(2093, 2093, 0.16, 0.35), sine_sweep(3136, 3136, 0.12, 0.25),
+                                 noise(0.03, 0.3, 80, 16))),
+        "sfx_hit_fighting": limit(mix(smooth(noise(0.08, 0.8, 35, 17), 6), sine_sweep(160, 50, 0.1, 0.6))),
+        "sfx_hit_poison": limit(mix(bubbles(0.16, 0.35, 7, 18), smooth(noise(0.16, 0.2, 12, 19), 8))),
+        "sfx_hit_ground": limit(mix(smooth(noise(0.16, 0.9, 14, 20), 16), sine_sweep(90, 40, 0.16, 0.6))),
+        "sfx_hit_flying": limit([value * math.sin(math.pi * index / int(RATE * 0.16))
+                                 for index, value in enumerate(smooth(noise(0.16, 0.9, 2, 21), 5))]),
+        "sfx_hit_psychic": limit(sine_sweep(600, 900, 0.16, 0.6, vibrato=180, rate=30)),
+        "sfx_hit_bug": limit([square(140 + 40 * math.sin(2 * math.pi * 25 * index / RATE), index / RATE) * 0.45 *
+                              envelope(index / RATE, 0.12) for index in range(int(RATE * 0.12))]),
+        "sfx_hit_rock": limit(mix(crackle(0.12, 0.8, 0.02, 22), smooth(noise(0.12, 0.6, 25, 23), 10),
+                                  sine_sweep(120, 70, 0.08, 0.4))),
+        "sfx_hit_ghost": limit(sine_sweep(500, 220, 0.18, 0.5, vibrato=40, rate=12)),
+        "sfx_hit_dragon": limit(mix([square(90 + 20 * math.sin(2 * math.pi * 18 * index / RATE), index / RATE) * 0.4 *
+                                     envelope(index / RATE, 0.18) for index in range(int(RATE * 0.18))],
+                                    smooth(noise(0.18, 0.4, 10, 24), 4))),
+        "sfx_room_clear": limit(mix(notes([784, 988, 1175, 1568], 0.08, 0.35),
+                                    [0.0] * int(RATE * 0.32) + notes([1568, 1568], 0.12, 0.3, "triangle"),
+                                    [0.0] * int(RATE * 0.32) + notes([1175, 1319], 0.12, 0.2)), 0.7),
+    }
+
+
 def write_effects():
     effects = {
         "sfx_shot": tone_sweep(1400, 900, 0.05, volume=0.25),
@@ -338,6 +418,8 @@ def write_effects():
         "sfx_menu": tone_sweep(1200, 1200, 0.03, volume=0.3),
         "sfx_heal": notes([523, 659, 784, 1047], 0.06, 0.35, "triangle"),
     }
+
+    effects.update(typed_hit_effects())
 
     for name, samples in effects.items():
         write_wav(name, samples)

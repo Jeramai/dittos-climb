@@ -8,6 +8,8 @@ namespace ui
 {
     [[nodiscard]] const bn::sprite_palette_item& dark_text_palette();
 
+    [[nodiscard]] const bn::sprite_palette_item& number_palette(int effectiveness);
+
     [[nodiscard]] constexpr int tile_x(int column)
     {
         return column * 8 - 120;

@@ -44,6 +44,19 @@ private:
         int frames;
     };
 
+    struct damage_number
+    {
+        bn::vector<bn::sprite_ptr, 2> sprites;
+        int frames;
+    };
+
+    struct particle
+    {
+        bn::sprite_ptr sprite;
+        bn::fixed_point velocity;
+        int frames;
+    };
+
     struct falling_ember
     {
         bn::sprite_ptr marker;
@@ -69,6 +82,9 @@ private:
     bn::vector<enemy, 6> _enemies;
     bn::vector<outline, 6> _outlines;
     bn::vector<effect, 10> _effects;
+    bn::vector<damage_number, 6> _damage_numbers;
+    bn::vector<particle, 10> _particles;
+    int _particle_timer = 0;
     bn::unique_ptr<boss> _boss;
     bn::optional<bn::sprite_ptr> _flute_pickup;
     bn::optional<bn::sprite_ptr> _light;
@@ -84,6 +100,7 @@ private:
     int _spawn_delay = 0;
     int _waves_left = 0;
     int _shake_frames = 0;
+    int _hit_stop = 0;
     int _last_recoil_serial = -1;
     int _plate_timer = 0;
     int _plate_serial = -1000;
@@ -133,6 +150,10 @@ private:
 
     void _spawn_boss();
 
+    void _show_boss_card();
+
+    void _show_credits();
+
     void _start_boss_fight();
 
     void _handle_cut();
@@ -155,7 +176,13 @@ private:
 
     [[nodiscard]] status_effect _roll_status(move_id move);
 
-    void _after_player_hit(const attack& hit, const hit_result& result, enemy* target);
+    void _after_player_hit(const attack& hit, const hit_result& result, enemy* target, const bn::fixed_point& where);
+
+    void _spawn_damage_number(const bn::fixed_point& where, int damage, int effectiveness);
+
+    void _update_damage_numbers();
+
+    void _update_particles();
 
     void _update_flute();
 

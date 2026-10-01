@@ -55,6 +55,8 @@ public:
 
     hit_result take_hit(const attack& hit);
 
+    void knock_back(const bn::fixed_point& from);
+
     [[nodiscard]] bool dead() const
     {
         return _hp <= 0;

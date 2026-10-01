@@ -38,4 +38,14 @@ int effectiveness(pokemon_type attack, pokemon_type defender_1, pokemon_type def
     return single(attack, defender_1) * single(attack, defender_2);
 }
 
+
+const char* name(pokemon_type type)
+{
+    constexpr const char* names[] = {
+        "", "NORMAL", "FIRE", "WATER", "ELECTRIC", "GRASS", "ICE", "FIGHTING", "POISON", "GROUND", "FLYING",
+        "PSYCHIC", "BUG", "ROCK", "GHOST", "DRAGON",
+    };
+
+    return names[int(type)];
+}
 }
