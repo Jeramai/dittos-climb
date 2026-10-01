@@ -2531,7 +2531,7 @@ void game::_show_credits()
     constexpr credit credits[] = {
         { "DITTO'S CLIMB", { "A POKEMON ROGUELIKE", "FOR THE GAME BOY ADVANCE", "" } },
         { "DESIGN AND DIRECTION", { "JERAMAI", "", "" } },
-        { "CODE, PIXEL ART AND CHIPTUNES", { "JERAMAI", "CLAUDE", "" } },
+        { "CODE, PIXEL ART AND CHIPTUNES", { "JERAMAI & CLAUDE", "", "" } },
         { "ENGINE", { "BUTANO", "BY GVALIENTE", "" } },
         { "TOOLS", { "DEVKITARM, MAXMOD", "AND MGBA", "" } },
         { "POKEMON BELONGS TO", { "NINTENDO, CREATURES", "AND GAME FREAK", "A PRIVATE FAN GAME" } },
