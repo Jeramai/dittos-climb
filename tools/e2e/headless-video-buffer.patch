@@ -1,0 +1,13 @@
+diff --git a/src/platform/headless-main.c b/src/platform/headless-main.c
+index 61110b1..c829f7d 100644
+--- a/src/platform/headless-main.c
++++ b/src/platform/headless-main.c
+@@ -114,6 +114,8 @@ int main(int argc, char * argv[]) {
+ 		goto argsExit;
+ 	}
+ 	core->init(core);
++	static mColor _videoBuffer[256 * 256];
++	core->setVideoBuffer(core, _videoBuffer, 256);
+ 	mCoreInitConfig(core, "headless");
+ 	mArgumentsApply(&args, NULL, 0, &core->config);
+ 

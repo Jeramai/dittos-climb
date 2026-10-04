@@ -72,7 +72,7 @@ endif
 #---------------------------------------------------------------------------------------------------------------------
 include $(LIBBUTANOABS)/butano.mak
 
-.PHONY: assets artbook audio run release
+.PHONY: assets artbook audio run release e2e
 
 assets:
 	$(PYTHON) tools/gen_assets.py
@@ -87,6 +87,9 @@ audio:
 run:
 	$(MAKE)
 	open -a mGBA $(TARGET).gba
+
+e2e:
+	tools/e2e/run.sh
 
 release:
 	@test -n "$(VERSION)" || { echo "Usage: make release VERSION=1.2.0"; exit 1; }

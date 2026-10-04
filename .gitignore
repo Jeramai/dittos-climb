@@ -3,4 +3,6 @@ build/
 *.elf
 *.sav
 build-test-*/
+build-e2e*/
+tools/e2e/.mgba/
 __pycache__/

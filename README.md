@@ -49,6 +49,16 @@ Test builds take these flags in `USERFLAGS` (use a separate `BUILD` folder, beca
 make TARGET=test-boss BUILD=build-test-boss USERFLAGS="-DDITTO_TEST_START_KIND=2 -DDITTO_TEST_FORM=1"
 ```
 
+### End-to-end tests
+
+`make e2e` plays scripted scenarios in a headless mGBA and writes screenshots, a GIF per scenario and
+`build-e2e/report/index.html`. The checks are visual: open the report and look. It needs `brew install cmake lua@5.4
+ffmpeg coreutils`; the first run builds mGBA into `tools/e2e/.mgba/`. `tools/e2e/run.sh stairs aim` runs only those.
+
+A scenario in `tools/e2e/scenarios/` names its test flags on a `-- flags:` line and lists its input as `PLAN` steps:
+`{ frames = n, keys = { "A", "UP" } }` holds keys for n frames, `{ shot = "name" }` saves a screenshot. The start
+transform blocks input for about 200 frames, and a boss card lasts 130 frames.
+
 ## Controls
 
 | Button | Action |
