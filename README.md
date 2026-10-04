@@ -1,7 +1,43 @@
 # Ditto's Climb
 
-A top-down action roguelite for the Game Boy Advance, built with [Butano](https://github.com/GValiente/butano).
-You play Ditto and climb a dungeon by transforming into the Pokémon you defeat. See [docs/design.md](docs/design.md).
+![Ditto's Climb: boss cards, then Ditto takes Venusaur's form](docs/promo.gif)
+
+A top-down action roguelite for the Game Boy Advance. You play Ditto and climb thirteen floors of a dungeon,
+from Cinnabar Lab to Cerulean Cave. Beat a wild Pokémon or a boss, and you can transform into it and use its
+moves. The full design is in [docs/design.md](docs/design.md).
+
+Watch the [30-second trailer](https://github.com/Jeramai/dittos-climb/releases/download/v1.1.3/dittos-climb-promo.mp4).
+
+## Play
+
+Download `dittos-climb.gba` from the [latest release](https://github.com/Jeramai/dittos-climb/releases/latest). It
+is free.
+
+- **Emulator:** open the ROM in [mGBA](https://mgba.io) or any other GBA emulator.
+- **Game Boy Advance:** copy the ROM to a flash cart.
+- **Nintendo 3DS (custom firmware):** play it with open_agb_firm or the mGBA homebrew app. To put it on the HOME
+  Menu as its own icon, use [shortcut3ds](https://github.com/Jeramai/shortcut3ds).
+
+## Controls
+
+| Button | Action |
+|---|---|
+| D-pad | Move |
+| A (hold) | Move 1 |
+| B | Move 2 |
+| L | Dodge |
+| R (hold) | Lock aim while moving; an arrow shows the aim |
+| Select (tap) | Use the item in the bag |
+| Select (hold) | Drop the current form and go back to DITTO |
+| A (on the stairs) | Go up to the next floor |
+| Start | Floor map / continue |
+| B (on the floor map) | Controls screen |
+| R (on the title screen) | Options: music and sound volume, saved with the Pokédex |
+| Select (on the title screen) | Pokédex of the species seen and the forms used, across runs; D-pad moves, L/R turn pages, A shows a shiny |
+| A (on the floor map) | Read the collected journal pages; Left/Right turn, B goes back |
+| Select (on the floor map) | Save and quit; A confirms, B goes back |
+
+A saved run shows **A: CONTINUE** on the title screen. Continuing deletes the save, so a run resumes once.
 
 ## Build
 
@@ -13,8 +49,8 @@ make -j8
 make run
 ```
 
-`make release VERSION=1.2.0` builds the ROM and publishes it as a GitHub release (the repo is private, so only
-people with access can download it). The latest ROM is always on the repo's Releases page.
+`make release VERSION=1.2.0` builds the ROM and publishes it as a GitHub release. The latest ROM is always on the
+repo's Releases page.
 
 `make assets` regenerates the placeholder art from `tools/gen_assets.py`. `make artbook` rebuilds the
 [art book](docs/artbook/README.md), a page with every sprite and tileset per floor. `make audio` regenerates
@@ -59,22 +95,18 @@ A scenario in `tools/e2e/scenarios/` names its test flags on a `-- flags:` line 
 `{ frames = n, keys = { "A", "UP" } }` holds keys for n frames, `{ shot = "name" }` saves a screenshot. The start
 transform blocks input for about 200 frames, and a boss card lasts 130 frames.
 
-## Controls
+## Credits
 
-| Button | Action |
-|---|---|
-| D-pad | Move |
-| A (hold) | Move 1 |
-| B | Move 2 |
-| L | Dodge |
-| R (hold) | Lock aim while moving; an arrow shows the aim |
-| Select (tap) | Use the item in the bag |
-| Select (hold) | Drop the current form and go back to DITTO |
-| A (on the stairs) | Go up to the next floor |
-| Start | Floor map / continue |
-| R (on the title screen) | Options: music and sound volume, saved with the Pokédex |
-| Select (on the title screen) | Pokédex of the species seen and the forms used, across runs; D-pad moves, L/R turn pages, A shows a shiny |
-| A (on the floor map) | Read the collected journal pages; Left/Right turn, B goes back |
-| Select (on the floor map) | Save and quit; A confirms, B goes back |
+Code, pixel art and chiptunes by Jeramai & Claude. Built with [Butano](https://github.com/GValiente/butano) by
+Gustavo Valiente. The trailer uses the [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) font.
 
-A saved run shows **A: CONTINUE** on the title screen. Continuing deletes the save, so a run resumes once.
+## License
+
+The code, pixel art, music and sound effects are under the [MIT License](LICENSE): use, change and share them as
+you like. Butano has its own zlib license.
+
+## Disclaimer
+
+Ditto's Climb is a free, non-commercial fan project. It is not affiliated with, endorsed or sponsored by Nintendo,
+Creatures Inc., GAME FREAK inc. or The Pokémon Company. Pokémon and all Pokémon names and characters are trademarks
+of Nintendo, Creatures Inc. and GAME FREAK inc. The MIT License does not cover them.
