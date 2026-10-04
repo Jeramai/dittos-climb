@@ -57,8 +57,10 @@ make TARGET=test-boss BUILD=build-test-boss USERFLAGS="-DDITTO_TEST_START_KIND=2
 | A (hold) | Move 1 |
 | B | Move 2 |
 | L | Dodge |
-| R (hold) | Lock aim while moving |
-| Select | Use the item in the bag |
+| R (hold) | Lock aim while moving; an arrow shows the aim |
+| Select (tap) | Use the item in the bag |
+| Select (hold) | Drop the current form and go back to DITTO |
+| A (on the stairs) | Go up to the next floor |
 | Start | Floor map / continue |
 | R (on the title screen) | Options: music and sound volume, saved with the Pokédex |
 | Select (on the title screen) | Pokédex of the species seen and the forms used, across runs; D-pad moves, L/R turn pages, A shows a shiny |

@@ -146,6 +146,8 @@ public:
 
     void evolve(species_id target);
 
+    [[nodiscard]] bool release_form(message_box& messages);
+
     void set_position(const bn::fixed_point& position);
 
 
@@ -162,6 +164,7 @@ public:
 private:
     bn::camera_ptr _camera;
     bn::sprite_ptr _sprite;
+    bn::sprite_ptr _aim_arrow;
     bn::optional<bn::sprite_ptr> _wave_sprite;
     bn::fixed_point _position;
     bn::optional<form> _form;
@@ -220,9 +223,13 @@ private:
 
     void _faint_form(message_box& messages);
 
+    void _drop_form();
+
     void _update_sprite(bool moving);
 
     void _update_sprite_item(bool moving);
+
+    void _update_aim_arrow();
 };
 
 #endif

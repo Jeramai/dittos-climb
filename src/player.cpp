@@ -3,6 +3,7 @@
 #include "bn_keypad.h"
 #include "bn_sprite_affine_mat_ptr.h"
 
+#include "bn_sprite_items_aim_arrow.h"
 #include "bn_sprite_items_ditto.h"
 #include "bn_sprite_items_wave.h"
 
@@ -43,6 +44,7 @@ namespace
     constexpr bn::fixed spin_speed = 2.8;
     constexpr int leftovers_frames = 120;
     constexpr int rare_candy_hp = 5;
+    constexpr int aim_arrow_distance = 14;
 
     const species_data& ditto()
     {
@@ -53,12 +55,16 @@ namespace
 player::player(const bn::camera_ptr& camera, const bn::fixed_point& position) :
     _camera(camera),
     _sprite(bn::sprite_items::ditto.create_sprite(position, species_frames::own_walk)),
+    _aim_arrow(bn::sprite_items::aim_arrow.create_sprite(position)),
     _position(position),
     _hp(ditto().hp),
     _area_attack(combat::make_attack(move_id::struggle, pokemon_type::normal, pokemon_type::none)),
     _charge_attack(_area_attack)
 {
     _sprite.set_camera(camera);
+    _aim_arrow.set_camera(camera);
+    _aim_arrow.set_z_order(-1000);
+    _aim_arrow.set_visible(false);
 }
 
 bool player::update(player_projectiles& projectiles, message_box& messages, const species_id* outline_below,
@@ -560,6 +566,24 @@ void player::_faint_form(message_box& messages)
     message.append(" fainted!");
     messages.show(message);
     messages.show("DITTO lost its shape!");
+    _drop_form();
+}
+
+bool player::release_form(message_box& messages)
+{
+    if(! _form || _transform_frames || _dodge_frames || _dash_frames || _digging || _charge_frames ||
+       _self_destructing)
+    {
+        return false;
+    }
+
+    messages.show("DITTO let go of its shape!");
+    _drop_form();
+    return true;
+}
+
+void player::_drop_form()
+{
     audio::play(bn::sound_items::sfx_faint);
     _form.reset();
     _charge_frames = 0;
@@ -645,6 +669,7 @@ void player::take_fall_damage(int amount)
 void player::set_visible(bool visible)
 {
     _sprite.set_visible(visible);
+    _aim_arrow.set_visible(false);
 }
 
 void player::_use_move(bool move_a, player_projectiles& projectiles, message_box& messages)
@@ -895,6 +920,7 @@ void player::_update_wave()
 void player::_update_sprite(bool moving)
 {
     _update_sprite_item(moving);
+    _update_aim_arrow();
 
     if(_form && _form->shiny && ! _transform_frames)
     {
@@ -904,6 +930,17 @@ void player::_update_sprite(bool moving)
     {
         _sprite.set_palette(shiny::ditto_palette());
     }
+}
+
+void player::_update_aim_arrow()
+{
+    constexpr int frames[8] = { 0, 2, 1, 2, 0, 2, 1, 2 };
+
+    _aim_arrow.set_visible(bn::keypad::r_held() && ! _transform_frames);
+    _aim_arrow.set_tiles(bn::sprite_items::aim_arrow.tiles_item(), frames[_aim]);
+    _aim_arrow.set_horizontal_flip(_aim >= 3 && _aim <= 5);
+    _aim_arrow.set_vertical_flip(_aim >= 5);
+    _aim_arrow.set_position(_position + directions::vectors[_aim] * aim_arrow_distance);
 }
 
 void player::set_shiny_ditto(bool shiny)

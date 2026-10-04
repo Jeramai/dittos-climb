@@ -85,8 +85,9 @@ namespace
     constexpr int plate_paralysis_chance = 25;
     constexpr int explosion_radius = 34;
     constexpr int flicker_frames = 16;
+    constexpr int release_hold_frames = 30;
     constexpr int ember_interval = 80;
-    constexpr int boss_ember_interval = 45;
+    constexpr int boss_ember_interval = 65;
     constexpr int ember_warning_frames = 45;
     constexpr int ember_spread = 64;
     constexpr int ember_power = 40;
@@ -301,6 +302,7 @@ void game::run()
         if(bn::keypad::start_pressed())
         {
             _pause_map();
+            _select_frames = -1;
 
             if(_quit)
             {
@@ -530,9 +532,25 @@ void game::_update_play()
     _update_damage_numbers();
     _update_particles();
 
-    if(bn::keypad::select_pressed() && _player.bag_item() && ! _player.transforming())
+    if(bn::keypad::select_pressed())
     {
-        _player.use_bag(_messages);
+        _select_frames = 0;
+    }
+    else if(_select_frames >= 0 && bn::keypad::select_held())
+    {
+        if(++_select_frames == release_hold_frames && ! _player.release_form(_messages))
+        {
+            _select_frames = -1;
+        }
+    }
+    else if(_select_frames >= 0)
+    {
+        if(_select_frames < release_hold_frames && _player.bag_item() && ! _player.transforming())
+        {
+            _player.use_bag(_messages);
+        }
+
+        _select_frames = -1;
     }
 
     if(_near_mart_counter())
@@ -545,6 +563,20 @@ void game::_update_play()
             return;
         }
     }
+
+    bn::fixed_point feet = _player.position() + bn::fixed_point(0, 2);
+
+    if(! _boss && ! _player.transforming() && room::at(feet.x(), feet.y()) == room::cells::stairs)
+    {
+        _messages.show("Press A to go up!");
+
+        if(bn::keypad::a_pressed())
+        {
+            _climb_stairs();
+            return;
+        }
+    }
+
     int outline_index = _outline_below_player();
     const species_id* outline_species = outline_index >= 0 ? &_outlines[outline_index].species : nullptr;
 
@@ -690,13 +722,6 @@ void game::_update_room_state()
     {
         _fall_into_pit();
         return;
-    }
-
-    bn::fixed_point feet = _player.position() + bn::fixed_point(0, 2);
-
-    if(! _boss && room::at(feet.x(), feet.y()) == room::cells::stairs)
-    {
-        _climb_stairs();
     }
 }
 
@@ -1819,6 +1844,57 @@ void game::_read_journal()
     text.clear();
 }
 
+void game::_show_controls()
+{
+    constexpr const char* controls[][2] = {
+        { "D-PAD", "MOVE" },
+        { "A (HOLD)", "MOVE 1" },
+        { "B", "MOVE 2 / TRANSFORM" },
+        { "L", "DODGE" },
+        { "R (HOLD)", "LOCK AIM" },
+        { "SELECT", "USE THE BAG ITEM" },
+        { "SELECT (HOLD)", "DROP THE FORM" },
+        { "START", "FLOOR MAP" },
+    };
+
+    bn::sprite_text_generator big(common::variable_8x16_sprite_font);
+    big.set_center_alignment();
+    big.set_bg_priority(0);
+
+    bn::sprite_text_generator label(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    label.set_left_alignment();
+    label.set_bg_priority(0);
+
+    bn::sprite_text_generator prompt_text(common::variable_8x8_sprite_font, ui::dark_text_palette());
+    prompt_text.set_center_alignment();
+    prompt_text.set_bg_priority(0);
+
+    _overlay.show_backdrop();
+    _overlay.window(0, 0, 30, 3, window_style::blue);
+    _overlay.window(0, 3, 30, 13, window_style::white);
+    _overlay.window(0, 16, 30, 4, window_style::white);
+
+    bn::vector<bn::sprite_ptr, 64> text;
+    big.generate(0, ui::row_y(1) + 2, "CONTROLS", text);
+
+    for(int row = 0; row < int(sizeof(controls) / sizeof(controls[0])); ++row)
+    {
+        int y = ui::row_y(4) + 4 + row * 11;
+        label.generate(ui::tile_x(1), y, controls[row][0], text);
+        label.generate(ui::tile_x(13), y, controls[row][1], text);
+    }
+
+    prompt_text.generate(0, ui::row_y(18), "B: BACK", text);
+    bn::core::update();
+
+    while(! bn::keypad::b_pressed())
+    {
+        bn::core::update();
+    }
+
+    text.clear();
+}
+
 void game::_handle_enemy_attacks()
 {
     if(! _player.vulnerable())
@@ -2172,14 +2248,22 @@ void game::_pause_map()
         add_icon(_player.bag_item(), 7);
     };
 
-    bn::vector<bn::sprite_ptr, 24> prompt;
+    bn::vector<bn::sprite_ptr, 32> prompt;
     bool confirming = false;
     auto show_prompt = [&]()
     {
         prompt.clear();
-        prompt_text.generate(0, ui::row_y(17) + 4, confirming ? "A: SAVE AND QUIT" :
-                             _journal_mask ? "START: RESUME     A: JOURNAL" : "START: RESUME", prompt);
-        prompt_text.generate(0, ui::row_y(18) + 4, confirming ? "B: BACK" : "SELECT: SAVE AND QUIT", prompt);
+        if(confirming)
+        {
+            prompt_text.generate(0, ui::row_y(17) + 4, "A: SAVE AND QUIT", prompt);
+            prompt_text.generate(0, ui::row_y(18) + 4, "B: BACK", prompt);
+            return;
+        }
+
+        prompt_text.generate(0, ui::row_y(17) - 4, _journal_mask ? "START: RESUME     A: JOURNAL" : "START: RESUME",
+                             prompt);
+        prompt_text.generate(0, ui::row_y(17) + 4, "B: CONTROLS", prompt);
+        prompt_text.generate(0, ui::row_y(18) + 4, "SELECT: SAVE AND QUIT", prompt);
     };
 
     show_screen();
@@ -2213,6 +2297,16 @@ void game::_pause_map()
             icons.clear();
             prompt.clear();
             _read_journal();
+            show_screen();
+            show_prompt();
+        }
+        else if(bn::keypad::b_pressed())
+        {
+            audio::play(bn::sound_items::sfx_menu);
+            text.clear();
+            icons.clear();
+            prompt.clear();
+            _show_controls();
             show_screen();
             show_prompt();
         }

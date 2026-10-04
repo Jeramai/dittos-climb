@@ -113,6 +113,7 @@ private:
     int _coins_earned = 0;
     unsigned _run_forms[3] = {};
     int _ember_timer = 60;
+    int _select_frames = -1;
     int _flute_room = -1;
     bool _locked = false;
     bool _has_flute = false;
@@ -195,6 +196,8 @@ private:
     void _generate_journal_page(int page, bn::ivector<bn::sprite_ptr>& text);
 
     void _read_journal();
+
+    void _show_controls();
 
     void _spawn_outline(species_id id, const bn::fixed_point& position, bool shiny = false);
 
