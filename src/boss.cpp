@@ -25,7 +25,7 @@ bool boss::contains(const bn::fixed_point& point, int half_size) const
     return bn::abs(delta.x()) < 12 + half_size && bn::abs(delta.y()) < 13 + half_size;
 }
 
-hit_result boss::take_hit(const attack& hit)
+hit_result boss::take_hit(const attack& hit, const bn::fixed_point&, int)
 {
     if(! vulnerable())
     {

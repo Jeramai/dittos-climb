@@ -99,7 +99,7 @@ public:
         return _max_hp;
     }
 
-    void set_test_hp(int hp)
+    virtual void set_test_hp(int hp)
     {
         _max_hp = hp;
         _hp = hp;
@@ -117,7 +117,12 @@ public:
 
     [[nodiscard]] virtual bool contains(const bn::fixed_point& point, int half_size) const;
 
-    hit_result take_hit(const attack& hit);
+    virtual hit_result take_hit(const attack& hit, const bn::fixed_point& point, int half_size);
+
+    [[nodiscard]] virtual bn::fixed_point last_hit_position() const
+    {
+        return _position;
+    }
 
     [[nodiscard]] bool hit_by_area(int serial);
 

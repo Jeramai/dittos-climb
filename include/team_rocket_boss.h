@@ -41,6 +41,15 @@ public:
         return _wrap;
     }
 
+    void set_test_hp(int hp) final;
+
+    hit_result take_hit(const attack& hit, const bn::fixed_point& point, int half_size) final;
+
+    [[nodiscard]] bn::fixed_point last_hit_position() const final
+    {
+        return _last_hit_position;
+    }
+
 private:
     bn::sprite_ptr _arbok;
     bn::sprite_ptr _weezing;
@@ -48,6 +57,7 @@ private:
     bn::fixed_point _weezing_position;
     bn::fixed_point _balloon_anchor;
     bn::fixed_point _wrap_direction;
+    bn::fixed_point _last_hit_position;
     attack _poison_sting;
     attack _wrap;
     attack _sludge;
@@ -62,6 +72,12 @@ private:
     int _smog_timer;
     int _coin_timer;
     int _frame_counter = 0;
+    int _arbok_hp;
+    int _weezing_hp;
+    int _arbok_flash = 0;
+    int _weezing_flash = 0;
+    bool _arbok_fainted = false;
+    bool _weezing_fainted = false;
     bool _desperate = false;
 
     [[nodiscard]] int _scaled(int frames) const;

@@ -262,9 +262,10 @@ while its boss is alive. Snorlax still sleeps until the Poké Flute wakes it, an
     vents cycle like the plates (the gas poisons; Poison types are immune). One room drops the Silph Scope, which
     Ditto keeps for the rest of the run (floor 11 needs it) — key items (Poké Flute, Silph Scope) now share one
     system. Koffing (Tackle, Self-Destruct), Ekans (Poison Sting, Glare), Grimer (Sludge, Poison Gas). Rare:
-    Slowpoke. Team Rocket: Arbok (Poison Sting fan, Wrap lunge) and Weezing (Sludge, Smog) share one HP bar, while
-    Meowth drifts overhead in the balloon throwing Pay Day coins; defeat: "TEAM ROCKET is blasting off again!" and
-    outlines of both Arbok and Weezing.
+    Slowpoke. Team Rocket: Arbok (Poison Sting fan, Wrap lunge) and Weezing (Sludge, Smog) each have their own HP
+    (one bar shows the total); when one faints the other fights on alone and faster, while Meowth drifts overhead
+    in the balloon throwing Pay Day coins; defeat: "TEAM ROCKET is blasting off again!" and outlines of both Arbok
+    and Weezing.
 12. **Floor 10.** (done) Fighting Dojo: combat rooms send three waves of three wild Pokémon; held items have no
     effect and side rooms give no items; cracked rocks block side doors and a Fighting form uses Rock Smash.
     Mankey (Karate Chop, Thrash), Machop, Machoke (Karate Chop, Submission). Rare: Farfetch'd. The Dojo Master sends

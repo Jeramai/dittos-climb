@@ -750,8 +750,8 @@ void game::_handle_player_attacks()
             }
             else if(_boss->vulnerable())
             {
-                hit_result result = _boss->take_hit(shot.hit);
-                _after_player_hit(shot.hit, result, nullptr, _boss->position());
+                hit_result result = _boss->take_hit(shot.hit, shot.position, shot.half_size);
+                _after_player_hit(shot.hit, result, nullptr, _boss->last_hit_position());
             }
             else if(_boss->asleep())
             {
@@ -802,9 +802,9 @@ void game::_handle_player_attacks()
     if(_player.area_active() && _boss && ! _boss_waiting && _boss->vulnerable() &&
        _boss->contains(_player.position(), _player.area_half_size()) && _boss->hit_by_area(_player.area_serial()))
     {
-        hit_result result = _boss->take_hit(_player.area_attack());
-        _after_player_hit(_player.area_attack(), result, nullptr, _boss->position());
-        _spawn_effect(_boss->position());
+        hit_result result = _boss->take_hit(_player.area_attack(), _player.position(), _player.area_half_size());
+        _after_player_hit(_player.area_attack(), result, nullptr, _boss->last_hit_position());
+        _spawn_effect(_boss->last_hit_position());
         int serial = _player.area_serial();
 
         if(result.damage && _player.area_attack().move == move_id::struggle && serial != _last_recoil_serial)
