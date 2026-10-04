@@ -6,6 +6,8 @@
 
 namespace audio
 {
+    void init();
+
     void play_music(const bn::music_item& item);
 
     void play_floor_music(int floor_number);
