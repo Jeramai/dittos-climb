@@ -31,21 +31,21 @@ for name in "${scenarios[@]}"; do
     rom="e2e-$(printf '%s' "$flags" | shasum | cut -c 1-10)"
 
     echo "Building $rom for $name"
-    make -C "$root" -j 8 TARGET="$rom" BUILD="build-$rom" USERFLAGS="$flags" > "$work/$rom.log" 2>&1 ||
+    make -C "$root" -j 4 TARGET="$rom" BUILD="build-$rom" USERFLAGS="$flags" > "$work/$rom.log" 2>&1 ||
         { echo "Build failed, see $work/$rom.log"; exit 1; }
 
     out="$report/$name"
     mkdir -p "$out"
     echo "Running $name"
 
-    if ! OUT="$out" E2E="$here" RECORD=1 timeout 300 "$headless" --script "$scenario" "$root/$rom.gba" > "$out/mgba.log" 2>&1; then
+    if ! OUT="$out" E2E="$here" RECORD=1 timeout 60 "$headless" --script "$scenario" "$root/$rom.gba" > "$out/mgba.log" 2>&1; then
         echo "  FAILED: the emulator did not finish, see $out/mgba.log"
         failed=1
         sections+="<h2>$name: FAILED</h2><p>The emulator did not finish. See $name/mgba.log.</p>"
         continue
     fi
 
-    ffmpeg -loglevel error -y -framerate 30 -pattern_type glob -i "$out/rec_*.png" \
+    ffmpeg -loglevel error -y -framerate 15 -pattern_type glob -i "$out/rec_*.png" \
         -vf "scale=480:320:flags=neighbor,split[a][b];[a]palettegen[p];[b][p]paletteuse" "$out/$name.gif"
     rm -f "$out/"rec_*.png
 

@@ -2,6 +2,7 @@
 local KEY = { A = 0, B = 1, SELECT = 2, START = 3, RIGHT = 4, LEFT = 5, UP = 6, DOWN = 7, R = 8, L = 9 }
 local OUT = os.getenv("OUT")
 local RECORD = os.getenv("RECORD") == "1"
+local MAX_FRAMES = 5000
 
 -- Title screen, then skip the story.
 local BOOT = { { frames = 60 }, { frames = 4, keys = { "START" } }, { frames = 30 }, { frames = 4, keys = { "START" } } }
@@ -21,8 +22,12 @@ local index, left, frame = 1, nil, 0
 callbacks:add("frame", function()
     frame = frame + 1
 
-    if RECORD and frame % 2 == 0 then
-        emu:screenshot(string.format("%s/rec_%05d.png", OUT, frame // 2))
+    if frame > MAX_FRAMES then
+        os.exit(1)
+    end
+
+    if RECORD and frame % 4 == 0 then
+        emu:screenshot(string.format("%s/rec_%05d.png", OUT, frame // 4))
     end
 
     while true do
