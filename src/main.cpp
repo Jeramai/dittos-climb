@@ -10,7 +10,6 @@
 int main()
 {
     bn::core::init();
-    audio::init();
     bn::random random;
     audio::set_levels(profile::get().music_level, profile::get().sound_level);
 

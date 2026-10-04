@@ -1,9 +1,9 @@
 #include "audio.h"
 
-#include "bn_core.h"
 #include "bn_math.h"
 #include "bn_music.h"
 #include "bn_optional.h"
+#include "bn_sound_handle.h"
 #include "bn_vector.h"
 
 #include "bn_music_items.h"
@@ -14,8 +14,8 @@ namespace
     constexpr bn::fixed full_sound_volume = 0.7;
     constexpr bn::fixed full_quiet_volume = 0.35;
     constexpr int max_level = 10;
-    // Butano asserts when one frame starts more sounds than it has handles (8, with 4 still playing).
-    constexpr int max_sounds_per_frame = 4;
+    // Butano asserts once all 8 of its sound handles are in use; keep 2 free.
+    constexpr int max_active_sounds = 6;
 
     int music_level = max_level;
     int sound_level = max_level;
@@ -34,40 +34,17 @@ namespace
 
     constexpr int floor_music_count = sizeof(floor_music) / sizeof(floor_music[0]);
 
-    bn::vector<int, max_sounds_per_frame> frame_sounds;
+    bn::vector<bn::sound_handle, max_active_sounds> active_sounds;
 
-    void clear_frame_sounds()
+    bool sound_handle_free()
     {
-        frame_sounds.clear();
-    }
-
-    bool claim_frame_sound(const bn::sound_item& item)
-    {
-        if(frame_sounds.full())
-        {
-            return false;
-        }
-
-        for(int id : frame_sounds)
-        {
-            if(id == item.id())
-            {
-                return false;
-            }
-        }
-
-        frame_sounds.push_back(item.id());
-        return true;
+        bn::erase_if(active_sounds, [](const bn::sound_handle& handle) { return ! handle.active(); });
+        return ! active_sounds.full();
     }
 }
 
 namespace audio
 {
-
-void init()
-{
-    bn::core::set_update_callback(clear_frame_sounds);
-}
 
 void play_music(const bn::music_item& item)
 {
@@ -96,17 +73,17 @@ void stop_music()
 
 void play(const bn::sound_item& item)
 {
-    if(sound_level && claim_frame_sound(item))
+    if(sound_level && sound_handle_free())
     {
-        item.play(full_sound_volume * sound_level / max_level);
+        active_sounds.push_back(item.play(full_sound_volume * sound_level / max_level));
     }
 }
 
 void play_quiet(const bn::sound_item& item)
 {
-    if(sound_level && claim_frame_sound(item))
+    if(sound_level && sound_handle_free())
     {
-        item.play(full_quiet_volume * sound_level / max_level);
+        active_sounds.push_back(item.play(full_quiet_volume * sound_level / max_level));
     }
 }
 
