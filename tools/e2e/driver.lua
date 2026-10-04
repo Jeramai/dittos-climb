@@ -2,13 +2,16 @@
 local KEY = { A = 0, B = 1, SELECT = 2, START = 3, RIGHT = 4, LEFT = 5, UP = 6, DOWN = 7, R = 8, L = 9 }
 local OUT = os.getenv("OUT")
 local RECORD = os.getenv("RECORD") == "1"
+local RECORD_EVERY = tonumber(os.getenv("RECORD_EVERY") or "4")
 local MAX_FRAMES = 5000
 
 -- Title screen, then skip the story.
 local BOOT = { { frames = 60 }, { frames = 4, keys = { "START" } }, { frames = 30 }, { frames = 4, keys = { "START" } } }
 
 local steps = {}
-for _, step in ipairs(BOOT) do steps[#steps + 1] = step end
+if not SKIP_BOOT then
+    for _, step in ipairs(BOOT) do steps[#steps + 1] = step end
+end
 for _, step in ipairs(PLAN) do steps[#steps + 1] = step end
 
 local function mask(keys)
@@ -26,8 +29,8 @@ callbacks:add("frame", function()
         os.exit(1)
     end
 
-    if RECORD and frame % 4 == 0 then
-        emu:screenshot(string.format("%s/rec_%05d.png", OUT, frame // 4))
+    if RECORD and frame % RECORD_EVERY == 0 then
+        emu:screenshot(string.format("%s/rec_%05d.png", OUT, frame // RECORD_EVERY))
     end
 
     while true do
