@@ -354,8 +354,8 @@ player_state player::state() const
                            _transform_shiny };
     }
 
-    return player_state{ _hp, _bonus_hp, saved_form.has_value(), saved_form.value_or(form{ species_id::ditto, 0, 0 }),
-                         _held.has_value(), _held.value_or(item_id::ether), _shiny_ditto,
+    return player_state{ _transform_frames ? max_hp() : _hp, _bonus_hp, saved_form.has_value(),
+                         saved_form.value_or(form{ species_id::ditto, 0, 0 }), _held.has_value(), _held.value_or(item_id::ether), _shiny_ditto,
                          _bag.has_value(), _bag.value_or(item_id::potion) };
 }
 

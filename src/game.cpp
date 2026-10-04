@@ -2035,6 +2035,12 @@ void game::_spawn_enemies()
     if(current_room.reward == room_reward::rare && ! current_room.reward_taken && first_wave && ! _enemies.empty())
     {
         bn::fixed_point position = _enemies.back().position();
+
+        if(room::feet_are_blocked(position, species::can_swim(species::get(_theme().rare))))
+        {
+            position = _view.open_spot_near(position);
+        }
+
         _enemies.pop_back();
         _enemies.emplace_back(_theme().rare, position, _camera, _random);
         show_name_message(_messages, "A rare ", species::get(_theme().rare).name, " is here!");
@@ -2118,6 +2124,7 @@ void game::_change_room(direction side)
 
 void game::_climb_stairs()
 {
+    _select_frames = -1;
     _messages.clear();
     _messages.show("DITTO went up the stairs!");
     audio::play(bn::sound_items::sfx_stairs);
@@ -2448,6 +2455,7 @@ bool game::_near_mart_counter() const
 
 void game::_open_mart()
 {
+    _select_frames = -1;
     audio::play(bn::sound_items::sfx_menu);
     _set_world_visible(false);
     _overlay.show_backdrop();
@@ -2849,6 +2857,7 @@ void game::_game_over()
 {
     audio::stop_music();
     audio::play(bn::sound_items::sfx_faint);
+    set_fade(0);
     _clear_room_objects();
     _messages.clear();
     _hud.set_visible(false);
